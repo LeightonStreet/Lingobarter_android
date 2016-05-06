@@ -16,9 +16,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Register" />
-        <activity android:name=".Profile" />
         <activity android:name=".LanguageTalks" />
-        <!--<activity android:name=".SamplesNtbActivity" />-->
     </application>
 
 </manifest>
