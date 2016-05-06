@@ -36,4 +36,9 @@ public class Login extends AppCompatActivity {
         Intent intent = new Intent(this, Register.class);
         startActivity(intent);
     }
+
+    public void check_identity(View view) {
+        Intent intent = new Intent(this, Chat.class);
+        startActivity(intent);
+    }
 }
