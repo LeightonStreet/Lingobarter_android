@@ -70,15 +70,13 @@ public class LanguageTalks extends Activity {
         final NavigationTabBar navigationTabBar = (NavigationTabBar) findViewById(R.id.ntb_horizontal);
         final ArrayList<NavigationTabBar.Model> models = new ArrayList<>();
         models.add(new NavigationTabBar.Model(
-                getResources().getDrawable(R.drawable.ic_first), Color.parseColor(colors[0]), "Heart"));
+                getResources().getDrawable(R.drawable.ic_message_black_36dp), Color.parseColor(colors[0]), "Chats"));
         models.add(new NavigationTabBar.Model(
-                getResources().getDrawable(R.drawable.ic_second), Color.parseColor(colors[1]), "Cup"));
+                getResources().getDrawable(R.drawable.ic_people_outline_black_36dp), Color.parseColor(colors[1]), "Partners"));
         models.add(new NavigationTabBar.Model(
-                getResources().getDrawable(R.drawable.ic_third), Color.parseColor(colors[2]), "Diploma"));
+                getResources().getDrawable(R.drawable.ic_search_black_36dp), Color.parseColor(colors[3]), "Search"));
         models.add(new NavigationTabBar.Model(
-                getResources().getDrawable(R.drawable.ic_fourth), Color.parseColor(colors[3]), "Flag"));
-        models.add(new NavigationTabBar.Model(
-                getResources().getDrawable(R.drawable.ic_fifth), Color.parseColor(colors[4]), "Medal"));
+                getResources().getDrawable(R.drawable.ic_face_black_36dp), Color.parseColor(colors[4]), "Me"));
         navigationTabBar.setModels(models);
         navigationTabBar.setViewPager(viewPager, 2);
         navigationTabBar.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {

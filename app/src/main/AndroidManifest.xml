@@ -19,7 +19,6 @@
         <activity android:name=".Profile" />
         <activity android:name=".LanguageTalks" />
         <!--<activity android:name=".SamplesNtbActivity" />-->
-        <activity android:name=".LanguageTalks" />
     </application>
 
 </manifest>
