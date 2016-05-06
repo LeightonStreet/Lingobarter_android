@@ -123,6 +123,7 @@
 
         <Button
             android:id="@+id/hx_login_button_register"
+            android:onClick="register"
             android:gravity="center_vertical"
             android:text="@string/hx_register_button"
             android:background="@android:color/transparent"

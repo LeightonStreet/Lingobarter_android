@@ -2,7 +2,7 @@
     <string name="app_name">LingoBarterClient</string>
     <string name="hx_email">"Email"</string>
     <string name="hx_password">"Password"</string>
-    <string name="hx_login">LOGIN</string>
+    <string name="hx_login">"LOGIN"</string>
     <string name="hx_register_hint">"I don't have an account."</string>
     <string name="hx_register_button">"Register Me"</string>
     <string name="hx_wrong_email">"This email has not been registered."</string>
@@ -11,4 +11,9 @@
     <string name="hx_no_password">"Password cannot be empty."</string>
     <string name="hx_forget_password">"Forget Password"</string>
     <string name="hx_login_image_description">"Logo"</string>
+    <string name="hx_register">"REGISTER"</string>
+    <string name="hx_user_name">"User name"</string>
+    <string name="hx_login_hint">"Already registered?"</string>
+    <string name="hx_login_button">"Login Me"</string>
+    <string name="hx_login_show_password">"Show Password"</string>
 </resources>
