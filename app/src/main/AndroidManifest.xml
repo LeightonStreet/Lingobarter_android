@@ -17,6 +17,7 @@
         </activity>
         <activity android:name=".Register" />
         <activity android:name=".Profile"></activity>
+        <activity android:name="org.kymjs.chat.ChatActivity"></activity>
     </application>
 
 </manifest>
