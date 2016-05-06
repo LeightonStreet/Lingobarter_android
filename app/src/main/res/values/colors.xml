@@ -3,4 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="DarkSalmon">#E9967A</color>
+    <color name="PaleTurquoise">#AFEEEE</color>
+    <color name="White">#FFFFFF</color>
+    <color name="GreenYellow">#ADFF2F</color>
+    <color name="LawnGreen">#7CFC00</color>
 </resources>
