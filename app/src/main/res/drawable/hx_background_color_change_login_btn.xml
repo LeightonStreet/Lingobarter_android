@@ -3,12 +3,12 @@
     <item android:state_pressed="true" >
         <shape>
             <gradient
-                android:startColor="@color/GreenYellow"
-                android:endColor="@color/LawnGreen"
+                android:startColor="@color/Salmon"
+                android:endColor="@color/Coral"
                 android:angle="270" />
             <stroke
                 android:width="3dp"
-                android:color="@color/White" />
+                android:color="@color/DarkGray" />
             <corners
                 android:radius="3dp" />
             <padding
@@ -22,12 +22,12 @@
     <item android:state_focused="true" >
         <shape>
             <gradient
-                android:startColor="@color/GreenYellow"
-                android:endColor="@color/LawnGreen"
+                android:startColor="@color/LightCoral"
+                android:endColor="@color/Tomato"
                 android:angle="270" />
             <stroke
                 android:width="3dp"
-                android:color="@color/White" />
+                android:color="@color/DarkGray" />
             <corners
                 android:radius="3dp" />
             <padding
@@ -41,12 +41,12 @@
     <item>
         <shape>
             <gradient
-                android:startColor="@color/GreenYellow"
-                android:endColor="@color/LawnGreen"
+                android:startColor="@color/LightCoral"
+                android:endColor="@color/Tomato"
                 android:angle="270" />
             <stroke
                 android:width="3dp"
-                android:color="@color/White" />
+                android:color="@color/DarkGray" />
             <corners
                 android:radius="3dp" />
             <padding

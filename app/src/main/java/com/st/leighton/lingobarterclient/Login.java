@@ -1,9 +1,12 @@
 package com.st.leighton.lingobarterclient;
 
+import android.graphics.Paint;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 
 public class Login extends AppCompatActivity {
 
@@ -17,5 +20,15 @@ public class Login extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_login);
+
+        Button registerBtn = (Button) findViewById(R.id.hx_login_button_register);
+        Button retrieveBtn = (Button) findViewById(R.id.hx_login_button_forget_password);
+        if (registerBtn != null) {
+            registerBtn.setPaintFlags(registerBtn.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        }
+
+        if (retrieveBtn != null) {
+            retrieveBtn.setPaintFlags(retrieveBtn.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        }
     }
 }

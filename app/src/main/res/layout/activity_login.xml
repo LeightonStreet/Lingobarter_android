@@ -5,7 +5,8 @@
 
     android:id="@+id/hx_login_base_layout"
     android:orientation="vertical"
-    android:background="@color/PaleTurquoise"
+    android:background="@color/DarkGray"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -15,28 +16,121 @@
 
     <ImageView
         android:id="@+id/hx_login_image_logo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/logo_square"/>
+        android:src="@drawable/logo_square"
+        android:contentDescription="@string/hx_login_image_description"
 
-    <EditText
-        android:id="@+id/hx_login_edit_email"
-        android:hint="@string/email"
-        android:inputType="textEmailAddress"
+        android:layout_gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <EditText
-        android:id="@+id/hx_login_edit_password"
-        android:hint="@string/password"
-        android:inputType="textPassword"
+    <LinearLayout
+        android:id="@+id/hx_login_login_layout"
+        android:orientation="vertical"
+
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    
-    <Button
-        android:id="@+id/hx_login_button_login"
-        android:text="@string/Log_in"
-        android:background="@drawable/login_button"
+        android:layout_height="300dp">
+
+        <TextView
+            android:id="@+id/hx_login_text_email_alert"
+            android:layout_gravity="start"
+            android:text=""
+            android:textColor="@android:color/holo_red_dark"
+
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/hx_login_edit_email"
+            android:layout_gravity="center_horizontal"
+            android:hint="@string/hx_email"
+            android:inputType="textEmailAddress"
+            android:background="@color/DimGray"
+
+            android:layout_weight="4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/hx_login_text_password_alert"
+            android:layout_gravity="start"
+            android:text=""
+            android:textColor="@android:color/holo_red_dark"
+
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/hx_login_edit_password"
+            android:layout_gravity="center_horizontal"
+            android:hint="@string/hx_password"
+            android:inputType="textPassword"
+            android:background="@color/DimGray"
+
+            android:layout_weight="4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/hx_login_button_forget_password"
+            android:layout_gravity="end"
+            android:text="@string/hx_forget_password"
+            android:textSize="12sp"
+            android:background="@android:color/transparent"
+            android:textColor="@drawable/hx_text_color_change_register_btn"
+
+            android:layout_weight="1"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/hx_login_button_login"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/hx_login"
+            android:background="@drawable/hx_background_color_change_login_btn"
+
+            android:layout_weight="3"
+            android:layout_marginTop="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/hx_login_register_layout"
+        android:orientation="horizontal"
+
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/hx_login_text_register"
+            android:gravity="center_vertical"
+            android:text="@string/hx_register_hint"
+
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+        <Space
+            android:layout_width="5dp"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/hx_login_button_register"
+            android:gravity="center_vertical"
+            android:text="@string/hx_register_button"
+            android:background="@android:color/transparent"
+            android:textColor="@drawable/hx_text_color_change_register_btn"
+
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
 </LinearLayout>

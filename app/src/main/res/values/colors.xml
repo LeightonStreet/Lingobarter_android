@@ -8,4 +8,10 @@
     <color name="White">#FFFFFF</color>
     <color name="GreenYellow">#ADFF2F</color>
     <color name="LawnGreen">#7CFC00</color>
+    <color name="DimGray">#404040</color>
+    <color name="DarkGray">#202020</color>
+    <color name="Coral">#FF7F50</color>
+    <color name="Salmon">#FA8072</color>
+    <color name="Tomato">#FF6347</color>
+    <color name="LightCoral">#F08080</color>
 </resources>
