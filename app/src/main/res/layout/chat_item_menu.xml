@@ -19,14 +19,14 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/icon_chat_image"/>
+            android:src="@drawable/ic_image_white_36dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="5dp"
-            android:text="图片"/>
+            android:text="Image"/>
     </LinearLayout>
 
     <LinearLayout
@@ -44,14 +44,14 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/icon_chat_photo"/>
+            android:src="@drawable/ic_add_a_photo_white_36dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="5dp"
-            android:text="拍照"/>
+            android:text="Camera"/>
     </LinearLayout>
 
 </RelativeLayout>

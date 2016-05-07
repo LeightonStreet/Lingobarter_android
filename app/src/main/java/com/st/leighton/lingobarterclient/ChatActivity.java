@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -47,6 +48,8 @@ import java.util.Random;
  * Chat
  */
 public class ChatActivity extends KJActivity {
+    private String user1;
+    private String user2;
 
     public static final int REQUEST_CODE_GETIMAGE_BYSDCARD = 0x1;
 
@@ -55,6 +58,13 @@ public class ChatActivity extends KJActivity {
 
     List<Message> messages = new ArrayList<>();
     private ChatAdapter adapter;
+
+    @Override
+    protected void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        user1 = getIntent().getExtras().getString("USER1_ID");
+        user2 = getIntent().getExtras().getString("USER2_ID");
+    }
 
     @Override
     public void setRootView() {
@@ -77,7 +87,7 @@ public class ChatActivity extends KJActivity {
             @Override
             public void send(String content) {
                 Message message = new Message(Message.MSG_TYPE_TEXT, Message.MSG_STATE_SUCCESS,
-                        "Tom", "avatar", "Jerry",
+                        user1, "avatar", user2,
                         "avatar", content, true, true, new Date());
                 messages.add(message);
                 adapter.refresh(messages);
@@ -87,7 +97,7 @@ public class ChatActivity extends KJActivity {
             @Override
             public void selectedFace(Faceicon content) {
                 Message message = new Message(Message.MSG_TYPE_FACE, Message.MSG_STATE_SUCCESS,
-                        "Tom", "avatar", "Jerry", "avatar", content.getPath(), true, true, new
+                        user1, "avatar", user2, "avatar", content.getPath(), true, true, new
                         Date());
                 messages.add(message);
                 adapter.refresh(messages);
@@ -138,24 +148,24 @@ public class ChatActivity extends KJActivity {
                 (byte) 0xF0, (byte) 0x9F, (byte) 0x98, (byte) 0x81
         };
         Message message = new Message(Message.MSG_TYPE_TEXT,
-                Message.MSG_STATE_SUCCESS, "\ue415", "avatar", "Jerry", "avatar",
+                Message.MSG_STATE_SUCCESS, user1, "avatar", user2, "avatar",
                 new String(emoji), false, true, new Date(System.currentTimeMillis()
                 - (1000 * 60 * 60 * 24) * 8));
         Message message1 = new Message(Message.MSG_TYPE_TEXT,
-                Message.MSG_STATE_SUCCESS, "Tom", "avatar", "Jerry", "avatar",
+                Message.MSG_STATE_SUCCESS, user2, "avatar", user1, "avatar",
                 "以后的版本支持链接高亮喔:http://www.kymjs.com支持http、https、svn、ftp开头的链接",
                 true, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
         Message message2 = new Message(Message.MSG_TYPE_PHOTO,
-                Message.MSG_STATE_SUCCESS, "Tom", "avatar", "Jerry", "avatar",
+                Message.MSG_STATE_SUCCESS, user1, "avatar", user2, "avatar",
                 "http://static.oschina.net/uploads/space/2015/0611/103706_rpPc_1157342.png",
                 false, true, new Date(
                 System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 7));
         Message message6 = new Message(Message.MSG_TYPE_TEXT,
-                Message.MSG_STATE_FAIL, "Tom", "avatar", "Jerry", "avatar",
+                Message.MSG_STATE_FAIL, user1, "avatar", user2, "avatar",
                 "test send fail", true, false, new Date(
                 System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 6));
         Message message7 = new Message(Message.MSG_TYPE_TEXT,
-                Message.MSG_STATE_SENDING, "Tom", "avatar", "Jerry", "avatar",
+                Message.MSG_STATE_SENDING, user1, "avatar", user2, "avatar",
                 "<a href=\"http://kymjs.com\">自定义链接</a>也是支持的", true, true, new Date(System.currentTimeMillis()
                 - (1000 * 60 * 60 * 24) * 6));
 
@@ -170,8 +180,8 @@ public class ChatActivity extends KJActivity {
     }
 
     private void createReplayMsg(Message message) {
-        final Message reMessage = new Message(message.getType(), Message.MSG_STATE_SUCCESS, "Tom",
-                "avatar", "Jerry", "avatar", message.getType() == Message.MSG_TYPE_TEXT ? "返回:"
+        final Message reMessage = new Message(message.getType(), Message.MSG_STATE_SUCCESS, user1,
+                "avatar", user2, "avatar", message.getType() == Message.MSG_TYPE_TEXT ? "返回:"
                 + message.getContent() : message.getContent(), false,
                 true, new Date());
         new Thread(new Runnable() {
@@ -235,7 +245,7 @@ public class ChatActivity extends KJActivity {
             if (dataUri != null) {
                 File file = FileUtils.uri2File(aty, dataUri);
                 Message message = new Message(Message.MSG_TYPE_PHOTO, Message.MSG_STATE_SUCCESS,
-                        "Tom", "avatar", "Jerry",
+                        user1, "avatar", user2,
                         "avatar", file.getAbsolutePath(), true, true, new Date());
                 messages.add(message);
                 adapter.refresh(messages);

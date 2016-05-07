@@ -55,7 +55,7 @@ public class FaceCategroyAdapter extends FragmentStatePagerAdapter implements
     @Override
     public void setPageIcon(int position, ImageView image) {
         if (position == 0) {
-            image.setImageResource(R.drawable.icon_face_click);
+            image.setImageResource(R.drawable.ic_tag_faces_white_36dp);
             return;
         }
         File file = new File(datas.get(position - 1));

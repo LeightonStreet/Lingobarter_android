@@ -1,6 +1,7 @@
 package com.st.leighton.lingobarterclient;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
@@ -8,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -40,9 +42,6 @@ public class MainActivity extends Activity {
     }
 
     private void initUI() {
-        talks.add("vicky");
-        talks.add("hello world");
-
         partners.add("Qi");
         partners.add("Andy");
 
@@ -70,18 +69,16 @@ public class MainActivity extends Activity {
             @Override
             public Object instantiateItem(final ViewGroup container, final int position) {
                 View view = LayoutInflater.from(
-                        getBaseContext()).inflate(R.layout.language_talks, null, false);
+                        getBaseContext()).inflate(R.layout.activity_main, null, false);
 
                 switch (position) {
                     case 0:
-                        ListView talkList = (ListView) view.findViewById(R.id.talksListView);
-                        talkList.setAdapter(
-                                new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, talks));
+                        setConversationsList(view);
                         break;
 
                     case 1:
                         view = LayoutInflater.from(
-                                getBaseContext()).inflate(R.layout.language_talks, null, false);
+                                getBaseContext()).inflate(R.layout.activity_main, null, false);
                         ListView partnerList = (ListView) view.findViewById(R.id.talksListView);
                         partnerList.setAdapter(
                                 new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, partners));
@@ -89,7 +86,7 @@ public class MainActivity extends Activity {
 
                     case 2:
                         view = LayoutInflater.from(
-                                getBaseContext()).inflate(R.layout.language_talks, null, false);
+                                getBaseContext()).inflate(R.layout.activity_main, null, false);
                         ListView searchList = (ListView) view.findViewById(R.id.talksListView);
                         searchList.setAdapter(
                                 new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, searches));
@@ -97,7 +94,7 @@ public class MainActivity extends Activity {
 
                     case 3:
                         view = LayoutInflater.from(
-                                getBaseContext()).inflate(R.layout.language_talks, null, false);
+                                getBaseContext()).inflate(R.layout.activity_main, null, false);
                         ListView profileList = (ListView) view.findViewById(R.id.talksListView);
                         profileList.setAdapter(
                                 new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, myProfile));
@@ -180,13 +177,51 @@ public class MainActivity extends Activity {
         }, 500);
     }
 
+    //display clickable a list of all talks
+    private void setConversationsList(View view) {
+        final ListView talkList = (ListView)view.findViewById(R.id.talksListView);
+//        currentUserId = ParseUser.getCurrentUser().getObjectId();
+
+//        ParseQuery<ParseUser> query = ParseUser.getQuery();
+//        query.whereNotEqualTo("objectId", currentUserId);
+//        query.findInBackground(new FindCallback<ParseUser>() {
+//            public void done(com.parse.ParseException e) {
+//                if (e == null) {
+//                    for (int i=0; i<userList.size(); i++) {
+//                        talks.add(userList.get(i).getUsername().toString());
+//                    }
+        talks.add("vicky");
+        talks.add("hello world");
+
+        talkList.setAdapter(
+                new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, talks));
+
+        talkList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> a, View v, int i, long l) {
+                openConversation(talks, i);
+            }
+        });
+
+//                } else {
+//                    Toast.makeText(getApplicationContext(),
+//                            "Error loading user list",
+//                            Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+    }
+
+    //open a conversation with one person
     public void openConversation(ArrayList<String> talks, int pos) {
 //        ParseQuery<ParseUser> query = ParseUser.getQuery();
 //        query.whereEqualTo("username", talks.get(pos));
 //        query.findInBackground(new FindCallback<ParseUser>() {
-//            public void done(List<ParseUser> user, ParseException e) {
+//            public void done(List<ParseUser> user, com.parse.ParseException e) {
 //                if (e == null) {
-//                    //start the messaging activity
+//                    Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+//                    intent.putExtra("RECIPIENT_ID", user.get(0).getObjectId());
+//                    startActivity(intent);
 //                } else {
 //                    Toast.makeText(getApplicationContext(),
 //                            "Error finding that user",
@@ -194,5 +229,9 @@ public class MainActivity extends Activity {
 //                }
 //            }
 //        });
+        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+        intent.putExtra("USER1_ID", "vicky");
+        intent.putExtra("USER2_ID", "Qi");
+        startActivity(intent);
     }
 }
