@@ -17,9 +17,20 @@
     <string name="hx_login_button">"Login Me"</string>
     <string name="hx_login_show_password">"Show Password"</string>
     <string name="hx_basic_profile_name">"Full Name"</string>
+    <string name="hx_basic_profile_gender">"Gender"</string>
+    <string name="hx_basic_profile_location">"Location"</string>
     <string name="hx_basic_profile_default_name">"Ted"</string>
-    <string name="hx_basic_profile_choose_photo">"Upload avatar from gallery!"</string>
-    <string name="hx_basic_profile_birthday">"Birthday"</string>
+    <string name="hx_basic_profile_choose_photo">"Upload avatar!"</string>
+    <string name="hx_basic_profile_get_location">"New York"</string>
+    <string name="hx_basic_profile_birthday_text">"Birthday"</string>
+    <string name="hx_basic_profile_birthday_example">"01/01/16"</string>
+    <string name="hx_basic_profile_male">"Male"</string>
+    <string name="hx_basic_profile_female">"Female"</string>
+    <string name="hx_basic_profile_nationality">"Nationality"</string>
+    <string name="hx_basic_profile_native_language">"Add your native languages"</string>
+    <string name="hx_basic_profile_learn_language">"Languages you want to learn"</string>
+    <string name="hx_basic_profile_language_level">"Current proficiency"</string>
+    <string name="hx_basic_profile_submit_button">"SUBMIT"</string>
 
     <string-array name="language_array">
         <item>"Chinese"</item>

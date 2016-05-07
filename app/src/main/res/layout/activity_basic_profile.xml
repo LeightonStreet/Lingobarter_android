@@ -20,69 +20,175 @@
         android:id="@+id/hx_basic_profile_name_layout"
         android:orientation="horizontal"
 
+        android:baselineAligned="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/hx_basic_profile_text_name"
-            android:text="@string/hx_basic_profile_name"
-            android:textSize="15sp"
-            android:gravity="center"
-
-            android:layout_weight="3"
-            android:layout_width="0dp"
-            android:layout_height="match_parent" />
-
-        <EditText
-            android:id="@+id/hx_basic_profile_edit_name"
-            android:hint="@string/hx_basic_profile_default_name"
-            android:background="@color/DimGray"
-
+        <LinearLayout
+            android:id="@+id/hx_basic_profile_basic_information_layout"
+            android:orientation="vertical"
             android:layout_weight="7"
-            android:layout_width="wrap_content"
+
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/hx_basic_profile_text_name"
+                android:text="@string/hx_basic_profile_name"
+                android:gravity="start"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/hx_basic_profile_edit_name"
+                android:hint="@string/hx_basic_profile_default_name"
+                android:inputType="text"
+                android:background="@color/DimGray"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
+
+            <TextView
+                android:id="@+id/hx_basic_profile_text_gender"
+                android:text="@string/hx_basic_profile_gender"
+                android:gravity="start"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <RadioGroup
+                android:id="@+id/hx_basic_radio_group_gender"
+                android:orientation="horizontal"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/hx_basic_profile_gender_male"
+                    android:text="@string/hx_basic_profile_male"
+                    android:checked="true"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+                <RadioButton
+                    android:id="@+id/hx_basic_profile_gender_female"
+                    android:text="@string/hx_basic_profile_female"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+            </RadioGroup>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
+
+            <TextView
+                android:id="@+id/hx_basic_profile_text_birthday"
+                android:text="@string/hx_basic_profile_birthday_text"
+                android:gravity="start"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/hx_basic_profile_edit_birthday"
+                android:focusable="false"
+                android:hint="@string/hx_basic_profile_birthday_example"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="20dp"
             android:layout_height="match_parent" />
+        
+        <LinearLayout
+            android:id="@+id/hx_basic_profile_avatar_layout"
+            android:orientation="vertical"
+            android:layout_weight="3"
+
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+            
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="20dp" />
+
+            <ImageView
+                android:id="@+id/hx_basic_profile_image_avatar"
+                android:scaleType="fitXY"
+                android:background="@color/main_gray"
+                android:src="@mipmap/ic_launcher"
+                android:contentDescription="@string/app_name"
+                android:layout_gravity="center"
+
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
+
+            <Button
+                android:id="@+id/hx_basic_profile_button_avatar"
+                android:text="@string/hx_basic_profile_choose_photo"
+                android:layout_gravity="center"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            
+        </LinearLayout>
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/hx_basic_profile_button_avatar"
-        android:text="@string/hx_basic_profile_choose_photo"
+    <Spinner
+        android:id="@+id/hx_basic_profile_spinner_nationality"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </Spinner>
+
+    <TextView
+        android:id="@+id/hx_basic_profile_text_location_title"
+        android:text="@string/hx_basic_profile_location"
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <EditText
-        android:id="@+id/hx_basic_profile_edit_birthday"
-        android:focusable="false"
-        android:hint="@string/hx_basic_profile_birthday"
+        android:id="@+id/hx_basic_profile_edit_location"
+        android:hint="@string/hx_basic_profile_get_location"
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
-        android:id="@+id/hx_basic_profile_spinners_layout"
-        android:orientation="vertical"
+    <EditText
+        android:id="@+id/hx_basic_profile_edit_native_languages"
+        android:focusable="false"
+        android:hint="@string/hx_basic_profile_native_language"
 
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content" />
 
-        <Spinner
-            android:id="@+id/hx_basic_profile_spinner_nationality"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </Spinner>
+    <EditText
+        android:id="@+id/hx_basic_profile_edit_learn_languages"
+        android:focusable="false"
+        android:hint="@string/hx_basic_profile_learn_language"
 
-        <Spinner
-            android:id="@+id/hx_basic_profile_spinner_learn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </Spinner>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-        <Spinner
-            android:id="@+id/hx_basic_profile_spinner_teach"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </Spinner>
-    </LinearLayout>
+    <Button
+        android:id="@+id/hx_basic_profile_button_submit"
+        android:text="@string/hx_basic_profile_submit_button"
+        android:gravity="center"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
