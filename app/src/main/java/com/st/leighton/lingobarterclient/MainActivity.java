@@ -8,10 +8,8 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.gigamole.library.NavigationTabBar;
 
@@ -20,8 +18,11 @@ import java.util.ArrayList;
 /**
  * Created by vicky on 06.05.2016.
  */
-public class LanguageTalks extends Activity {
+public class MainActivity extends Activity {
     private ArrayList<String> talks = new ArrayList<>();
+    private ArrayList<String> partners = new ArrayList<>();
+    private ArrayList<String> searches = new ArrayList<>();
+    private ArrayList<String> myProfile = new ArrayList<>();
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -40,7 +41,14 @@ public class LanguageTalks extends Activity {
 
     private void initUI() {
         talks.add("vicky");
-        talks.add("Qi");
+        talks.add("hello world");
+
+        partners.add("Qi");
+        partners.add("Andy");
+
+        searches.add("find vicky");
+
+        myProfile.add("8)");
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.vp_horizontal_ntb);
         viewPager.setAdapter(new PagerAdapter() {
@@ -61,12 +69,42 @@ public class LanguageTalks extends Activity {
 
             @Override
             public Object instantiateItem(final ViewGroup container, final int position) {
-                final View view = LayoutInflater.from(
+                View view = LayoutInflater.from(
                         getBaseContext()).inflate(R.layout.language_talks, null, false);
 
-                ListView talkList = (ListView)view.findViewById(R.id.talksListView);
-                talkList.setAdapter(new ArrayAdapter<>(LanguageTalks.this, android.R.layout.simple_list_item_1, talks));
+                switch (position) {
+                    case 0:
+                        ListView talkList = (ListView) view.findViewById(R.id.talksListView);
+                        talkList.setAdapter(
+                                new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, talks));
+                        break;
 
+                    case 1:
+                        view = LayoutInflater.from(
+                                getBaseContext()).inflate(R.layout.language_talks, null, false);
+                        ListView partnerList = (ListView) view.findViewById(R.id.talksListView);
+                        partnerList.setAdapter(
+                                new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, partners));
+                        break;
+
+                    case 2:
+                        view = LayoutInflater.from(
+                                getBaseContext()).inflate(R.layout.language_talks, null, false);
+                        ListView searchList = (ListView) view.findViewById(R.id.talksListView);
+                        searchList.setAdapter(
+                                new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, searches));
+                        break;
+
+                    case 3:
+                        view = LayoutInflater.from(
+                                getBaseContext()).inflate(R.layout.language_talks, null, false);
+                        ListView profileList = (ListView) view.findViewById(R.id.talksListView);
+                        profileList.setAdapter(
+                                new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, myProfile));
+                        break;
+                    default:
+                        break;
+                }
                 container.addView(view);
                 return view;
             }
@@ -84,8 +122,10 @@ public class LanguageTalks extends Activity {
                 getResources().getDrawable(R.drawable.ic_search_black_36dp), Color.parseColor(colors[3]), "Search"));
         models.add(new NavigationTabBar.Model(
                 getResources().getDrawable(R.drawable.ic_face_black_36dp), Color.parseColor(colors[4]), "Me"));
+
         navigationTabBar.setModels(models);
-        navigationTabBar.setViewPager(viewPager, 2);
+        navigationTabBar.setViewPager(viewPager, 0);
+
         navigationTabBar.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
@@ -119,27 +159,20 @@ public class LanguageTalks extends Activity {
                     final NavigationTabBar.Model model = navigationTabBar.getModels().get(i);
                     switch (i) {
                         case 0:
-                            model.setBadgeTitle("NTB");
+                            model.setBadgeTitle("1");
                             break;
                         case 1:
-                            model.setBadgeTitle("with");
-                            break;
-                        case 2:
-                            model.setBadgeTitle("title");
-                            break;
-                        case 3:
-                            model.setBadgeTitle("badge");
-                            break;
-                        case 4:
-                            model.setBadgeTitle("777");
+                            model.setBadgeTitle("2");
                             break;
                         default:
+                            model.setBadgeTitle("-1");
                             break;
                     }
                     navigationTabBar.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            model.showBadge();
+                            if(model.getBadgeTitle() != "-1")
+                                model.showBadge();
                         }
                     }, i * 100);
                 }
