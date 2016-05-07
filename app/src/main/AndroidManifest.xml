@@ -21,7 +21,6 @@
         <activity android:name=".BasicProfile" />
         <activity android:name=".ForgetPassword" />
         <activity android:name=".EmailConfirmation" />
-        <activity android:name=".BasicProfile"/>
     </application>
 
 </manifest>

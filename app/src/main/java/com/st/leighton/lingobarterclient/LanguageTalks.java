@@ -22,7 +22,6 @@ import java.util.ArrayList;
  */
 public class LanguageTalks extends Activity {
     private ArrayList<String> talks = new ArrayList<>();
-    ArrayAdapter<String> talksArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, talks);
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -62,9 +61,11 @@ public class LanguageTalks extends Activity {
 
             @Override
             public Object instantiateItem(final ViewGroup container, final int position) {
-                final ListView view = LayoutInflater.from(
+                final View view = LayoutInflater.from(
                         getBaseContext()).inflate(R.layout.language_talks, null, false);
-                view.setAdapter(talksArrayAdapter);
+
+                ListView talkList = (ListView)view.findViewById(R.id.talksListView);
+                talkList.setAdapter(new ArrayAdapter<>(LanguageTalks.this, android.R.layout.simple_list_item_1, talks));
 
                 container.addView(view);
                 return view;
