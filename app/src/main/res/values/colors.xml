@@ -14,4 +14,11 @@
     <color name="Salmon">#FA8072</color>
     <color name="Tomato">#FF6347</color>
     <color name="LightCoral">#F08080</color>
+    
+    <color name="window_background">#EBEBEB</color>
+    <color name="main_gray">#9A9A9A</color>
+    <color name="frag_more_name_text">#ff7b7b7b</color>
+    <color name="colorPrimary">#e35b5a</color>
+    <color name="background_tab_pressed">#6633B5E5</color>
+    <color name="emoji_keyboard_bg_light">#f6f5f5</color>
 </resources>
