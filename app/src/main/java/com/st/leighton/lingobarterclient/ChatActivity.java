@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * 聊天主界面
+ * Chat
  */
 public class ChatActivity extends KJActivity {
 
@@ -53,7 +53,7 @@ public class ChatActivity extends KJActivity {
     private KJChatKeyboard box;
     private ListView mRealListView;
 
-    List<Message> datas = new ArrayList<Message>();
+    List<Message> messages = new ArrayList<>();
     private ChatAdapter adapter;
 
     @Override
@@ -79,8 +79,8 @@ public class ChatActivity extends KJActivity {
                 Message message = new Message(Message.MSG_TYPE_TEXT, Message.MSG_STATE_SUCCESS,
                         "Tom", "avatar", "Jerry",
                         "avatar", content, true, true, new Date());
-                datas.add(message);
-                adapter.refresh(datas);
+                messages.add(message);
+                adapter.refresh(messages);
                 createReplayMsg(message);
             }
 
@@ -89,8 +89,8 @@ public class ChatActivity extends KJActivity {
                 Message message = new Message(Message.MSG_TYPE_FACE, Message.MSG_STATE_SUCCESS,
                         "Tom", "avatar", "Jerry", "avatar", content.getPath(), true, true, new
                         Date());
-                datas.add(message);
-                adapter.refresh(datas);
+                messages.add(message);
+                adapter.refresh(messages);
                 createReplayMsg(message);
             }
 
@@ -159,13 +159,13 @@ public class ChatActivity extends KJActivity {
                 "<a href=\"http://kymjs.com\">自定义链接</a>也是支持的", true, true, new Date(System.currentTimeMillis()
                 - (1000 * 60 * 60 * 24) * 6));
 
-        datas.add(message);
-        datas.add(message1);
-        datas.add(message2);
-        datas.add(message6);
-        datas.add(message7);
+        messages.add(message);
+        messages.add(message1);
+        messages.add(message2);
+        messages.add(message6);
+        messages.add(message7);
 
-        adapter = new ChatAdapter(this, datas, getOnChatItemClickListener());
+        adapter = new ChatAdapter(this, messages, getOnChatItemClickListener());
         mRealListView.setAdapter(adapter);
     }
 
@@ -182,8 +182,8 @@ public class ChatActivity extends KJActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            datas.add(reMessage);
-                            adapter.refresh(datas);
+                            messages.add(reMessage);
+                            adapter.refresh(messages);
                         }
                     });
                 } catch (Exception e) {
@@ -237,8 +237,8 @@ public class ChatActivity extends KJActivity {
                 Message message = new Message(Message.MSG_TYPE_PHOTO, Message.MSG_STATE_SUCCESS,
                         "Tom", "avatar", "Jerry",
                         "avatar", file.getAbsolutePath(), true, true, new Date());
-                datas.add(message);
-                adapter.refresh(datas);
+                messages.add(message);
+                adapter.refresh(messages);
             }
         }
     }
@@ -266,8 +266,8 @@ public class ChatActivity extends KJActivity {
         return new OnChatItemClickListener() {
             @Override
             public void onPhotoClick(int position) {
-                KJLoger.debug(datas.get(position).getContent() + "点击图片的");
-                ViewInject.toast(aty, datas.get(position).getContent() + "点击图片的");
+                KJLoger.debug(messages.get(position).getContent() + "点击图片的");
+                ViewInject.toast(aty, messages.get(position).getContent() + "点击图片的");
             }
 
             @Override

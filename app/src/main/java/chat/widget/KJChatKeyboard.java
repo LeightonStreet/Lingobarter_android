@@ -105,7 +105,7 @@ public class KJChatKeyboard extends RelativeLayout implements
     }
 
     private void initData() {
-        mKeyboardHelper = new SoftKeyboardStateHelper(((Activity) getContext())
+        mKeyboardHelper = new SoftKeyboardStateHelper(((Activity)getContext())
                 .getWindow().getDecorView());
         mKeyboardHelper.addSoftKeyboardStateListener(this);
     }
@@ -260,8 +260,7 @@ public class KJChatKeyboard extends RelativeLayout implements
         if (activity != null) {
             InputMethodManager imm = (InputMethodManager) activity
                     .getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInputFromInputMethod(activity.getCurrentFocus()
-                    .getWindowToken(), 0);
+            imm.showSoftInputFromInputMethod(activity.getCurrentFocus().getWindowToken(), 0);
             imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }

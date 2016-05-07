@@ -8,16 +8,21 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.gigamole.library.NavigationTabBar;
 
 import java.util.ArrayList;
 
 /**
- * Created by GIGAMOLE on 28.03.2016.
+ * Created by vicky on 06.05.2016.
  */
 public class LanguageTalks extends Activity {
+    private ArrayList<String> talks = new ArrayList<>();
+    ArrayAdapter<String> talksArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, talks);
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -35,11 +40,14 @@ public class LanguageTalks extends Activity {
     }
 
     private void initUI() {
+        talks.add("vicky");
+        talks.add("Qi");
+
         final ViewPager viewPager = (ViewPager) findViewById(R.id.vp_horizontal_ntb);
         viewPager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
-                return 5;
+                return 4;
             }
 
             @Override
@@ -54,11 +62,9 @@ public class LanguageTalks extends Activity {
 
             @Override
             public Object instantiateItem(final ViewGroup container, final int position) {
-                final View view = LayoutInflater.from(
-                        getBaseContext()).inflate(R.layout.vp_item, null, false);
-
-                final TextView txtPage = (TextView) view.findViewById(R.id.txt_vp_item_page);
-                txtPage.setText(String.format("Page #%d", position));
+                final ListView view = LayoutInflater.from(
+                        getBaseContext()).inflate(R.layout.language_talks, null, false);
+                view.setAdapter(talksArrayAdapter);
 
                 container.addView(view);
                 return view;
@@ -138,5 +144,21 @@ public class LanguageTalks extends Activity {
                 }
             }
         }, 500);
+    }
+
+    public void openConversation(ArrayList<String> talks, int pos) {
+//        ParseQuery<ParseUser> query = ParseUser.getQuery();
+//        query.whereEqualTo("username", talks.get(pos));
+//        query.findInBackground(new FindCallback<ParseUser>() {
+//            public void done(List<ParseUser> user, ParseException e) {
+//                if (e == null) {
+//                    //start the messaging activity
+//                } else {
+//                    Toast.makeText(getApplicationContext(),
+//                            "Error finding that user",
+//                            Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
     }
 }
