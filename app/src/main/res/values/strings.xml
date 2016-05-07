@@ -16,4 +16,18 @@
     <string name="hx_login_hint">"Already registered?"</string>
     <string name="hx_login_button">"Login Me"</string>
     <string name="hx_login_show_password">"Show Password"</string>
+    <string name="hx_basic_profile_name">"Full Name"</string>
+    <string name="hx_basic_profile_default_name">"Ted"</string>
+    <string name="hx_basic_profile_choose_photo">"Upload avatar from gallery!"</string>
+    <string name="hx_basic_profile_birthday">"Birthday"</string>
+
+    <string-array name="language_array">
+        <item>"Chinese"</item>
+        <item>"English"</item>
+    </string-array>
+
+    <string-array name="nationality_array">
+        <item>"China"</item>
+        <item>"United States"</item>
+    </string-array>
 </resources>

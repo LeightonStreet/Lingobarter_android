@@ -100,6 +100,7 @@
 
     <Button
         android:id="@+id/hx_register_button_register"
+        android:onClick="submit_info_first"
         android:layout_gravity="center_horizontal"
         android:text="@string/hx_register"
         android:background="@drawable/hx_background_color_change_login_btn"

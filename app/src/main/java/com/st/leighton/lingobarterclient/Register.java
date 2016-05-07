@@ -37,4 +37,10 @@ public class Register extends AppCompatActivity {
         startActivity(intent);
         this.finish();
     }
+
+    public void submit_info_first(View view) {
+        Intent intent = new Intent(this, BasicProfile.class);
+        startActivity(intent);
+        this.finish();
+    }
 }
