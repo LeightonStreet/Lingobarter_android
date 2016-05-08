@@ -1,26 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.st.leighton.lingobarterclient">
+    package="com.st.leighton.lingobarterclient" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".Login" android:noHistory="true">
+        android:theme="@style/Theme.AppCompat.NoActionBar" >
+        <activity
+            android:name=".Login"
+            android:noHistory="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Register" android:noHistory="true"/>
+        <activity
+            android:name=".Register"
+            android:noHistory="true" />
         <activity android:name=".MainActivity" />
         <activity android:name=".ChatActivity" />
-        <activity android:name=".BasicProfile" android:noHistory="true"/>
-        <activity android:name=".ForgetPassword" android:noHistory="true"/>
-        <activity android:name=".EmailConfirmation" android:noHistory="true"/>
+        <activity
+            android:name=".BasicProfile"
+            android:noHistory="true" />
+        <activity
+            android:name=".ForgetPassword"
+            android:noHistory="true" />
+        <activity
+            android:name=".EmailConfirmation"
+            android:noHistory="true" />
+
+        <service
+            android:name=".Websocket"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".ProfileSettings" />
+        <activity android:name=".SelfInformation" />
+        <activity android:name=".ApplicationSettings" />
+        <activity android:name=".Search" >
+        </activity>
     </application>
 
 </manifest>
