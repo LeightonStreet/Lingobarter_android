@@ -4,12 +4,16 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
+import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -39,6 +43,7 @@ import java.util.Map;
 public class BasicProfile extends AppCompatActivity {
     final Integer baseLevel = 0;
     final Integer highestLevel = 5;
+    private static final int SELECT_PICTURE = 1;
 
     Context baseContext;
 
@@ -68,7 +73,7 @@ public class BasicProfile extends AppCompatActivity {
     AlertDialog.Builder learnLanguageAlertDialogBuilder;
 
     boolean gender = true;
-    String fullname="", birthday="", nation="";
+    String fullname="", birthday="", nation="", image_path="";
     double latitude, longitude, birthday_timestamp;
 
     String[] languages;
@@ -277,6 +282,16 @@ public class BasicProfile extends AppCompatActivity {
             }
         });
 
+        uploadAvatarB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent.createChooser(intent, "Select picture"), SELECT_PICTURE);
+            }
+        });
+
         submitB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -333,9 +348,31 @@ public class BasicProfile extends AppCompatActivity {
                     return ;
                 }
 
-                Toast.makeText(baseContext,"Succeed.", Toast.LENGTH_LONG).show();
+                if (noOverlapLanguages(nativeLanguages, learnLanguages)) {
+                    Toast.makeText(baseContext,"Succeed.", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(baseContext,"Overlapped language choices", Toast.LENGTH_LONG).show();
+                }
             }
         });
+    }
+
+    public String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                Uri selectedImageUri = data.getData();
+                image_path = getPath(selectedImageUri);
+                avatarIV.setImageURI(selectedImageUri);
+            }
+        }
     }
 
     void resetBackgroundColors() {
@@ -387,5 +424,14 @@ public class BasicProfile extends AppCompatActivity {
             rtn = rtn.substring(0, rtn.length() - 2);
         }
         return rtn;
+    }
+
+    Boolean noOverlapLanguages(HashSet<String> nativeLanguages, HashMap<String, Integer> learnLanguages) {
+        for(String item : nativeLanguages) {
+            if(learnLanguages.containsKey(item)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
