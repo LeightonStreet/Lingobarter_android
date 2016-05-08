@@ -154,24 +154,23 @@ public class ChatActivity extends KJActivity {
         Message message1 = new Message(Message.MSG_TYPE_TEXT,
                 Message.MSG_STATE_SUCCESS, user2, "avatar", user1, "avatar",
                 "以后的版本支持链接高亮喔:http://www.kymjs.com支持http、https、svn、ftp开头的链接",
-                true, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
-        Message message2 = new Message(Message.MSG_TYPE_PHOTO,
-                Message.MSG_STATE_SUCCESS, user1, "avatar", user2, "avatar",
-                "http://static.oschina.net/uploads/space/2015/0611/103706_rpPc_1157342.png",
-                false, true, new Date(
-                System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 7));
+                true, true, new Date());
+//        Message message2 = new Message(Message.MSG_TYPE_PHOTO,
+//                Message.MSG_STATE_SUCCESS, user1, "avatar", user2, "avatar",
+//                "http://camranger.com/wp-content/uploads/2014/10/Android-Icon.png",
+//                false, true, new Date(
+//                System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 7));
         Message message6 = new Message(Message.MSG_TYPE_TEXT,
                 Message.MSG_STATE_FAIL, user1, "avatar", user2, "avatar",
                 "test send fail", true, false, new Date(
-                System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 6));
+                System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 2));
         Message message7 = new Message(Message.MSG_TYPE_TEXT,
                 Message.MSG_STATE_SENDING, user1, "avatar", user2, "avatar",
-                "<a href=\"http://kymjs.com\">自定义链接</a>也是支持的", true, true, new Date(System.currentTimeMillis()
-                - (1000 * 60 * 60 * 24) * 6));
+                "<a href=\"http://kymjs.com\">自定义链接</a>也是支持的", true, true, new Date(System.currentTimeMillis()));
 
         messages.add(message);
         messages.add(message1);
-        messages.add(message2);
+//        messages.add(message2);
         messages.add(message6);
         messages.add(message7);
 

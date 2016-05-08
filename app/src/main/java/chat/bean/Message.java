@@ -41,12 +41,12 @@ public class Message {
     private String content;
 
     private Boolean isSend;
-    private Boolean sendSucces;
+    private Boolean sendSuccess;
     private Date time;
 
     public Message(int type, int state, String fromUserName,
                    String fromUserAvatar, String toUserName, String toUserAvatar,
-                   String content, Boolean isSend, Boolean sendSucces, Date time) {
+                   String content, Boolean isSend, Boolean sendSuccess, Date time) {
         super();
         this.type = type;
         this.state = state;
@@ -56,7 +56,7 @@ public class Message {
         this.toUserAvatar = toUserAvatar;
         this.content = content;
         this.isSend = isSend;
-        this.sendSucces = sendSucces;
+        this.sendSuccess = sendSuccess;
         this.time = time;
     }
 
@@ -133,11 +133,11 @@ public class Message {
     }
 
     public Boolean getSendSucces() {
-        return sendSucces;
+        return sendSuccess;
     }
 
     public void setSendSucces(Boolean sendSucces) {
-        this.sendSucces = sendSucces;
+        this.sendSuccess = sendSucces;
     }
 
     public Date getTime() {
