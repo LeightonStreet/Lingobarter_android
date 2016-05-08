@@ -27,7 +27,7 @@
         <LinearLayout
             android:id="@+id/hx_basic_profile_basic_information_layout"
             android:orientation="vertical"
-            android:layout_weight="7"
+            android:layout_weight="6"
 
             android:layout_width="0dp"
             android:layout_height="match_parent">
@@ -35,6 +35,7 @@
             <TextView
                 android:id="@+id/hx_basic_profile_text_name"
                 android:text="@string/hx_basic_profile_name"
+                android:textColor="@color/colorPrimary"
                 android:gravity="start"
 
                 android:layout_width="match_parent"
@@ -56,6 +57,7 @@
             <TextView
                 android:id="@+id/hx_basic_profile_text_gender"
                 android:text="@string/hx_basic_profile_gender"
+                android:textColor="@color/colorPrimary"
                 android:gravity="start"
 
                 android:layout_width="match_parent"
@@ -92,6 +94,7 @@
             <TextView
                 android:id="@+id/hx_basic_profile_text_birthday"
                 android:text="@string/hx_basic_profile_birthday_text"
+                android:textColor="@color/colorPrimary"
                 android:gravity="start"
 
                 android:layout_width="match_parent"
@@ -108,7 +111,8 @@
         </LinearLayout>
 
         <Space
-            android:layout_width="20dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="match_parent" />
         
         <LinearLayout
@@ -138,6 +142,7 @@
                 android:id="@+id/hx_basic_profile_button_avatar"
                 android:text="@string/hx_basic_profile_choose_photo"
                 android:layout_gravity="center"
+                android:background="@drawable/hx_background_color_change_login_btn"
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -146,23 +151,53 @@
 
     </LinearLayout>
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <TextView
+        android:id="@+id/hx_basic_profile_text_nationality_title"
+        android:text="@string/hx_basic_profile_nationality_text"
+        android:textColor="@color/colorPrimary"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <Spinner
         android:id="@+id/hx_basic_profile_spinner_nationality"
 
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="30dp">
     </Spinner>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
 
     <TextView
         android:id="@+id/hx_basic_profile_text_location_title"
         android:text="@string/hx_basic_profile_location"
+        android:textColor="@color/colorPrimary"
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <EditText
         android:id="@+id/hx_basic_profile_edit_location"
+        android:textSize="15sp"
         android:hint="@string/hx_basic_profile_get_location"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="5dp" />
+
+    <TextView
+        android:id="@+id/hx_basic_profile_text_nativelanguages_title"
+        android:text="@string/hx_basic_profile_nativelanguage_text"
+        android:textColor="@color/colorPrimary"
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -170,7 +205,20 @@
     <EditText
         android:id="@+id/hx_basic_profile_edit_native_languages"
         android:focusable="false"
+        android:textSize="15sp"
         android:hint="@string/hx_basic_profile_native_language"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="5dp" />
+
+    <TextView
+        android:id="@+id/hx_basic_profile_text_learnlanguages_title"
+        android:text="@string/hx_basic_profile_learnlanguage_text"
+        android:textColor="@color/colorPrimary"
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -178,14 +226,20 @@
     <EditText
         android:id="@+id/hx_basic_profile_edit_learn_languages"
         android:focusable="false"
+        android:textSize="15sp"
         android:hint="@string/hx_basic_profile_learn_language"
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+
     <Button
         android:id="@+id/hx_basic_profile_button_submit"
         android:text="@string/hx_basic_profile_submit_button"
+        android:background="@drawable/hx_background_color_change_login_btn"
         android:gravity="center"
 
         android:layout_width="match_parent"

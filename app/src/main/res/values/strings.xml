@@ -31,6 +31,9 @@
     <string name="hx_basic_profile_learn_language">"Languages you want to learn"</string>
     <string name="hx_basic_profile_language_level">"Current proficiency"</string>
     <string name="hx_basic_profile_submit_button">"SUBMIT"</string>
+    <string name="hx_basic_profile_nationality_text">"Nationality"</string>
+    <string name="hx_basic_profile_nativelanguage_text">"Native languages"</string>
+    <string name="hx_basic_profile_learnlanguage_text">"Languages to learn"</string>
 
     <string-array name="language_array">
         <item>"Chinese"</item>
