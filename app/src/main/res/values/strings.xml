@@ -59,4 +59,6 @@
         <item>"China"</item>
         <item>"United States"</item>
     </string-array>
+
+    <string name="url_base">"http://localhost:8080/api/v1"</string>
 </resources>
