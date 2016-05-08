@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.location.Address;
 import android.location.Geocoder;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,10 +31,15 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class BasicProfile extends AppCompatActivity {
+    final Integer baseLevel = 0;
+    final Integer highestLevel = 5;
+
     Context baseContext;
 
     EditText fullnameET;
@@ -65,7 +71,8 @@ public class BasicProfile extends AppCompatActivity {
     String fullname="", birthday="", nation="";
     double latitude, longitude, birthday_timestamp;
 
-    ArrayList<String> countries, languages;
+    String[] languages;
+    ArrayList<String> countries;
     ArrayAdapter<String> countryAdapter, languageAdapter;
 
     HashSet<String> nativeLanguages;
@@ -93,13 +100,12 @@ public class BasicProfile extends AppCompatActivity {
         femaleRB = (RadioButton) findViewById(R.id.hx_basic_profile_gender_female);
 
         avatarIV = (ImageView) findViewById(R.id.hx_basic_profile_image_avatar);
+
+        birthdayC = Calendar.getInstance();
         nativeLanguageLV = new ListView(this);
         learnLanguageLV = new ListView(this);
 
-        birthdayC = Calendar.getInstance();
-
         geocoder = new Geocoder(this, Locale.getDefault());
-
         nativeLanguageAlertDialogBuilder = new AlertDialog.Builder(baseContext);
         learnLanguageAlertDialogBuilder = new AlertDialog.Builder(baseContext);
 
@@ -152,52 +158,45 @@ public class BasicProfile extends AppCompatActivity {
 
         locales = Locale.getAvailableLocales();
         countries = new ArrayList<>();
-        languages = new ArrayList<>();
+        languages = getResources().getStringArray(R.array.language_array);
 
-        String country, language;
         for (Locale loc: locales) {
-            country = loc.getDisplayCountry();
-            language = loc.getDisplayLanguage();
+            String country = loc.getDisplayCountry();
 
             if (country.length() > 0 && !countries.contains(country)) {
                 countries.add(country);
             }
-            if (language.length() > 0 && !languages.contains(language)) {
-                languages.add(language);
-            }
         }
-
         Collections.sort(countries, String.CASE_INSENSITIVE_ORDER);
-        Collections.sort(languages, String.CASE_INSENSITIVE_ORDER);
+
         countryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, countries);
-        languageAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, languages);
+        languageAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, languages);
 
         nationalityS.setAdapter(countryAdapter);
         nationalityS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 resetBackgroundColors();
-                nation = countries.get(position);
+                nation = countries.get((int)id);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
-        nativeLanguageLV.setItemChecked(2, true);
         nativeLanguageLV.setAdapter(languageAdapter);
         nativeLanguageLV.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         nativeLanguageLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String choice = languages.get(position);
+                String choice = languages[(int)id];
 
                 if(nativeLanguages.contains(choice)) {
                     nativeLanguages.remove(choice);
-                    parent.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.DimGray));
+                    view.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
                 } else {
                     nativeLanguages.add(choice);
-                    parent.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.background_tab_pressed));
+                    view.setBackgroundColor(ContextCompat.getColor(baseContext,R.color.background_tab_pressed));
                 }
 
                 nativeLanguageET.setText(mergeNativeLanguage(nativeLanguages));
@@ -206,15 +205,7 @@ public class BasicProfile extends AppCompatActivity {
 
         nativeLanguageAlertDialogBuilder.setTitle("Native languages");
         nativeLanguageAlertDialogBuilder.setView(nativeLanguageLV);
-        nativeLanguageAlertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(nativeLanguageLV.getParent()!=null) {
-                    ((ViewGroup)nativeLanguageLV.getParent()).removeView(nativeLanguageLV);
-                }
-            }
-        });
-        nativeLanguageAlertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        nativeLanguageAlertDialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(nativeLanguageLV.getParent()!=null) {
@@ -226,57 +217,65 @@ public class BasicProfile extends AppCompatActivity {
         nativeLanguageET.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                resetBackgroundColors();
                 final Dialog dialog = nativeLanguageAlertDialogBuilder.create();
                 dialog.show();
-
             }
         });
 
-        ///////////////////////////////////
+        learnLanguageLV.setAdapter(languageAdapter);
+        learnLanguageLV.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        learnLanguageLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String choice = languages[(int)id];
 
-//        nativeLanguageLV.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-//        nativeLanguageLV.setItemChecked(2, true);
-//        nativeLanguageLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                String choice = languages.get(position);
-//
-//                if(nativeLanguages.contains(choice)) {
-//                    nativeLanguages.remove(choice);
-//                    Toast.makeText(baseContext, choice + " has been removed.", Toast.LENGTH_SHORT).show();
-//                    parent.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.DimGray));
-//                    ((TextView) view).setText("Changed!");
-//                } else {
-//                    nativeLanguages.add(choice);
-//                    Toast.makeText(baseContext, choice + " has been selected.", Toast.LENGTH_SHORT).show();
-//                    parent.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.background_tab_pressed));
-//                }
-//            }
-//        });
+                if(learnLanguages.containsKey(choice)) {
+                    Integer level = learnLanguages.get(choice);
 
+                    if (level.equals(highestLevel)) {
+                        learnLanguages.remove(choice);
+                        view.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
+                        ((TextView)view).setText(choice);
+                    } else {
+                        level += 1;
+                        learnLanguages.put(choice, level);
 
+                        String entry_text = choice + " (" + getDescriptionByLevel(level) + ")";
+                        ((TextView)view).setText(entry_text);
+                    }
 
-//        final Dialog dialog = builder.create();
-//
-//        dialog.show();
-//        nativeLanguageET.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ListView nativeLanguageLV = new ListView(baseContext);
-//                languageAdapter = new ArrayAdapter<>(baseContext, android.R.layout.simple_spinner_item, languages);
-//                nativeLanguageLV.setAdapter(languageAdapter);
-//
-//                AlertDialog.Builder builder = new AlertDialog.Builder(baseContext);
-//                builder.setTitle("Native languages");
-//                builder.setView(nativeLanguageLV);
-//
-//                final Dialog dialog = builder.create();
-//                dialog.show();
-//            }
-//        });
+                } else {
+                    learnLanguages.put(choice, baseLevel);
+                    view.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.background_tab_pressed));
 
+                    String entry_text = choice + " (" + getDescriptionByLevel(baseLevel) + ")";
+                    ((TextView)view).setText(entry_text);
+                }
 
+                learnLanguageET.setText(mergeLearnLanguage(learnLanguages));
+            }
+        });
 
+        learnLanguageAlertDialogBuilder.setTitle("Learn languages");
+        learnLanguageAlertDialogBuilder.setView(learnLanguageLV);
+        learnLanguageAlertDialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(learnLanguageLV.getParent()!=null) {
+                    ((ViewGroup)learnLanguageLV.getParent()).removeView(learnLanguageLV);
+                }
+            }
+        });
+
+        learnLanguageET.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetBackgroundColors();
+                final Dialog dialog = learnLanguageAlertDialogBuilder.create();
+                dialog.show();
+            }
+        });
 
         submitB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -286,7 +285,7 @@ public class BasicProfile extends AppCompatActivity {
                 fullname = fullnameET.getText().toString();
                 if(fullname.equals("")) {
                     Toast.makeText(baseContext,"Please specify your name.", Toast.LENGTH_LONG).show();
-                    fullnameET.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                    fullnameET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
                     return ;
                 }
 
@@ -296,20 +295,20 @@ public class BasicProfile extends AppCompatActivity {
 
                 if(birthday.equals("")) {
                     Toast.makeText(baseContext,"Please select your birthday.", Toast.LENGTH_LONG).show();
-                    birthdayET.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                    birthdayET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
                     return ;
                 }
 
                 if(nation.equals("")) {
                     Toast.makeText(baseContext,"Please select your nationality.", Toast.LENGTH_LONG).show();
-                    nationalityS.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                    nationalityS.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
                     return ;
                 }
 
                 String location = locationET.getText().toString();
                 if(location.equals("")) {
                     Toast.makeText(baseContext,"Please specify your location.", Toast.LENGTH_LONG).show();
-                    locationET.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                    locationET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
                     return ;
                 } else {
                     try {
@@ -321,56 +320,34 @@ public class BasicProfile extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+
+                if(nativeLanguages.isEmpty()) {
+                    Toast.makeText(baseContext,"Please specify your native languages.", Toast.LENGTH_LONG).show();
+                    nativeLanguageET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                    return ;
+                }
+
+                if(learnLanguages.isEmpty()) {
+                    Toast.makeText(baseContext,"Please specify languages you want to learn.", Toast.LENGTH_LONG).show();
+                    learnLanguageET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                    return ;
+                }
+
+                Toast.makeText(baseContext,"Succeed.", Toast.LENGTH_LONG).show();
             }
         });
-
-//        builder.setTitle("Native languages");
-//
-//        nativeLanguageLV = new ListView(this);
-//        nativeLanguageLV.setAdapter(languageAdapter);
-//        nativeLanguageLV.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-//        nativeLanguageLV.setItemChecked(2, true);
-//        nativeLanguageLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                String choice = languages.get(position);
-//
-//                if(nativeLanguages.contains(choice)) {
-//                    nativeLanguages.remove(choice);
-//                    Toast.makeText(baseContext, choice + " has been removed.", Toast.LENGTH_SHORT).show();
-//                    parent.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.DimGray));
-////                    ((TextView) view).setText("Changed!");
-//                } else {
-//                    nativeLanguages.add(choice);
-//                    Toast.makeText(baseContext, choice + " has been selected.", Toast.LENGTH_SHORT).show();
-//                    parent.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.background_tab_pressed));
-//                }
-//            }
-//        });
-//
-//        builder.setView(nativeLanguageLV);
-//
-//
-//        nativeLanguageET = (EditText) findViewById(R.id.hx_basic_profile_edit_native_languages);
-//        nativeLanguageET.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                final Dialog dialog = builder.create();
-//                dialog.show();
-//            }
-//        });
     }
 
     void resetBackgroundColors() {
-        fullnameET.setBackgroundColor(getResources().getColor(R.color.DimGray));
-        birthdayET.setBackgroundColor(getResources().getColor(R.color.DimGray));
-        locationET.setBackgroundColor(getResources().getColor(R.color.DimGray));
-        nativeLanguageET.setBackgroundColor(getResources().getColor(R.color.DimGray));
-        learnLanguageET.setBackgroundColor(getResources().getColor(R.color.DimGray));
+        fullnameET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
+        birthdayET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
+        locationET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
+        nativeLanguageET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
+        learnLanguageET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
 
-        nationalityS.setBackgroundColor(getResources().getColor(R.color.DimGray));
+        nationalityS.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
 
-        uploadAvatarB.setBackgroundColor(getResources().getColor(R.color.DimGray));
+        uploadAvatarB.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
     }
 
     String mergeNativeLanguage(HashSet<String> nativeLanguages) {
@@ -378,10 +355,37 @@ public class BasicProfile extends AppCompatActivity {
         for(String item : nativeLanguages) {
             rtn += item + ", ";
         }
-        if (rtn.length() > 0 && rtn.charAt(rtn.length() - 1)==',') {
-            rtn = rtn.substring(0, rtn.length()-1);
+        if (rtn.length() > 0) {
+            rtn = rtn.substring(0, rtn.length() - 2);
         }
 
+        return rtn;
+    }
+
+    String getDescriptionByLevel(Integer level) {
+        switch (level) {
+            case 0: return "Beginner";
+            case 1: return "Elementary";
+            case 2: return "Intermediate";
+            case 3: return "Advanced";
+            case 4: return "Proficient";
+            case 5: return "Native";
+        }
+        return "";
+    }
+
+    String mergeLearnLanguage(HashMap<String, Integer> learnLanguages) {
+        String rtn = "";
+        Iterator it = learnLanguages.entrySet().iterator();
+        while(true) {
+            if(!it.hasNext()) break;
+            Map.Entry pair = (Map.Entry) it.next();
+            rtn += pair.getKey() + " (" + getDescriptionByLevel((Integer) pair.getValue()) + "), ";
+        }
+
+        if (rtn.length() > 0) {
+            rtn = rtn.substring(0, rtn.length() - 2);
+        }
         return rtn;
     }
 }
