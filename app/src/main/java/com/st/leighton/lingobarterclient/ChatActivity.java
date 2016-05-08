@@ -25,12 +25,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListView;
-// IBM Watson SDK
-import com.ibm.watson.developer_cloud.android.speech_to_text.v1.dto.SpeechConfiguration;
-import com.ibm.watson.developer_cloud.android.speech_to_text.v1.ISpeechDelegate;
-import com.ibm.watson.developer_cloud.android.speech_to_text.v1.SpeechToText;
-import com.ibm.watson.developer_cloud.android.text_to_speech.v1.TextToSpeech;
-import com.ibm.watson.developer_cloud.android.speech_common.v1.TokenProvider;
+
+import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 
 import chat.OnOperationListener;
 import chat.adapter.ChatAdapter;
@@ -57,6 +53,8 @@ public class ChatActivity extends KJActivity {
     private String user1;
     private String user2;
 
+//    private SpeechToText service;
+
     public static final int REQUEST_CODE_GETIMAGE_BYSDCARD = 0x1;
 
     private KJChatKeyboard box;
@@ -70,6 +68,9 @@ public class ChatActivity extends KJActivity {
         super.onCreate(savedInstanceState);
         user1 = getIntent().getExtras().getString("USER1_ID");
         user2 = getIntent().getExtras().getString("USER2_ID");
+
+//        service = new SpeechToText();
+//        service.setUsernameAndPassword(getString(R.string.STT_Username), getString(R.string.STT_Password));
     }
 
     @Override
@@ -86,39 +87,6 @@ public class ChatActivity extends KJActivity {
         mRealListView.setSelector(android.R.color.transparent);
         initMessageInputToolBox();
         initListView();
-    }
-
-    // initialize the connection to the Watson STT service
-    private boolean initSTT() {
-
-        // DISCLAIMER: please enter your credentials or token factory in the lines below
-        String username = getString(R.string.STT_Username);
-        String password = getString(R.string.STT_Password);
-
-        String tokenFactoryURL = getString(R.string.STT_TokenFactory);
-        String serviceURL = "wss://stream.watsonplatform.net/speech-to-text/api";
-
-        SpeechConfiguration sConfig = new SpeechConfiguration(SpeechConfiguration.AUDIO_FORMAT_OGGOPUS);
-        //SpeechConfiguration sConfig = new SpeechConfiguration(SpeechConfiguration.AUDIO_FORMAT_DEFAULT);
-
-        SpeechToText.sharedInstance().initWithContext(this.getHost(serviceURL), getActivity().getApplicationContext(), sConfig);
-
-        // token factory is the preferred authentication method (service credentials are not distributed in the client app)
-        if (tokenFactoryURL.equals(getString(R.string.STT_TokenFactory)) == false) {
-            SpeechToText.sharedInstance().setTokenProvider(new MyTokenProvider(tokenFactoryURL));
-        }
-        // Basic Authentication
-        else if (username.equals(getString(R.string.STT_Username)) == false) {
-            SpeechToText.sharedInstance().setCredentials(username, password);
-        } else {
-            // no authentication method available
-            return false;
-        }
-
-        SpeechToText.sharedInstance().setModel(getString(R.string.modelDefault));
-        SpeechToText.sharedInstance().setDelegate(this);
-
-        return true;
     }
 
     private void initMessageInputToolBox() {
@@ -190,15 +158,18 @@ public class ChatActivity extends KJActivity {
                 Message.MSG_STATE_SUCCESS, user1, "avatar", user2, "avatar",
                 new String(emoji), false, true, new Date(System.currentTimeMillis()
                 - (1000 * 60 * 60 * 24) * 8));
+
         Message message1 = new Message(Message.MSG_TYPE_TEXT,
                 Message.MSG_STATE_SUCCESS, user2, "avatar", user1, "avatar",
                 "以后的版本支持链接高亮喔:http://www.kymjs.com支持http、https、svn、ftp开头的链接",
                 true, true, new Date());
-//        Message message2 = new Message(Message.MSG_TYPE_PHOTO,
+
+//        Message message2 = new Message(Message.MSG_TYPE_SPEECH,
 //                Message.MSG_STATE_SUCCESS, user1, "avatar", user2, "avatar",
 //                "http://camranger.com/wp-content/uploads/2014/10/Android-Icon.png",
 //                false, true, new Date(
 //                System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 7));
+
         Message message6 = new Message(Message.MSG_TYPE_TEXT,
                 Message.MSG_STATE_FAIL, user1, "avatar", user2, "avatar",
                 "test send fail", true, false, new Date(

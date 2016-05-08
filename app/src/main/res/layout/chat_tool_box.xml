@@ -15,7 +15,7 @@
 
         <Button
             android:id="@+id/toolbox_btn_send"
-            android:layout_width="wrap_content"
+            android:layout_width="55dp"
             android:layout_height="35dp"
             android:layout_alignParentRight="true"
             android:layout_gravity="bottom"
@@ -25,7 +25,6 @@
             android:background="#563d91"
             android:textColor="#ffffffff"
             android:textSize="15sp"/>
-
 
         <CheckBox
             android:id="@+id/toolbox_btn_face"
@@ -41,17 +40,25 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_marginLeft="2dp"
-            android:layout_marginRight="5dp"
             android:layout_toRightOf="@+id/toolbox_btn_face"
             android:background="@drawable/selector_chat_more"
             android:button="@null"/>
+
+        <Button
+            android:id="@+id/toolbox_btn_speak"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_toRightOf="@id/toolbox_btn_more"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/speech_selector"/>
 
         <com.rockerhieu.emojicon.EmojiconEditText
             android:id="@+id/toolbox_et_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/toolbox_btn_send"
-            android:layout_toRightOf="@+id/toolbox_btn_more"
+            android:layout_toRightOf="@+id/toolbox_btn_speak"
             android:background="@color/window_background"
             android:inputType="textMultiLine"
             android:textColor="@color/DarkGray"

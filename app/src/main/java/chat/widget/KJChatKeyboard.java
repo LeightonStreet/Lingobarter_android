@@ -17,15 +17,20 @@ package chat.widget;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.media.MediaRecorder;
+import android.widget.Toast;
 
 import com.st.leighton.lingobarterclient.R;
 
@@ -33,6 +38,7 @@ import chat.OnOperationListener;
 import chat.SoftKeyboardStateHelper;
 import chat.adapter.FaceCategroyAdapter;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -58,6 +64,13 @@ public class KJChatKeyboard extends RelativeLayout implements
     private CheckBox mBtnFace;
     private CheckBox mBtnMore;
     private Button mBtnSend;
+
+    private Button mBtnSpeak;
+    private boolean startRecording = true;
+    private MediaRecorder mRecorder;
+    private static String mFileName = Environment.getExternalStorageDirectory()
+                                        .getAbsolutePath()+ "/test.3gp";
+    private static final String LOG_TAG = "AudioRecordTest";
 
     /**
      * 表情
@@ -113,6 +126,7 @@ public class KJChatKeyboard extends RelativeLayout implements
     private void initWidget() {
         mEtMsg = (EditText) findViewById(R.id.toolbox_et_message);
         mBtnSend = (Button) findViewById(R.id.toolbox_btn_send);
+        mBtnSpeak = (Button) findViewById(R.id.toolbox_btn_speak);
         mBtnFace = (CheckBox) findViewById(R.id.toolbox_btn_face);
         mBtnMore = (CheckBox) findViewById(R.id.toolbox_btn_more);
         mRlFace = (RelativeLayout) findViewById(R.id.toolbox_layout_face);
@@ -120,6 +134,7 @@ public class KJChatKeyboard extends RelativeLayout implements
         mFaceTabs = (PagerSlidingTabStrip) findViewById(R.id.toolbox_tabs);
         adapter = new FaceCategroyAdapter(((FragmentActivity) getContext())
                 .getSupportFragmentManager(), LAYOUT_TYPE_FACE);
+
         mBtnSend.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,6 +145,26 @@ public class KJChatKeyboard extends RelativeLayout implements
                 }
             }
         });
+
+        mBtnSpeak.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    onRecord(startRecording);
+                    if (startRecording) {
+                        Toast.makeText(context, "Stop", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Start", Toast.LENGTH_SHORT).show();
+                    }
+                    startRecording = !startRecording;
+
+//                    String content = mEtMsg.getText().toString();
+//                    listener.send(content);
+//                    mEtMsg.setText(null);
+                }
+            }
+        });
+
         // 点击表情按钮
         mBtnFace.setOnClickListener(getFunctionBtnListener(LAYOUT_TYPE_FACE));
         // 点击表情按钮旁边的加号
@@ -280,4 +315,35 @@ public class KJChatKeyboard extends RelativeLayout implements
     }
 
     /*********************** 可选调用的方法 end ******************************/
+
+    // Audio Record
+    private void onRecord(boolean start) {
+        if (start) {
+            startRecording();
+        } else {
+            stopRecording();
+        }
+    }
+
+    private void startRecording() {
+        mRecorder = new MediaRecorder();
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder.setOutputFile(mFileName);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            mRecorder.prepare();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "prepare() failed");
+        }
+
+        mRecorder.start();
+    }
+
+    private void stopRecording() {
+        mRecorder.stop();
+        mRecorder.release();
+        mRecorder = null;
+    }
 }
