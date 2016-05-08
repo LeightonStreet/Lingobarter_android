@@ -22,8 +22,8 @@
         </activity>
         <activity android:name=".Register" android:noHistory="true"/>
         <activity android:name=".LanguageTalks" />
-        <activity android:name=".ForgetPassword" />
-        <activity android:name=".EmailConfirmation" />
+        <activity android:name=".ForgetPassword" android:noHistory="true"/>
+        <activity android:name=".EmailConfirmation" android:noHistory="true"/>
         <activity android:name=".BasicProfile" android:noHistory="true"/>
     </application>
 
