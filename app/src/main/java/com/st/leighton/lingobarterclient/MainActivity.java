@@ -1,6 +1,7 @@
 package com.st.leighton.lingobarterclient;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,10 +9,13 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.EditText;
+import android.support.v4.content.ContextCompat;
 
 import com.gigamole.library.NavigationTabBar;
 
@@ -21,6 +25,9 @@ import java.util.ArrayList;
  * Created by vicky on 06.05.2016.
  */
 public class MainActivity extends Activity {
+
+    Context baseContext;
+
     private ArrayList<String> talks = new ArrayList<>();
     private ArrayList<String> partners = new ArrayList<>();
     private ArrayList<String> searches = new ArrayList<>();
@@ -30,6 +37,8 @@ public class MainActivity extends Activity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_horizontal_ntb);
+
+        baseContext = this;
         talks.add("vicky");
         talks.add("hello world");
 
@@ -87,19 +96,21 @@ public class MainActivity extends Activity {
                         break;
 
                     case 2:
-                        view = LayoutInflater.from(
-                                getBaseContext()).inflate(R.layout.activity_main, null, false);
-                        ListView searchList = (ListView) view.findViewById(R.id.talksListView);
-                        searchList.setAdapter(
-                                new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, searches));
+//                        view = LayoutInflater.from(
+//                                getBaseContext()).inflate(R.layout.activity_main, null, false);
+//                        ListView searchList = (ListView) view.findViewById(R.id.talksListView);
+//                        searchList.setAdapter(
+//                                new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, searches));
+                        setSearches(view);
                         break;
 
                     case 3:
-                        view = LayoutInflater.from(
-                                getBaseContext()).inflate(R.layout.activity_main, null, false);
-                        ListView profileList = (ListView) view.findViewById(R.id.talksListView);
-                        profileList.setAdapter(
-                                new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, myProfile));
+//                        view = LayoutInflater.from(
+//                                getBaseContext()).inflate(R.layout.activity_main, null, false);
+//                        ListView profileList = (ListView) view.findViewById(R.id.talksListView);
+//                        profileList.setAdapter(
+//                                new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, myProfile));
+                        setSettingList(view);
                         break;
                     default:
                         break;
@@ -177,6 +188,60 @@ public class MainActivity extends Activity {
                 }
             }
         }, 500);
+    }
+
+    private void setSearches(View view) {
+        ListView list = (ListView) view.findViewById(R.id.talksListView);
+        ViewGroup root = ((ViewGroup)list.getParent());
+        root.removeView(list);
+
+        EditText searchET = new EditText(baseContext);
+        searchET.setText(getResources().getString(R.string.hx_search_entrance_description));
+        searchET.setTextColor(ContextCompat.getColor(baseContext, R.color.DarkSalmon));
+        searchET.setGravity(Gravity.TOP);
+        searchET.setWidth(10);
+        searchET.setHeight(2);
+        searchET.setFocusable(false);
+        searchET.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(baseContext, Search.class);
+                startActivity(intent);
+            }
+        });
+
+        root.addView(searchET);
+    }
+
+    private void setSettingList(View view) {
+        final ListView settingList = (ListView) view.findViewById(R.id.talksListView);
+
+        String[] settings = getResources().getStringArray(R.array.settings_array);
+        ArrayAdapter<String> settingAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, settings);
+        settingList.setAdapter(settingAdapter);
+
+        settingList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent;
+                switch (position) {
+                    case 1:
+                        intent = new Intent(baseContext, ProfileSettings.class);
+                        startActivity(intent);
+                        break;
+
+                    case 2:
+                        intent = new Intent(baseContext, SelfInformation.class);
+                        startActivity(intent);
+                        break;
+
+                    case 3:
+                        intent = new Intent(baseContext, ApplicationSettings.class);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        });
     }
 
     //display clickable a list of all talks
