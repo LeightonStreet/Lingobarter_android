@@ -25,6 +25,12 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListView;
+// IBM Watson SDK
+import com.ibm.watson.developer_cloud.android.speech_to_text.v1.dto.SpeechConfiguration;
+import com.ibm.watson.developer_cloud.android.speech_to_text.v1.ISpeechDelegate;
+import com.ibm.watson.developer_cloud.android.speech_to_text.v1.SpeechToText;
+import com.ibm.watson.developer_cloud.android.text_to_speech.v1.TextToSpeech;
+import com.ibm.watson.developer_cloud.android.speech_common.v1.TokenProvider;
 
 import chat.OnOperationListener;
 import chat.adapter.ChatAdapter;
@@ -80,6 +86,39 @@ public class ChatActivity extends KJActivity {
         mRealListView.setSelector(android.R.color.transparent);
         initMessageInputToolBox();
         initListView();
+    }
+
+    // initialize the connection to the Watson STT service
+    private boolean initSTT() {
+
+        // DISCLAIMER: please enter your credentials or token factory in the lines below
+        String username = getString(R.string.STT_Username);
+        String password = getString(R.string.STT_Password);
+
+        String tokenFactoryURL = getString(R.string.STT_TokenFactory);
+        String serviceURL = "wss://stream.watsonplatform.net/speech-to-text/api";
+
+        SpeechConfiguration sConfig = new SpeechConfiguration(SpeechConfiguration.AUDIO_FORMAT_OGGOPUS);
+        //SpeechConfiguration sConfig = new SpeechConfiguration(SpeechConfiguration.AUDIO_FORMAT_DEFAULT);
+
+        SpeechToText.sharedInstance().initWithContext(this.getHost(serviceURL), getActivity().getApplicationContext(), sConfig);
+
+        // token factory is the preferred authentication method (service credentials are not distributed in the client app)
+        if (tokenFactoryURL.equals(getString(R.string.STT_TokenFactory)) == false) {
+            SpeechToText.sharedInstance().setTokenProvider(new MyTokenProvider(tokenFactoryURL));
+        }
+        // Basic Authentication
+        else if (username.equals(getString(R.string.STT_Username)) == false) {
+            SpeechToText.sharedInstance().setCredentials(username, password);
+        } else {
+            // no authentication method available
+            return false;
+        }
+
+        SpeechToText.sharedInstance().setModel(getString(R.string.modelDefault));
+        SpeechToText.sharedInstance().setDelegate(this);
+
+        return true;
     }
 
     private void initMessageInputToolBox() {
