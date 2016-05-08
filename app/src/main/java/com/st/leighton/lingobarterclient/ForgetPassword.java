@@ -64,6 +64,7 @@ public class ForgetPassword extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 resetBackgroundColors();
+
                 Intent intent = new Intent(baseContext, Login.class);
                 startActivity(intent);
             }
