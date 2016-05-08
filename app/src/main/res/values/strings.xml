@@ -40,7 +40,7 @@
     <string name="hx_email_description">"Your email: "</string>
     <string name="hx_forget_title">"Reset Password "</string>
     <string name="hx_forget_hint">"example@lingobarter.com"</string>
-    <string name="hx_forget_description">"Please input your password"</string>
+    <string name="hx_forget_description">"Please input your email:"</string>
     <string name="hx_forget_send">"Send email"</string>
     <string name="hx_forget_login">"Back to login"</string>
 

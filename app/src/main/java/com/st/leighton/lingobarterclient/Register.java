@@ -27,6 +27,7 @@ public class Register extends AppCompatActivity {
     EditText passwordET;
 
     Boolean passwordFlag = Boolean.TRUE;
+    final public static String EMAIL_KEY = "EMAIL";
     final private String hidePassword = "HIDE PASSWORD", showPassword = "SHOW PASSWORD";
     String username = "", email = "", password = "";
 
@@ -47,6 +48,27 @@ public class Register extends AppCompatActivity {
 
         loginB.setPaintFlags(loginB.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         showPasswordB.setPaintFlags(showPasswordB.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
+        usernameET.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetBackgroundColors();
+            }
+        });
+
+        emailET.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetBackgroundColors();
+            }
+        });
+
+        passwordET.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetBackgroundColors();
+            }
+        });
 
         registerB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +96,9 @@ public class Register extends AppCompatActivity {
                     return ;
                 }
 
-                Toast.makeText(baseContext,"Succeed.", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(baseContext, EmailConfirmation.class);
+                intent.putExtra(EMAIL_KEY, email);
+                startActivity(intent);
             }
         });
 
@@ -105,7 +129,7 @@ public class Register extends AppCompatActivity {
         });
     }
 
-    boolean isEmailValid(String email) {
+    public static boolean isEmailValid(String email) {
         String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
 
         Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
