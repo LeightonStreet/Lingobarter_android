@@ -60,7 +60,7 @@ public class Login extends AppCompatActivity {
                     return ;
                 }
 
-                Intent intent = new Intent(baseContext, LanguageTalks.class);
+                Intent intent = new Intent(baseContext, MainActivity.class);
                 startActivity(intent);
             }
         });
