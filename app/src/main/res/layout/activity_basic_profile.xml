@@ -35,7 +35,7 @@
             <TextView
                 android:id="@+id/hx_basic_profile_text_name"
                 android:text="@string/hx_basic_profile_name"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/PaleTurquoise"
                 android:gravity="start"
 
                 android:layout_width="match_parent"
@@ -57,7 +57,7 @@
             <TextView
                 android:id="@+id/hx_basic_profile_text_gender"
                 android:text="@string/hx_basic_profile_gender"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/PaleTurquoise"
                 android:gravity="start"
 
                 android:layout_width="match_parent"
@@ -94,7 +94,7 @@
             <TextView
                 android:id="@+id/hx_basic_profile_text_birthday"
                 android:text="@string/hx_basic_profile_birthday_text"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/PaleTurquoise"
                 android:gravity="start"
 
                 android:layout_width="match_parent"
@@ -158,7 +158,7 @@
     <TextView
         android:id="@+id/hx_basic_profile_text_nationality_title"
         android:text="@string/hx_basic_profile_nationality_text"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/PaleTurquoise"
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -177,7 +177,7 @@
     <TextView
         android:id="@+id/hx_basic_profile_text_location_title"
         android:text="@string/hx_basic_profile_location"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/PaleTurquoise"
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -197,7 +197,7 @@
     <TextView
         android:id="@+id/hx_basic_profile_text_nativelanguages_title"
         android:text="@string/hx_basic_profile_nativelanguage_text"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/PaleTurquoise"
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -218,7 +218,7 @@
     <TextView
         android:id="@+id/hx_basic_profile_text_learnlanguages_title"
         android:text="@string/hx_basic_profile_learnlanguage_text"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/PaleTurquoise"
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

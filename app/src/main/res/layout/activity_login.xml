@@ -90,7 +90,6 @@
 
         <Button
             android:id="@+id/hx_login_button_login"
-            android:onClick="check_identity"
             android:layout_gravity="center_horizontal"
             android:text="@string/hx_login"
             android:background="@drawable/hx_background_color_change_login_btn"
@@ -124,7 +123,6 @@
 
         <Button
             android:id="@+id/hx_login_button_register"
-            android:onClick="register"
             android:gravity="center_vertical"
             android:text="@string/hx_register_button"
             android:background="@android:color/transparent"
