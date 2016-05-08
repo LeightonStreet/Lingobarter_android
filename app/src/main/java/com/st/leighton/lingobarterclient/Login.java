@@ -1,11 +1,14 @@
 package com.st.leighton.lingobarterclient;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +26,30 @@ public class Login extends AppCompatActivity {
     EditText passwordET;
 
     String email = "", password = "";
+
+    private BroadcastReceiver noticeReceiver;
+    final public static String LOGIN_FEEDBACK = "LOGIN_FEEDBACK";
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        IntentFilter noticeFilter = new IntentFilter("android.intent.action.Login");
+        noticeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String message = intent.getStringExtra(LOGIN_FEEDBACK);
+                Log.i("Here", message);
+            }
+        };
+        this.registerReceiver(noticeReceiver, noticeFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.unregisterReceiver(this.noticeReceiver);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +109,9 @@ public class Login extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        Intent webSocketServiceIntent = new Intent(this, Websocket.class);
+        startService(webSocketServiceIntent);
     }
 
     void resetBackgroundColors() {

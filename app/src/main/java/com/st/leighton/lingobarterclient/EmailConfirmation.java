@@ -43,7 +43,8 @@ public class EmailConfirmation extends AppCompatActivity {
                 .setNegativeButton("RESEND", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(baseContext,"Email has been sent, please check your email account.", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(baseContext, BasicProfile.class);
+                        startActivity(intent);
                     }
                 })
                 .setPositiveButton("BACK TO LOGIN", new DialogInterface.OnClickListener() {
