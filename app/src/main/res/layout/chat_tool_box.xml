@@ -44,14 +44,15 @@
             android:background="@drawable/selector_chat_more"
             android:button="@null"/>
 
-        <Button
+        <CheckBox
             android:id="@+id/toolbox_btn_speak"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_toRightOf="@id/toolbox_btn_more"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="5dp"
-            android:background="@drawable/speech_selector"/>
+            android:background="@drawable/speech_selector"
+            android:button="@null"/>
 
         <com.rockerhieu.emojicon.EmojiconEditText
             android:id="@+id/toolbox_et_message"

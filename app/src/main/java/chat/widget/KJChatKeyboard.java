@@ -17,7 +17,6 @@ package chat.widget;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -66,10 +65,10 @@ public class KJChatKeyboard extends RelativeLayout implements
     private Button mBtnSend;
 
     private Button mBtnSpeak;
-    private boolean startRecording = true;
-    private MediaRecorder mRecorder;
-    private static String mFileName = Environment.getExternalStorageDirectory()
-                                        .getAbsolutePath()+ "/test.3gp";
+    private boolean record = true;
+    private MediaRecorder mRecorder = null;
+    private static String mFileName = Environment.getExternalStoragePublicDirectory(
+            Environment.DIRECTORY_DOWNLOADS) + "/test.3gp";
     private static final String LOG_TAG = "AudioRecordTest";
 
     /**
@@ -150,13 +149,13 @@ public class KJChatKeyboard extends RelativeLayout implements
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    onRecord(startRecording);
-                    if (startRecording) {
-                        Toast.makeText(context, "Stop", Toast.LENGTH_SHORT).show();
-                    } else {
+                    onRecord(record);
+                    if (record) {
                         Toast.makeText(context, "Start", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Stop", Toast.LENGTH_SHORT).show();
                     }
-                    startRecording = !startRecording;
+                    record = !record;
 
 //                    String content = mEtMsg.getText().toString();
 //                    listener.send(content);
@@ -326,23 +325,27 @@ public class KJChatKeyboard extends RelativeLayout implements
     }
 
     private void startRecording() {
+        if (mRecorder != null) {
+            mRecorder.release();
+        }
+
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setOutputFile(mFileName);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mRecorder.setOutputFile(mFileName);
 
         try {
             mRecorder.prepare();
+            mRecorder.start();
         } catch (IOException e) {
             Log.e(LOG_TAG, "prepare() failed");
         }
-
-        mRecorder.start();
     }
 
     private void stopRecording() {
         mRecorder.stop();
+        mRecorder.reset();
         mRecorder.release();
         mRecorder = null;
     }
