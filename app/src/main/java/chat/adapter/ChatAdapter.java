@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import java.lang.Object;
 
 import com.st.leighton.lingobarterclient.ChatActivity.OnChatItemClickListener;
 import com.st.leighton.lingobarterclient.R;
@@ -32,6 +33,7 @@ import org.kymjs.kjframe.KJBitmap;
 import org.kymjs.kjframe.utils.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -110,8 +112,8 @@ public class ChatAdapter extends BaseAdapter {
             holder = (ViewHolder) v.getTag();
         }
 
-        holder.tv_date.setText(StringUtils.friendlyTime(StringUtils.getDataTime("yyyy-MM-dd " +
-                "HH:mm:ss")));
+        Date date = new Date();
+        holder.tv_date.setText(date.toString());
         holder.tv_date.setVisibility(View.VISIBLE);
 
         //如果是文本类型，则隐藏图片，如果是图片则隐藏文本

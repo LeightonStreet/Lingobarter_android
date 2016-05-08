@@ -30,6 +30,15 @@ public class MainActivity extends Activity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_horizontal_ntb);
+        talks.add("vicky");
+        talks.add("hello world");
+
+        partners.add("Qi");
+        partners.add("Andy");
+
+        searches.add("find vicky");
+
+        myProfile.add("8)");
         initUI();
     }
 
@@ -42,13 +51,6 @@ public class MainActivity extends Activity {
     }
 
     private void initUI() {
-        partners.add("Qi");
-        partners.add("Andy");
-
-        searches.add("find vicky");
-
-        myProfile.add("8)");
-
         final ViewPager viewPager = (ViewPager) findViewById(R.id.vp_horizontal_ntb);
         viewPager.setAdapter(new PagerAdapter() {
             @Override
@@ -162,13 +164,13 @@ public class MainActivity extends Activity {
                             model.setBadgeTitle("2");
                             break;
                         default:
-                            model.setBadgeTitle("-1");
+                            model.setBadgeTitle("0");
                             break;
                     }
                     navigationTabBar.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            if(model.getBadgeTitle() != "-1")
+                            if(model.getBadgeTitle() != "0")
                                 model.showBadge();
                         }
                     }, i * 100);
@@ -190,8 +192,6 @@ public class MainActivity extends Activity {
 //                    for (int i=0; i<userList.size(); i++) {
 //                        talks.add(userList.get(i).getUsername().toString());
 //                    }
-        talks.add("vicky");
-        talks.add("hello world");
 
         talkList.setAdapter(
                 new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, talks));
