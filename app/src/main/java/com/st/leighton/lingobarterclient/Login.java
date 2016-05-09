@@ -17,6 +17,7 @@ import android.widget.Toast;
 public class Login extends AppCompatActivity {
 
     Context baseContext;
+    Websocket socketService;
 
     Button logginB;
     Button forgetPasswordB;
@@ -39,7 +40,35 @@ public class Login extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String message = intent.getStringExtra(LOGIN_FEEDBACK);
-                Log.i("Here", message);
+
+                switch (message) {
+                    case "Succeed":
+                        Intent main_intent = new Intent(baseContext, MainActivity.class);
+                        startActivity(main_intent);
+                        break;
+
+                    case "NeedConfirm":
+                        Intent confirm_intent = new Intent(baseContext, EmailConfirmation.class);
+                        confirm_intent.putExtra(Register.EMAIL_KEY, email);
+                        startActivity(confirm_intent);
+                        break;
+
+                    case "InvalidPassword":
+                        Toast.makeText(baseContext,"Wrong password", Toast.LENGTH_LONG).show();
+                        passwordET.setText("");
+                        passwordET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                        break;
+
+                    case "InvalidUser":
+                        Toast.makeText(baseContext,"User not exist", Toast.LENGTH_LONG).show();
+                        emailET.setText("");
+                        emailET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                        break;
+
+                    default:
+
+                        break;
+                }
             }
         };
         this.registerReceiver(noticeReceiver, noticeFilter);
@@ -57,6 +86,7 @@ public class Login extends AppCompatActivity {
         this.setContentView(R.layout.activity_login);
 
         baseContext = this;
+        socketService = Websocket.getInstance();
 
         logginB = (Button) findViewById(R.id.hx_login_button_login);
         forgetPasswordB = (Button) findViewById(R.id.hx_login_button_forget_password);
@@ -87,8 +117,7 @@ public class Login extends AppCompatActivity {
                     return ;
                 }
 
-                Intent intent = new Intent(baseContext, MainActivity.class);
-                startActivity(intent);
+                socketService.Login(email, password);
             }
         });
 
