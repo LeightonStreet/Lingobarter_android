@@ -64,12 +64,15 @@ public class KJChatKeyboard extends RelativeLayout implements
     private CheckBox mBtnMore;
     private Button mBtnSend;
 
+    // Voice Message
     private Button mBtnSpeak;
     private boolean record = true;
     private MediaRecorder mRecorder = null;
     private static String mFileName = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOWNLOADS) + "/test.3gp";
     private static final String LOG_TAG = "AudioRecordTest";
+    private long startTime;
+    private long endTime;
 
     /**
      * 表情
@@ -156,10 +159,6 @@ public class KJChatKeyboard extends RelativeLayout implements
                         Toast.makeText(context, "Stop", Toast.LENGTH_SHORT).show();
                     }
                     record = !record;
-
-//                    String content = mEtMsg.getText().toString();
-//                    listener.send(content);
-//                    mEtMsg.setText(null);
                 }
             }
         });
@@ -180,6 +179,47 @@ public class KJChatKeyboard extends RelativeLayout implements
     /*************************
      * 内部方法 start
      ************************/
+
+    // Audio Record
+    private void onRecord(boolean start) {
+        if (start) {
+            startRecording();
+        } else {
+            stopRecording();
+        }
+    }
+
+    private void startRecording() {
+        if (mRecorder != null) {
+            mRecorder.release();
+        }
+
+        mRecorder = new MediaRecorder();
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mRecorder.setOutputFile(mFileName);
+
+        try {
+            mRecorder.prepare();
+            startTime = System.currentTimeMillis();
+            mRecorder.start();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "prepare() failed");
+        }
+    }
+
+    private void stopRecording() {
+        mRecorder.stop();
+        mRecorder.reset();
+        mRecorder.release();
+        mRecorder = null;
+        endTime = System.currentTimeMillis();
+
+        int length = (int) ((endTime - startTime) / 1000.0);
+        String fileName = mFileName;
+        listener.sendVoiceM(fileName, length);
+    }
 
     private OnClickListener getFunctionBtnListener(final int which) {
         return new OnClickListener() {
@@ -314,39 +354,4 @@ public class KJChatKeyboard extends RelativeLayout implements
     }
 
     /*********************** 可选调用的方法 end ******************************/
-
-    // Audio Record
-    private void onRecord(boolean start) {
-        if (start) {
-            startRecording();
-        } else {
-            stopRecording();
-        }
-    }
-
-    private void startRecording() {
-        if (mRecorder != null) {
-            mRecorder.release();
-        }
-
-        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mRecorder.setOutputFile(mFileName);
-
-        try {
-            mRecorder.prepare();
-            mRecorder.start();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
-        }
-    }
-
-    private void stopRecording() {
-        mRecorder.stop();
-        mRecorder.reset();
-        mRecorder.release();
-        mRecorder = null;
-    }
 }

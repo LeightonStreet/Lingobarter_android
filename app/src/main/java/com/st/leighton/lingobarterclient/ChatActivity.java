@@ -98,17 +98,23 @@ public class ChatActivity extends KJActivity {
                         "avatar", content, true, true, new Date());
                 messages.add(message);
                 adapter.refresh(messages);
-                createReplayMsg(message);
+                createReplyMsg(message);
             }
 
             @Override
-            public void selectedFace(Faceicon content) {
-                Message message = new Message(Message.MSG_TYPE_FACE, Message.MSG_STATE_SUCCESS,
-                        user1, "avatar", user2, "avatar", content.getPath(), true, true, new
-                        Date());
+            public void sendVoiceM(String fileName, int length) {
+                Message message = new Message(Message.MSG_TYPE_VOICE, Message.MSG_STATE_SUCCESS,
+                        user1, "avatar", user2,
+                        "avatar", fileName, true, true, new Date());
+
+                message.setLength(length);
                 messages.add(message);
                 adapter.refresh(messages);
-                createReplayMsg(message);
+            }
+
+            @Override
+            public void selectedFace(Faceicon content){
+
             }
 
             @Override
@@ -188,9 +194,9 @@ public class ChatActivity extends KJActivity {
         mRealListView.setAdapter(adapter);
     }
 
-    private void createReplayMsg(Message message) {
-        final Message reMessage = new Message(message.getType(), Message.MSG_STATE_SUCCESS, user1,
-                "avatar", user2, "avatar", message.getType() == Message.MSG_TYPE_TEXT ? "返回:"
+    private void createReplyMsg(Message message) {
+        final Message reMessage = new Message(message.getType(), Message.MSG_STATE_SUCCESS, user2,
+                "avatar", user1, "avatar", message.getType() == Message.MSG_TYPE_TEXT ? "Reply:"
                 + message.getContent() : message.getContent(), false,
                 true, new Date());
         new Thread(new Runnable() {
