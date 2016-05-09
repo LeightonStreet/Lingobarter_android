@@ -14,14 +14,27 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
 
-    <ImageView
-        android:id="@+id/hx_login_image_logo"
-        android:src="@drawable/logo_square"
-        android:contentDescription="@string/hx_login_image_description"
 
-        android:layout_gravity="center_horizontal"
+    <!---->
+    <Button
+        android:id="@+id/hx_login_button_god"
+        android:gravity="center_vertical"
+        android:text="@string/hx_god_button"
+        android:background="@android:color/transparent"
+        android:textColor="@drawable/hx_text_color_change_register_btn"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+    <!---->
+
+    <!--<ImageView-->
+        <!--android:id="@+id/hx_login_image_logo"-->
+        <!--android:src="@drawable/logo_square"-->
+        <!--android:contentDescription="@string/hx_login_image_description"-->
+
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content" />-->
 
     <LinearLayout
         android:id="@+id/hx_login_login_layout"

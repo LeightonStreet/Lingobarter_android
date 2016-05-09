@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -101,21 +100,21 @@ public class Login extends AppCompatActivity {
         logginB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                resetBackgroundColors();
-//                email = emailET.getText().toString();
-//                password = passwordET.getText().toString();
-//
-//                if (email.equals("")) {
-//                    Toast.makeText(baseContext,"Please input email", Toast.LENGTH_LONG).show();
-//                    emailET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-//                    return ;
-//                }
-//
-//                if (password.equals("")) {
-//                    Toast.makeText(baseContext,"Please input password", Toast.LENGTH_LONG).show();
-//                    passwordET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-//                    return ;
-//                }
+                resetBackgroundColors();
+                email = emailET.getText().toString();
+                password = passwordET.getText().toString();
+
+                if (email.equals("")) {
+                    Toast.makeText(baseContext,"Please input email", Toast.LENGTH_LONG).show();
+                    emailET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                    return ;
+                }
+
+                if (password.equals("")) {
+                    Toast.makeText(baseContext,"Please input password", Toast.LENGTH_LONG).show();
+                    passwordET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                    return ;
+                }
 
                 socketService.Login(email, password);
             }
@@ -141,6 +140,17 @@ public class Login extends AppCompatActivity {
 
         Intent webSocketServiceIntent = new Intent(this, Websocket.class);
         startService(webSocketServiceIntent);
+
+//
+        Button god = (Button) findViewById(R.id.hx_login_button_god);
+        god.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent main_intent = new Intent(baseContext, MainActivity.class);
+                startActivity(main_intent);
+            }
+        });
+//
     }
 
     void resetBackgroundColors() {
