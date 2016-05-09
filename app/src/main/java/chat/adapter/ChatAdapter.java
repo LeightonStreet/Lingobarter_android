@@ -130,7 +130,7 @@ public class ChatAdapter extends BaseAdapter {
             }
         } else if (data.getType() == Message.MSG_TYPE_VOICE) {
             String length = Integer.toString(data.getLength());
-            holder.tv_chatcontent.setText(length);
+            holder.tv_chatcontent.setText(data.getContent() + length);
         }
         else{
             holder.tv_chatcontent.setVisibility(View.GONE);

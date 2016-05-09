@@ -69,7 +69,7 @@ public class KJChatKeyboard extends RelativeLayout implements
     private boolean record = true;
     private MediaRecorder mRecorder = null;
     private static String mFileName = Environment.getExternalStoragePublicDirectory(
-            Environment.DIRECTORY_DOWNLOADS) + "/test.3gp";
+            Environment.DIRECTORY_DOWNLOADS) + "/test.wav";
     private static final String LOG_TAG = "AudioRecordTest";
     private long startTime;
     private long endTime;
