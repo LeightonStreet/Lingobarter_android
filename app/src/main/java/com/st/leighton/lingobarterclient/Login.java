@@ -101,21 +101,21 @@ public class Login extends AppCompatActivity {
         logginB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetBackgroundColors();
-                email = emailET.getText().toString();
-                password = passwordET.getText().toString();
-
-                if (email.equals("")) {
-                    Toast.makeText(baseContext,"Please input email", Toast.LENGTH_LONG).show();
-                    emailET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                    return ;
-                }
-
-                if (password.equals("")) {
-                    Toast.makeText(baseContext,"Please input password", Toast.LENGTH_LONG).show();
-                    passwordET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                    return ;
-                }
+//                resetBackgroundColors();
+//                email = emailET.getText().toString();
+//                password = passwordET.getText().toString();
+//
+//                if (email.equals("")) {
+//                    Toast.makeText(baseContext,"Please input email", Toast.LENGTH_LONG).show();
+//                    emailET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+//                    return ;
+//                }
+//
+//                if (password.equals("")) {
+//                    Toast.makeText(baseContext,"Please input password", Toast.LENGTH_LONG).show();
+//                    passwordET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+//                    return ;
+//                }
 
                 socketService.Login(email, password);
             }

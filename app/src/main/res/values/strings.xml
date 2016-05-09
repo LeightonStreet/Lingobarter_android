@@ -47,6 +47,21 @@
     <string name="hx_profile_settings_cancel">"Cancel"</string>
     <string name="hx_search_entrance_description">"Find your friends on Lingobarter!"</string>
 
+    <!-- STT credentials --> 
+    <string name="STT_Username">0e62a22d-2a54-4731-841d-9e3f91e5b661</string>
+     <string name="STT_Password">tKwa0qCYyBPx</string>
+     <string name="STT_TokenFactory">https://stream.watsonplatform.net/speech-to-text/api</string> 
+
+
+    <!-- TTS credentials --> 
+    <string name="TTS_Username">335715c1-4d50-48f9-aa18-9fb94263a375</string> 
+    <string name="TTS_Password">pfotm1PcKXjm</string> 
+    <string name="TTS_TokenFactory">https://stream.watsonplatform.net/text-to-speech/api</string> 
+
+    <!-- default model/voice -->
+    <string name="modelDefault">en-US_BroadbandModel</string>
+    <string name="voiceDefault">en-US_MichaelVoice</string>
+
     <string-array name="language_array">
         <item>"Chinese"</item>
         <item>"English"</item>
@@ -70,5 +85,5 @@
         <item>"Application Settings"</item>
     </string-array>
 
-    <string name="url_base">"http://localhost:8080/api/v1"</string>
+    <string name="url_base">http://localhost:8080/api/v1</string>
 </resources>

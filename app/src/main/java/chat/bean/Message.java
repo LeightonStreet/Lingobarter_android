@@ -23,17 +23,18 @@ import java.util.Date;
  * @author kymjs (http://www.kymjs.com/)
  */
 public class Message {
-    public final static int MSG_TYPE_TEXT = 3;
     public final static int MSG_TYPE_PHOTO = 1;
     public final static int MSG_TYPE_FACE = 2;
+    public final static int MSG_TYPE_TEXT = 3;
+    public final static int MSG_TYPE_SPEECH = 4;
 
-    public final static int MSG_STATE_SENDING = 3;
     public final static int MSG_STATE_SUCCESS = 1;
     public final static int MSG_STATE_FAIL = 2;
+    public final static int MSG_STATE_SENDING = 3;
 
     private Long id;
-    private int type; // 0-text | 1-photo | 2-face | more type ...
-    private int state; // 0-sending | 1-success | 2-fail
+    private int type; // 1-photo | 2-face | 3-text | 4-speech
+    private int state; // 1-success | 2-fail | 3-sending
     private String fromUserName;
     private String fromUserAvatar;
     private String toUserName;
