@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">LingoBarterClient</string>
+    <string name="hx_search">"Search"</string>
+    <string name="hx_return">"Return"</string>
+    <string name="hx_male">"Male"</string>
+    <string name="hx_female">"Female"</string>
+    <string name="hx_all">"All"</string>
     <string name="hx_yes">"YES"</string>
     <string name="hx_no">"NO"</string>
     <string name="hx_zero">"0"</string>
@@ -71,6 +76,19 @@
     <string name="hx_self_information_biography_hint">"More about you"</string>
     <string name="hx_self_information_tagline">"Tag Line"</string>
     <string name="hx_self_information_tagline_hint">"Describe yourself"</string>
+    <string name="hx_search_title">"Search User"</string>
+    <string name="hx_search_age_title">"Age range:"</string>
+    <string name="hx_search_gender_title">"Gender:"</string>
+    <string name="hx_search_nationality">"Nationalities:"</string>
+    <string name="hx_search_teach_language">"Teaching languages:"</string>
+    <string name="hx_search_learn_language">"Learning languages:"</string>
+    <string name="hx_search_nationality_hint">"Choose nationalities of target users"</string>
+    <string name="hx_search_teach_language_hint">"Choose teaching languages"</string>
+    <string name="hx_search_learn_language_hint">"Choose learn languages of target users"</string>
+    <string name="hx_search_feeling_lucky">"I'm feeling lucky!"</string>
+    <string name="hx_search_random_search">"Random Search"</string>
+    <string name="hx_search_specific_search">"Specific Search"</string>
+
 
     <!-- STT credentials --> 
     <string name="STT_Username">0e62a22d-2a54-4731-841d-9e3f91e5b661</string>

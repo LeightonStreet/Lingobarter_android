@@ -1,13 +1,293 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.st.leighton.lingobarterclient.Search"
+
+    android:background="@color/DarkGray"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.st.leighton.lingobarterclient.Search">
+    android:paddingBottom="@dimen/activity_vertical_margin">
 
-</RelativeLayout>
+    <Space
+        android:layout_weight="0.1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+    <TextView
+        android:text="@string/hx_search_random_search"
+        android:textSize="17sp"
+        android:textColor="@color/PaleTurquoise"
+        android:gravity="start"
+
+        android:layout_weight="0.7"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+    <Space
+        android:layout_weight="0.1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+    <Button
+        android:id="@+id/hx_search_button_lucky"
+        android:textSize="13sp"
+        android:text="@string/hx_search_feeling_lucky"
+        android:background="@drawable/hx_background_color_change_login_btn"
+
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+    <Space
+        android:layout_weight="0.4"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+    <TextView
+        android:text="@string/hx_search_specific_search"
+        android:textSize="17sp"
+        android:textColor="@color/PaleTurquoise"
+        android:gravity="start"
+
+        android:layout_weight="0.7"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+    <Space
+        android:layout_weight="0.1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+    <LinearLayout
+        android:background="@drawable/boarder"
+        android:orientation="vertical"
+
+        android:layout_weight="2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Space
+            android:layout_weight="0.1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <TextView
+            android:text="@string/hx_search_gender_title"
+            android:textSize="15sp"
+            android:gravity="start"
+
+            android:layout_weight="0.7"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <RadioGroup
+            android:layout_weight="0.8"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+
+            <RadioButton
+                android:id="@+id/hx_search_radio_all"
+                android:text="@string/hx_all"
+                android:checked="true"
+
+                android:layout_width="100dp"
+                android:layout_height="match_parent" />
+
+            <RadioButton
+                android:id="@+id/hx_search_radio_male"
+                android:text="@string/hx_male"
+
+                android:layout_width="100dp"
+                android:layout_height="match_parent" />
+
+            <RadioButton
+                android:id="@+id/hx_search_radio_female"
+                android:text="@string/hx_female"
+
+                android:layout_width="100dp"
+                android:layout_height="match_parent" />
+
+        </RadioGroup>
+
+        <Space
+            android:layout_weight="0.5"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <TextView
+            android:text="@string/hx_search_age_title"
+            android:textSize="15sp"
+            android:gravity="start"
+
+            android:layout_weight="0.7"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+
+            <TextView
+                android:text="@string/hx_from"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:layout_width="40dp"
+                android:layout_height="match_parent" />
+
+
+            <EditText
+                android:id="@+id/hx_search_edit_age_from"
+                android:inputType="number"
+                android:textSize="12sp"
+                android:hint="@string/hx_zero"
+
+                android:layout_width="60dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:text="@string/hx_to"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:layout_width="40dp"
+                android:layout_height="match_parent" />
+
+            <EditText
+                android:id="@+id/hx_search_edit_age_to"
+                android:inputType="number"
+                android:textSize="12sp"
+                android:hint="@string/hx_one_hundred"
+
+                android:layout_width="60dp"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+        <Space
+            android:layout_weight="0.5"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <TextView
+            android:text="@string/hx_search_nationality"
+            android:textSize="15sp"
+            android:gravity="start"
+
+            android:layout_weight="0.7"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <EditText
+            android:id="@+id/hx_search_edit_nationality"
+            android:focusable="false"
+            android:textSize="12sp"
+            android:inputType="text"
+            android:hint="@string/hx_search_nationality_hint"
+
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <Space
+            android:layout_weight="0.5"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <TextView
+            android:text="@string/hx_search_teach_language"
+            android:textSize="15sp"
+            android:gravity="start"
+
+            android:layout_weight="0.7"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <EditText
+            android:id="@+id/hx_search_edit_teach_language"
+            android:focusable="false"
+            android:textSize="12sp"
+            android:inputType="text"
+            android:hint="@string/hx_search_teach_language_hint"
+
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <Space
+            android:layout_weight="0.5"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <TextView
+            android:text="@string/hx_search_learn_language"
+            android:textSize="15sp"
+            android:gravity="start"
+
+            android:layout_weight="0.7"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <EditText
+            android:id="@+id/hx_search_edit_learn_language"
+            android:focusable="false"
+            android:textSize="12sp"
+            android:inputType="text"
+            android:hint="@string/hx_search_learn_language_hint"
+
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <Space
+            android:layout_weight="0.1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+    </LinearLayout>
+
+    <Space
+        android:layout_weight="0.2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+        <Button
+            android:id="@+id/hx_search_button_submit"
+            android:textSize="13sp"
+            android:text="@string/hx_search"
+            android:background="@drawable/hx_background_color_change_login_btn"
+
+            android:layout_weight="5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/hx_search_button_cancel"
+            android:textSize="13sp"
+            android:text="@string/hx_return"
+            android:background="@drawable/hx_background_color_change_login_btn"
+
+            android:layout_weight="5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+</LinearLayout>

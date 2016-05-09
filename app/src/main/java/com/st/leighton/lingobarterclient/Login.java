@@ -151,7 +151,7 @@ public class Login extends AppCompatActivity {
         god.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent main_intent = new Intent(baseContext, SelfInformation.class);
+                Intent main_intent = new Intent(baseContext, Search.class);
                 startActivity(main_intent);
             }
         });

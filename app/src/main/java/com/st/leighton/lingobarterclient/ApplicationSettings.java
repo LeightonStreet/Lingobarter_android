@@ -33,8 +33,8 @@ public class ApplicationSettings extends AppCompatActivity {
     RadioButton confirmationRB;
 
     EditText hideInfoET;
-    EditText fromAdgeET;
-    EditText toAdgeET;
+    EditText fromAgeET;
+    EditText toAgeET;
 
     Button updateB;
     Button cancelB;
@@ -64,8 +64,8 @@ public class ApplicationSettings extends AppCompatActivity {
         confirmationRB = (RadioButton) findViewById(R.id.hx_application_settings_radio_confirm_yes);
 
         hideInfoET = (EditText) findViewById(R.id.hx_application_settings_edit_info);
-        fromAdgeET = (EditText) findViewById(R.id.hx_application_settings_edit_age_from);
-        toAdgeET = (EditText) findViewById(R.id.hx_application_settings_edit_age_to);
+        fromAgeET = (EditText) findViewById(R.id.hx_application_settings_edit_age_from);
+        toAgeET = (EditText) findViewById(R.id.hx_application_settings_edit_age_to);
 
         updateB = (Button) findViewById(R.id.hx_application_settings_button_submit);
         cancelB = (Button) findViewById(R.id.hx_application_settings_button_cancel);
@@ -146,11 +146,16 @@ public class ApplicationSettings extends AppCompatActivity {
                 searchFlag = hideSearchRB.isChecked();
                 confirmFlag = confirmationRB.isChecked();
 
-                fromAge = Integer.parseInt(fromAdgeET.getText().toString());
-                toAge = Integer.parseInt(toAdgeET.getText().toString());
+                if (!fromAgeET.getText().toString().matches("") && !toAgeET.getText().toString().matches("")) {
+                    fromAge = Integer.parseInt(fromAgeET.getText().toString());
+                    toAge = Integer.parseInt(toAgeET.getText().toString());
 
-                if (fromAge > toAge) {
-                    Toast.makeText(baseContext,"Please specify valid age range.", Toast.LENGTH_LONG).show();
+                    if (fromAge > toAge) {
+                        Toast.makeText(baseContext, "Please specify valid age range.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                } else {
+                    Toast.makeText(baseContext, "Please specify age range.", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -167,8 +172,8 @@ public class ApplicationSettings extends AppCompatActivity {
     }
 
     void resetBackgroundColors() {
-        fromAdgeET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
-        toAdgeET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
+        fromAgeET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
+        toAgeET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
     }
 
     String mergeInfoFields(HashSet<String> hideInfoFields) {
