@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">LingoBarterClient</string>
+    <string name="hx_yes">"YES"</string>
+    <string name="hx_no">"NO"</string>
+    <string name="hx_zero">"0"</string>
+    <string name="hx_one_hundred">"100"</string>
+    <string name="hx_from">"From"</string>
+    <string name="hx_to">"To"</string>
     <string name="hx_god_button">"God Button"</string>
     <string name="hx_email">"Email"</string>
     <string name="hx_password">"Password"</string>
@@ -51,6 +57,15 @@
     <string name="hx_change_password_title">"Change Password"</string>
     <string name="hx_change_password_old_password_hint">"Old Password"</string>
     <string name="hx_change_password_new_password_hint">"New Password"</string>
+    <string name="hx_application_settings_title">"Account Settings"</string>
+    <string name="hx_application_settings_strict_match">"Strict language match:"</string>
+    <string name="hx_application_settings_same_gender">"Can only be found by user of same gender:"</string>
+    <string name="hx_application_settings_age_range">"Can only be found by user of age range:"</string>
+    <string name="hx_application_settings_hide_you_from_nearby">"Hide you from nearby searches:"</string>
+    <string name="hx_application_settings_hide_you_from_search">"Hide you from all searches:"</string>
+    <string name="hx_application_settings_hide_info">"Hide information:"</string>
+    <string name="hx_application_settings_need_confirmation">"Adding partners confirmation:"</string>
+    <string name="hx_application_settings_hide_info_hint">"None"</string>
 
     <!-- STT credentials --> 
     <string name="STT_Username">0e62a22d-2a54-4731-841d-9e3f91e5b661</string>
@@ -89,6 +104,21 @@
         <item>"Basic Information"</item>
         <item>"Self Introduction"</item>
         <item>"Application Settings"</item>
+    </string-array>
+
+    <string-array name="info_array">
+        <item>"Name"</item>
+        <item>"Email"</item>
+        <item>"User name"</item>
+        <item>"Gender"</item>
+        <item>"Birthday"</item>
+        <item>"Tag line"</item>
+        <item>"Biography"</item>
+        <item>"Avatar"</item>
+        <item>"Location"</item>
+        <item>"Nationality"</item>
+        <item>"Language to teach"</item>
+        <item>"Language to learn"</item>
     </string-array>
 
     <string name="url_base">http://localhost:8080/api/v1</string>

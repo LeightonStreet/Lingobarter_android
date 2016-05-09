@@ -53,7 +53,7 @@
         <activity
             android:name=".ProfileSettings" />
         <activity android:name=".SelfInformation" />
-        <activity android:name=".ApplicationSettings" />
+        <activity android:name=".ApplicationSettings" android:noHistory="true"/>
         <activity android:name=".Search"></activity>
         <activity android:name=".ChangePassword" android:noHistory="true"></activity>
     </application>
