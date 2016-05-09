@@ -1,7 +1,6 @@
 package com.st.leighton.lingobarterclient;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
