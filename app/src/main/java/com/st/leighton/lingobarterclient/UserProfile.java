@@ -11,14 +11,11 @@ public class UserProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
-
-        TextView textView = (TextView) findViewById(R.id.test_text);
-        Bundle extra = getIntent().getExtras();
-        if(extra != null && extra.getString("TEST") != null && textView != null) {
-             textView.setText(extra.getString("TEST"));
-        }
-
-
+//        TextView textView = (TextView) findViewById(R.id.test_text);
+//        Bundle extra = getIntent().getExtras();
+//        if(extra != null && extra.getString("TEST") != null && textView != null) {
+//             textView.setText(extra.getString("TEST"));
+//        }
 
     }
 }

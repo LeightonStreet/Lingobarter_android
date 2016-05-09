@@ -86,7 +86,7 @@ public class Search extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String username = usernames[(int) id];
                 Intent intent = new Intent(baseContext, UserProfile.class);
-                intent.putExtra("TEST", username);
+//                intent.putExtra("TEST", username);
                 startActivity(intent);
             }
         });

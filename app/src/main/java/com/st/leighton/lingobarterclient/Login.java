@@ -1,5 +1,6 @@
 package com.st.leighton.lingobarterclient;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ public class Login extends AppCompatActivity {
 
     Context baseContext;
     Websocket socketService;
+    ProgressDialog waitIndicator;
 
     Button logginB;
     Button forgetPasswordB;
@@ -38,6 +40,7 @@ public class Login extends AppCompatActivity {
         noticeReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                waitIndicator.cancel();
                 String message = intent.getStringExtra(LOGIN_FEEDBACK);
 
                 switch (message) {
@@ -86,6 +89,7 @@ public class Login extends AppCompatActivity {
 
         baseContext = this;
         socketService = Websocket.getInstance();
+        waitIndicator = new ProgressDialog(baseContext);
 
         logginB = (Button) findViewById(R.id.hx_login_button_login);
         forgetPasswordB = (Button) findViewById(R.id.hx_login_button_forget_password);
@@ -115,6 +119,10 @@ public class Login extends AppCompatActivity {
                     passwordET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
                     return ;
                 }
+
+                waitIndicator.setMessage("Please wait...");
+                waitIndicator.setCancelable(false);
+                waitIndicator.show();
 
                 new Thread(new Runnable() {
                     @Override
@@ -151,7 +159,7 @@ public class Login extends AppCompatActivity {
         god.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent main_intent = new Intent(baseContext, Search.class);
+                Intent main_intent = new Intent(baseContext, UserProfile.class);
                 startActivity(main_intent);
             }
         });

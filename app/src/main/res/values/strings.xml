@@ -88,6 +88,14 @@
     <string name="hx_search_feeling_lucky">"I'm feeling lucky!"</string>
     <string name="hx_search_random_search">"Random Search"</string>
     <string name="hx_search_specific_search">"Specific Search"</string>
+    <string name="hx_user_profile_name_title">"Name"</string>
+    <string name="hx_user_profile_login_title">"Last login at: "</string>
+    <string name="hx_user_profile_teach_language_title">"I can speak: "</string>
+    <string name="hx_user_profile_learn_language_title">"I want to learn: "</string>
+    <string name="hx_user_profile_biography_title">"More about me: "</string>
+    <string name="hx_user_profile_send_request">"ADD (S)HE AS PARTNER!"</string>
+    <string name="hx_user_profile_test">"TESTING"</string>
+    <string name="hx_user_profile_long_test">"TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING"</string>
 
 
     <!-- STT credentials --> 
