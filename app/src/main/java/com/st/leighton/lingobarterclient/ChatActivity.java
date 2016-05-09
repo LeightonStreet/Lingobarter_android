@@ -67,8 +67,11 @@ public class ChatActivity extends KJActivity {
 
     SpeechToText service = new SpeechToText();
 
-    RecognizeOptions options = new RecognizeOptions().contentType("audio/wav")
-            .continuous(true).interimResults(true);
+    RecognizeOptions options = new RecognizeOptions.Builder()
+            .continuous(true)
+            .interimResults(true)
+            .contentType(HttpMediaType.AUDIO_WAV)
+            .build();
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -115,7 +118,7 @@ public class ChatActivity extends KJActivity {
                 new AsyncTask<Void, Void, SpeechResults>(){
                     @Override
                     protected SpeechResults doInBackground(Void... none) {
-                        SpeechResults transcript = service.recognize(audio, options);
+                        SpeechResults transcript = service.recognize(audio, options).execute();
                         return transcript;
                     }
 
