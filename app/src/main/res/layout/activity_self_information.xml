@@ -46,6 +46,7 @@
         android:layout_height="0dp" />
 
     <EditText
+        android:id="@+id/hx_self_information_edit_tagline"
         android:textSize="15sp"
         android:inputType="text"
         android:background="@color/DimGray"
@@ -75,6 +76,7 @@
         android:layout_height="0dp" />
 
     <EditText
+        android:id="@+id/hx_self_information_edit_biography"
         android:textSize="15sp"
         android:inputType="text"
         android:background="@color/DimGray"
