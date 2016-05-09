@@ -33,7 +33,11 @@
             android:noHistory="true" />
         <activity
             android:name=".ForgetPassword"
-            android:noHistory="true" />
+            android:noHistory="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.FORGET_PASSWORD" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".EmailConfirmation"
             android:noHistory="true" />

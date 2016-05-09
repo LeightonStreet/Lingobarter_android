@@ -4,6 +4,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -32,6 +33,7 @@ public class WebsocketClient {
     private StringEntity stringEntity;
     private DefaultHttpClient httpClient;
     private HttpHost httpHost;
+    private HttpGet httpGet;
     private HttpPost httpPost;
     private HttpEntity httpEntity;
     private HttpResponse httpResponse;
@@ -56,6 +58,10 @@ public class WebsocketClient {
                 httpPost = new HttpPost(p_target);
                 break;
 
+            case Get:
+                httpGet = new HttpGet(p_target);
+                break;
+
             default:
                 break;
         }
@@ -66,6 +72,9 @@ public class WebsocketClient {
             case Post:
                 httpPost.addHeader(p_key, p_value);
                 break;
+
+            case Get:
+                httpGet.addHeader(p_key, p_value);
 
             default:
                 break;
@@ -121,9 +130,20 @@ public class WebsocketClient {
                     httpHost = new HttpHost(host, port, protocol);
 
                     stringEntity = new StringEntity(content.toString());
-                    httpPost.setEntity(stringEntity);
 
-                    httpResponse = httpClient.execute(httpHost, httpPost);
+                    switch (method) {
+                        case Post:
+                            httpPost.setEntity(stringEntity);
+                            httpResponse = httpClient.execute(httpHost, httpPost);
+                            break;
+
+                        case Get:
+                            httpResponse = httpClient.execute(httpHost, httpGet);
+                            break;
+
+                        default:
+                            break;
+                    }
 
                     if (httpResponse != null) {
                         status = httpResponse.getStatusLine().toString();
