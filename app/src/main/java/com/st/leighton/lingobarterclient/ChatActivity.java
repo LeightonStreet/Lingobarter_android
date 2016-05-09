@@ -67,11 +67,8 @@ public class ChatActivity extends KJActivity {
 
     SpeechToText service = new SpeechToText();
 
-    RecognizeOptions options = new RecognizeOptions.Builder()
-            .continuous(true)
-            .interimResults(true)
-            .contentType(HttpMediaType.AUDIO_WAV)
-            .build();
+    RecognizeOptions options = new RecognizeOptions.Builder().contentType(
+            HttpMediaType.AUDIO_RAW + "; rate=44000").build();
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -79,8 +76,12 @@ public class ChatActivity extends KJActivity {
         user1 = getIntent().getExtras().getString("USER1_ID");
         user2 = getIntent().getExtras().getString("USER2_ID");
 
-        service.setUsernameAndPassword(getString(R.string.STT_Username), getString(R.string.STT_Password));
-        service.setEndPoint(getString(R.string.STT_TokenFactory));
+        try {
+            service.setUsernameAndPassword(getString(R.string.STT_Username), getString(R.string.STT_Password));
+            service.setEndPoint(getString(R.string.STT_TokenFactory));
+        } catch (RuntimeException exception){
+            System.out.println(exception);
+        }
     }
 
     @Override
