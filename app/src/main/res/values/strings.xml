@@ -66,6 +66,11 @@
     <string name="hx_application_settings_hide_info">"Hide information:"</string>
     <string name="hx_application_settings_need_confirmation">"Adding partners confirmation:"</string>
     <string name="hx_application_settings_hide_info_hint">"None"</string>
+    <string name="hx_self_information_title">"Self Introduction"</string>
+    <string name="hx_self_information_biography">"Biography"</string>
+    <string name="hx_self_information_biography_hint">"More about you"</string>
+    <string name="hx_self_information_tagline">"Tag Line"</string>
+    <string name="hx_self_information_tagline_hint">"Describe yourself"</string>
 
     <!-- STT credentials --> 
     <string name="STT_Username">0e62a22d-2a54-4731-841d-9e3f91e5b661</string>
