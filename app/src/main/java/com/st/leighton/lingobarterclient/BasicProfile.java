@@ -72,8 +72,9 @@ public class BasicProfile extends AppCompatActivity {
     AlertDialog.Builder nativeLanguageAlertDialogBuilder;
     AlertDialog.Builder learnLanguageAlertDialogBuilder;
 
+    Uri selectedImageUri = null;
     boolean gender = true;
-    String fullname="", birthday="", nation="", image_path="";
+    String fullname="", birthday="", nation="";
     double latitude, longitude, birthday_timestamp;
 
     String[] languages;
@@ -348,6 +349,12 @@ public class BasicProfile extends AppCompatActivity {
                     return ;
                 }
 
+                if(selectedImageUri == null) {
+                    Toast.makeText(baseContext,"Please upload an avatar.", Toast.LENGTH_LONG).show();
+                    uploadAvatarB.setTextColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                    return ;
+                }
+
                 if (noOverlapLanguages(nativeLanguages, learnLanguages)) {
                     Toast.makeText(baseContext,"Succeed.", Toast.LENGTH_LONG).show();
                 } else {
@@ -368,8 +375,7 @@ public class BasicProfile extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
-                Uri selectedImageUri = data.getData();
-                image_path = getPath(selectedImageUri);
+                selectedImageUri = data.getData();
                 avatarIV.setImageURI(selectedImageUri);
             }
         }
@@ -384,7 +390,7 @@ public class BasicProfile extends AppCompatActivity {
 
         nationalityS.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
 
-        uploadAvatarB.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
+        uploadAvatarB.setTextColor(ContextCompat.getColor(baseContext, R.color.DimGray));
     }
 
     String mergeNativeLanguage(HashSet<String> nativeLanguages) {

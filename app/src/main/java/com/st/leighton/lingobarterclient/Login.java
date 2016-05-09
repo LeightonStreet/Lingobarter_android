@@ -116,7 +116,12 @@ public class Login extends AppCompatActivity {
                     return ;
                 }
 
-                socketService.Login(email, password);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        socketService.Login(email, password);
+                    }
+                }).run();
             }
         });
 
@@ -146,7 +151,7 @@ public class Login extends AppCompatActivity {
         god.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent main_intent = new Intent(baseContext, MainActivity.class);
+                Intent main_intent = new Intent(baseContext, ProfileSettings.class);
                 startActivity(main_intent);
             }
         });

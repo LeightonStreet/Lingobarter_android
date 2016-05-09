@@ -6,6 +6,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -34,6 +35,7 @@ public class WebsocketClient {
     private DefaultHttpClient httpClient;
     private HttpHost httpHost;
     private HttpGet httpGet;
+    private HttpPut httpPut;
     private HttpPost httpPost;
     private HttpEntity httpEntity;
     private HttpResponse httpResponse;
@@ -47,7 +49,7 @@ public class WebsocketClient {
 
     public WebsocketClient(METHOD p_method, String p_target) {
         host = "10.0.2.2";
-        port = 8080;
+        port = 5000;
         protocol = "http";
 
         method = p_method;
@@ -60,6 +62,10 @@ public class WebsocketClient {
 
             case Get:
                 httpGet = new HttpGet(p_target);
+                break;
+
+            case Put:
+                httpPut = new HttpPut(p_target);
                 break;
 
             default:
@@ -75,6 +81,11 @@ public class WebsocketClient {
 
             case Get:
                 httpGet.addHeader(p_key, p_value);
+                break;
+
+            case Put:
+                httpPut.addHeader(p_key, p_value);
+                break;
 
             default:
                 break;
@@ -139,6 +150,11 @@ public class WebsocketClient {
 
                         case Get:
                             httpResponse = httpClient.execute(httpHost, httpGet);
+                            break;
+
+                        case Put:
+                            httpPut.setEntity(stringEntity);
+                            httpResponse = httpClient.execute(httpHost, httpPut);
                             break;
 
                         default:

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -13,6 +14,7 @@ import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.EditText;
 import android.support.v4.content.ContextCompat;
@@ -195,22 +197,22 @@ public class MainActivity extends Activity {
         ViewGroup root = ((ViewGroup)list.getParent());
         root.removeView(list);
 
-        EditText searchET = new EditText(baseContext);
-        searchET.setText(getResources().getString(R.string.hx_search_entrance_description));
-        searchET.setTextColor(ContextCompat.getColor(baseContext, R.color.DarkSalmon));
-        searchET.setGravity(Gravity.TOP);
-        searchET.setWidth(10);
-        searchET.setHeight(2);
-        searchET.setFocusable(false);
-        searchET.setOnClickListener(new View.OnClickListener() {
+        Button searchB = new Button(baseContext);
+        searchB.setText(getResources().getString(R.string.hx_search_entrance_description));
+        searchB.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DarkSalmon));
+        searchB.setGravity(Gravity.CENTER);
+        searchB.setWidth(10);
+        searchB.setHeight(2);
+        searchB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(baseContext, Search.class);
                 startActivity(intent);
             }
         });
+        searchB.setPaintFlags(searchB.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
-        root.addView(searchET);
+        root.addView(searchB);
     }
 
     private void setSettingList(View view) {

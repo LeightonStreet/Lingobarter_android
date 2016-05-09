@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.st.leighton.lingobarterclient" >
+    package="com.st.leighton.lingobarterclient">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -16,7 +16,7 @@
         tools:replace="android:theme">
         <activity
             android:name=".Login"
-            android:noHistory="true" >
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,8 +24,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Register"
-            android:noHistory="true" />
+            android:name=".Register">
+            <intent-filter>
+                <action android:name="android.intent.action.FORGET_PASSWORD" />
+            </intent-filter>
+        </activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".ChatActivity" />
         <activity
@@ -33,7 +36,7 @@
             android:noHistory="true" />
         <activity
             android:name=".ForgetPassword"
-            android:noHistory="true" >
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.FORGET_PASSWORD" />
             </intent-filter>
@@ -47,11 +50,12 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".ProfileSettings" />
+        <activity
+            android:name=".ProfileSettings" />
         <activity android:name=".SelfInformation" />
         <activity android:name=".ApplicationSettings" />
-        <activity android:name=".Search" >
-        </activity>
+        <activity android:name=".Search"></activity>
+        <activity android:name=".ChangePassword" android:noHistory="true"></activity>
     </application>
 
 </manifest>

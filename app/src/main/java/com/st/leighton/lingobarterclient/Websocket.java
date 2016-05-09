@@ -109,6 +109,46 @@ public class Websocket extends Service {
         }
     }
 
+    public void UpdatePassword(String old_password, String new_password) {
+        WebsocketClient client
+                = new WebsocketClient(WebsocketClient.METHOD.Put, "/api/v1/accounts/password");
+        client.AddHeader("content-type", "application/json");
+        client.AddHeader("Authentication-Token", token);
+        client.AddPayload("cur_password", old_password);
+        client.AddPayload("new_password", new_password);
+        client.Execute();
+        Boolean flag = client.Waiting();
+
+        if (flag) {
+            JSONObject jsonResult = client.getJSON();
+            try {
+                int status = jsonResult.getInt("status");
+                String feedback;
+
+                switch (status) {
+                    case 200:
+                        feedback = "Succeed";
+                        break;
+
+                    case 406:
+                        feedback = "InvalidPassword";
+                        break;
+
+                    default:
+                        feedback = "";
+                        break;
+                }
+
+//                Intent intent = new Intent("android.intent.action.Login");
+//                intent.putExtra(Login.LOGIN_FEEDBACK, feedback);
+//                getInstance().sendBroadcast(intent);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void ResetPassword(String email) {
         WebsocketClient client
                 = new WebsocketClient(WebsocketClient.METHOD.Post, "/api/v1/accounts/password/reset");
@@ -148,7 +188,46 @@ public class Websocket extends Service {
     }
 
     public void UpdateUsername(String username) {
+        WebsocketClient client
+                = new WebsocketClient(WebsocketClient.METHOD.Put, "/api/v1/accounts/username");
+        client.AddHeader("content-type", "application/json");
+        client.AddHeader("Authentication-Token", token);
+        client.AddPayload("username", username);
+        client.Execute();
+        Boolean flag = client.Waiting();
 
+        if (flag) {
+            JSONObject jsonResult = client.getJSON();
+            try {
+                int status = jsonResult.getInt("status");
+                String feedback;
+
+                switch (status) {
+                    case 200:
+                        feedback = "Succeed";
+                        break;
+
+                    case 304:
+                        feedback = "Unchanged";
+                        break;
+
+                    case 409:
+                        feedback = "UsernameInvalid";
+                        break;
+
+                    default:
+                        feedback = "";
+                        break;
+                }
+
+//                Intent intent = new Intent("android.intent.action.Login");
+//                intent.putExtra(Login.LOGIN_FEEDBACK, feedback);
+//                getInstance().sendBroadcast(intent);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void ConfirmEmail(String email) {

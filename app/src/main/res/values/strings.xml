@@ -46,11 +46,16 @@
     <string name="hx_forget_login">"Back to login"</string>
     <string name="hx_profile_settings_confirm">"Update"</string>
     <string name="hx_profile_settings_cancel">"Cancel"</string>
+    <string name="hx_profile_settings_change_password">"Change Password"</string>
     <string name="hx_search_entrance_description">"Find your friends on Lingobarter!"</string>
+    <string name="hx_change_password_title">"Change Password"</string>
+    <string name="hx_change_password_old_password_hint">"Old Password"</string>
+    <string name="hx_change_password_new_password_hint">"New Password"</string>
 
     <!-- STT credentials --> 
     <string name="STT_Username">0e62a22d-2a54-4731-841d-9e3f91e5b661</string>
-     <string name="STT_Password">tKwa0qCYyBPx</string>
+     
+    <string name="STT_Password">tKwa0qCYyBPx</string>
      <string name="STT_TokenFactory">https://stream.watsonplatform.net/speech-to-text/api</string> 
 
 
