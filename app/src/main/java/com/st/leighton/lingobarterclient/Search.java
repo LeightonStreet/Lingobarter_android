@@ -3,12 +3,12 @@ package com.st.leighton.lingobarterclient;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Geocoder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -67,6 +67,45 @@ public class Search extends AppCompatActivity {
     Integer fromAge, toAge;
     HashSet<String> nationalities;
     HashMap<String, Integer> teachLanguages, learnLanguages;
+
+    private void test() {
+        final String[] usernames;
+        ArrayAdapter<String> usernameAdapter;
+
+        final ListView usernamesLV;
+        AlertDialog.Builder usersAlertDialog;
+
+        usernames = getResources().getStringArray(R.array.test_user);
+        usernameAdapter = new ArrayAdapter<String>(baseContext, android.R.layout.simple_list_item_1,usernames);
+
+        usernamesLV = new ListView(baseContext);
+        usernamesLV.setAdapter(usernameAdapter);
+        usernamesLV.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        usernamesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String username = usernames[(int) id];
+                Intent intent = new Intent(baseContext, UserProfile.class);
+                intent.putExtra("TEST", username);
+                startActivity(intent);
+            }
+        });
+
+        usersAlertDialog = new AlertDialog.Builder(baseContext);
+        usersAlertDialog.setTitle("Users");
+        usersAlertDialog.setView(usernamesLV);
+        usersAlertDialog.setPositiveButton("RETURN", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(usernamesLV.getParent() != null) {
+                    ((ViewGroup) usernamesLV.getParent()).removeView(usernamesLV);
+                }
+            }
+        });
+
+        final Dialog dialog = usersAlertDialog.create();
+        dialog.show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -293,7 +332,8 @@ public class Search extends AppCompatActivity {
                     }
                 }
 
-                Toast.makeText(baseContext,"Succeed", Toast.LENGTH_LONG).show();
+                test();
+//                Toast.makeText(baseContext,"Succeed", Toast.LENGTH_LONG).show();
             }
         });
 

@@ -23,8 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Register">
+        <activity android:name=".Register">
             <intent-filter>
                 <action android:name="android.intent.action.FORGET_PASSWORD" />
             </intent-filter>
@@ -50,12 +49,16 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity
-            android:name=".ProfileSettings" />
+        <activity android:name=".ProfileSettings" />
         <activity android:name=".SelfInformation" />
-        <activity android:name=".ApplicationSettings" android:noHistory="true"/>
-        <activity android:name=".Search"></activity>
-        <activity android:name=".ChangePassword" android:noHistory="true"></activity>
+        <activity
+            android:name=".ApplicationSettings"
+            android:noHistory="true" />
+        <activity android:name=".Search" />
+        <activity
+            android:name=".ChangePassword"
+            android:noHistory="true" />
+        <activity android:name=".UserProfile"></activity>
     </application>
 
 </manifest>
