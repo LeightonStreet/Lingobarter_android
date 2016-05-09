@@ -5,10 +5,20 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 public class Websocket extends Service {
+    private String token;
+    private String name;
+    private String userid;
+    private String username;
+
     private static Websocket instance = null;
 
-    public Websocket() {
+    @Override
+    public void onCreate() {
+        instance = this;
+        super.onCreate();
     }
 
     public static Websocket getInstance()
@@ -18,19 +28,123 @@ public class Websocket extends Service {
     }
 
     public void Login(String email, String password) {
+        WebsocketClient client
+                = new WebsocketClient(WebsocketClient.METHOD.Post, "/api/v1/accounts/authorize");
+        client.AddHeader("content-type", "application/json");
+        client.AddPayload("email", email);
+        client.AddPayload("password", password);
+        client.Execute();
+        Boolean flag = client.Waiting();
 
+        if (flag) {
+            JSONObject jsonResult = client.getJSON();
+            try {
+                int status = jsonResult.getInt("status");
+                String feedback;
+
+                switch (status) {
+                    case 200:
+                        token = jsonResult.getJSONObject("response").getString("auth_token");
+                        name = jsonResult.getJSONObject("response").getString("name");
+                        username = jsonResult.getJSONObject("response").getString("username");
+                        userid = jsonResult.getJSONObject("response").getString("user_id");
+
+                        feedback = "Succeed";
+                        break;
+
+                    case 403:
+                        feedback = "NeedConfirm";
+                        break;
+
+                    case 406:
+                        feedback = "InvalidPassword";
+                        break;
+
+                    case 404:
+                        feedback = "InvalidUser";
+                        break;
+
+                    default:
+                        feedback = "";
+                        break;
+                }
+
+                Intent intent = new Intent("android.intent.action.Login");
+                intent.putExtra(Login.LOGIN_FEEDBACK, feedback);
+                getInstance().sendBroadcast(intent);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void Logout() {
+        WebsocketClient client
+                = new WebsocketClient(WebsocketClient.METHOD.Get, "/api/v1/accounts/unauthorize");
+        client.AddHeader("content-type", "application/json");
+        client.AddHeader("Authentication-Token", token);
+        client.Execute();
+        Boolean flag = client.Waiting();
 
-    }
+        if(flag) {
+            JSONObject jsonResult = client.getJSON();
+            try {
+                int status = jsonResult.getInt("status");
 
-    public void UpdatePassword(String old_password, String new_password) {
+                switch (status) {
+                    case 200:
+                        Intent intent = new Intent("android.intent.action.Login");
+                        intent.putExtra(Login.LOGIN_FEEDBACK, "Logout Succeed.");
+                        getInstance().sendBroadcast(intent);
+                        break;
 
+                    default:
+
+                        break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void ResetPassword(String email) {
+        WebsocketClient client
+                = new WebsocketClient(WebsocketClient.METHOD.Post, "/api/v1/accounts/password/reset");
+        client.AddHeader("content-type", "application/json");
+        client.AddPayload("email", email);
+        client.Execute();
+        Boolean flag = client.Waiting();
 
+        if (flag) {
+            JSONObject jsonResult = client.getJSON();
+            try {
+                int status = jsonResult.getInt("status");
+                String feedback;
+
+                switch (status) {
+                    case 200:
+                        feedback = "Succeed";
+                        break;
+
+                    case 404:
+                        feedback = "InvalidUser";
+                        break;
+
+                    default:
+                        feedback = "";
+                        break;
+                }
+
+                Intent intent = new Intent("android.intent.action.ForgetPassword");
+                intent.putExtra(ForgetPassword.FORGET_PASSWORD_FEEDBACK, feedback);
+                getInstance().sendBroadcast(intent);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void UpdateUsername(String username) {
@@ -76,12 +190,7 @@ public class Websocket extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        int result = super.onStartCommand(intent, flags, startId);
-        Log.d("There", "Service started");
-        Intent i = new Intent("android.intent.action.Login").putExtra(Login.LOGIN_FEEDBACK, "Hahaha");
-        this.sendBroadcast(i);
-
-        return result;
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
