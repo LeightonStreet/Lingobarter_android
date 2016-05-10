@@ -27,7 +27,7 @@ public class Login extends AppCompatActivity {
     EditText emailET;
     EditText passwordET;
 
-    String email = "", password = "";
+    String email = "lingobarter.user1@gmail.com", password = "user1lingobarter";
 
     private BroadcastReceiver noticeReceiver;
     final public static String LOGIN_FEEDBACK = "LOGIN_FEEDBACK";
@@ -105,8 +105,6 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 resetBackgroundColors();
-                email = "lingobarter.user1@gmail.com";
-                password = "user1lingobarter";
 //                email = emailET.getText().toString();
 //                password = passwordET.getText().toString();
 

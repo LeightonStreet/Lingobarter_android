@@ -90,20 +90,20 @@ public class ChatActivity extends KJActivity {
         user1 = getIntent().getExtras().getString("USER1_ID");
         user2 = getIntent().getExtras().getString("USER2_ID");
 
-        String authToken = "ChFmVw.4h15p7BS2UGnk2FxDCFP7J3oDv4";
-        IO.Options opts = new IO.Options();
-        opts.forceNew = false;
-        opts.reconnection = false;
-        opts.query = "auth_token=" + authToken;
-        try {
-            mSocket = IO.socket("http://192.168.0.9:8080", opts);
-        } catch (URISyntaxException e){
-            e.printStackTrace();
-        }
-        mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
-        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-        mSocket.on("ret:browse messages", onBrowseMessages);
-        mSocket.connect();
+//        String authToken = "ChFmVw.4h15p7BS2UGnk2FxDCFP7J3oDv4";
+//        IO.Options opts = new IO.Options();
+//        opts.forceNew = false;
+//        opts.reconnection = false;
+//        opts.query = "auth_token=" + authToken;
+//        try {
+//            mSocket = IO.socket("http://192.168.0.9:5000", opts);
+//        } catch (URISyntaxException e){
+//            e.printStackTrace();
+//        }
+//        mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
+//        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
+//        mSocket.on("ret:browse messages", onBrowseMessages);
+//        mSocket.connect();
 
         service.setUsernameAndPassword(getString(R.string.STT_Username), getString(R.string.STT_Password));
         service.setEndPoint(getString(R.string.STT_TokenFactory));

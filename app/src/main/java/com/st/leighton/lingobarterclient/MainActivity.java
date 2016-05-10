@@ -16,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.EditText;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
@@ -60,7 +59,7 @@ public class MainActivity extends Activity {
         opts.reconnection = false;
         opts.query = "auth_token=" + authToken;
         try {
-            mSocket = IO.socket("http://192.168.0.9:8080", opts);
+            mSocket = IO.socket(getString(R.string.url), opts);
             mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 public void call(Object... args) {
                     System.out.println("connected!");
@@ -71,10 +70,17 @@ public class MainActivity extends Activity {
                         e.printStackTrace();
                     }
                     mSocket.emit("browse chats");
-
-                    mSocket.on("ret:browse chats", onBrowseChats);
-//        mSocket.on("ret:browse partners", onBrowsePartner);
-                    mSocket.on("ret:add partner", onAddPartner);
+                }
+            }).on("ret:browse chats", new Emitter.Listener() {
+                public void call(Object... args) {
+                    JSONArray obj = (JSONArray)args[0];
+                    System.out.println(obj);
+                }
+//                    .on("ret:browse chats", onBrowseChats);
+//            mSocket.on("ret:add partner", onAddPartner);
+            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+                public void call(Object... args) {
+                    System.out.println("You disconnect me");
                 }
             });
         } catch (URISyntaxException e){
