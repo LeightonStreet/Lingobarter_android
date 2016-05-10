@@ -3,7 +3,6 @@ package com.st.leighton.lingobarterclient;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -34,14 +33,14 @@ public class Websocket extends Service {
         client.AddPayload("email", email);
         client.AddPayload("password", password);
         client.Execute();
+
+        String feedback = "";
         Boolean flag = client.Waiting();
 
         if (flag) {
             JSONObject jsonResult = client.getJSON();
             try {
                 int status = jsonResult.getInt("status");
-                String feedback;
-
                 switch (status) {
                     case 200:
                         token = jsonResult.getJSONObject("response").getString("auth_token");
@@ -68,85 +67,16 @@ public class Websocket extends Service {
                         feedback = "";
                         break;
                 }
-
-                Intent intent = new Intent("android.intent.action.Login");
-                intent.putExtra(Login.LOGIN_FEEDBACK, feedback);
-                getInstance().sendBroadcast(intent);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            feedback = "ERROR";
         }
-    }
 
-    public void Logout() {
-        WebsocketClient client
-                = new WebsocketClient(WebsocketClient.METHOD.Get, "/api/v1/accounts/unauthorize");
-        client.AddHeader("content-type", "application/json");
-        client.AddHeader("Authentication-Token", token);
-        client.Execute();
-        Boolean flag = client.Waiting();
-
-        if(flag) {
-            JSONObject jsonResult = client.getJSON();
-            try {
-                int status = jsonResult.getInt("status");
-
-                switch (status) {
-                    case 200:
-                        Intent intent = new Intent("android.intent.action.Login");
-                        intent.putExtra(Login.LOGIN_FEEDBACK, "Logout Succeed.");
-                        getInstance().sendBroadcast(intent);
-                        break;
-
-                    default:
-
-                        break;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void UpdatePassword(String old_password, String new_password) {
-        WebsocketClient client
-                = new WebsocketClient(WebsocketClient.METHOD.Put, "/api/v1/accounts/password");
-        client.AddHeader("content-type", "application/json");
-        client.AddHeader("Authentication-Token", token);
-        client.AddPayload("cur_password", old_password);
-        client.AddPayload("new_password", new_password);
-        client.Execute();
-        Boolean flag = client.Waiting();
-
-        if (flag) {
-            JSONObject jsonResult = client.getJSON();
-            try {
-                int status = jsonResult.getInt("status");
-                String feedback;
-
-                switch (status) {
-                    case 200:
-                        feedback = "Succeed";
-                        break;
-
-                    case 406:
-                        feedback = "InvalidPassword";
-                        break;
-
-                    default:
-                        feedback = "";
-                        break;
-                }
-
-//                Intent intent = new Intent("android.intent.action.Login");
-//                intent.putExtra(Login.LOGIN_FEEDBACK, feedback);
-//                getInstance().sendBroadcast(intent);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        Intent intent = new Intent("android.intent.action.Login");
+        intent.putExtra(Login.LOGIN_FEEDBACK, feedback);
+        getInstance().sendBroadcast(intent);
     }
 
     public void ResetPassword(String email) {
@@ -155,13 +85,14 @@ public class Websocket extends Service {
         client.AddHeader("content-type", "application/json");
         client.AddPayload("email", email);
         client.Execute();
+
+        String feedback = "";
         Boolean flag = client.Waiting();
 
         if (flag) {
             JSONObject jsonResult = client.getJSON();
             try {
                 int status = jsonResult.getInt("status");
-                String feedback;
 
                 switch (status) {
                     case 200:
@@ -176,43 +107,42 @@ public class Websocket extends Service {
                         feedback = "";
                         break;
                 }
-
-                Intent intent = new Intent("android.intent.action.ForgetPassword");
-                intent.putExtra(ForgetPassword.FORGET_PASSWORD_FEEDBACK, feedback);
-                getInstance().sendBroadcast(intent);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            feedback = "ERROR";
         }
+
+        Intent intent = new Intent("android.intent.action.ForgetPassword");
+        intent.putExtra(ForgetPassword.FORGET_PASSWORD_FEEDBACK, feedback);
+        getInstance().sendBroadcast(intent);
     }
 
-    public void UpdateUsername(String username) {
+    public void Register(String username, String email, String password) {
         WebsocketClient client
-                = new WebsocketClient(WebsocketClient.METHOD.Put, "/api/v1/accounts/username");
+                = new WebsocketClient(WebsocketClient.METHOD.Post, "/api/v1/users");
         client.AddHeader("content-type", "application/json");
-        client.AddHeader("Authentication-Token", token);
         client.AddPayload("username", username);
+        client.AddPayload("email", email);
+        client.AddPayload("password", password);
         client.Execute();
+
+        String feedback = "";
         Boolean flag = client.Waiting();
 
         if (flag) {
             JSONObject jsonResult = client.getJSON();
             try {
                 int status = jsonResult.getInt("status");
-                String feedback;
 
                 switch (status) {
                     case 200:
                         feedback = "Succeed";
                         break;
 
-                    case 304:
-                        feedback = "Unchanged";
-                        break;
-
                     case 409:
-                        feedback = "UsernameInvalid";
+                        feedback = "EmailTaken";
                         break;
 
                     default:
@@ -220,46 +150,96 @@ public class Websocket extends Service {
                         break;
                 }
 
-//                Intent intent = new Intent("android.intent.action.Login");
-//                intent.putExtra(Login.LOGIN_FEEDBACK, feedback);
-//                getInstance().sendBroadcast(intent);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            feedback = "ERROR";
         }
+
+        Intent intent = new Intent("android.intent.action.Register");
+        intent.putExtra(Register.REGISTER_FEEDBACK, feedback);
+        getInstance().sendBroadcast(intent);
     }
 
-    public void ConfirmEmail(String email) {
+    public void Confirm(String email) {
+        WebsocketClient client
+                = new WebsocketClient(WebsocketClient.METHOD.Post, "/api/v1/accounts/confirm");
+        client.AddHeader("content-type", "application/json");
+        client.AddPayload("email", email);
+        client.Execute();
 
+        String feedback = "";
+        Boolean flag = client.Waiting();
+
+        if (flag) {
+            JSONObject jsonResult = client.getJSON();
+            try {
+                int status = jsonResult.getInt("status");
+                switch (status) {
+                    case 200:
+                        feedback = "Succeed";
+                        break;
+
+                    case 404:
+                        feedback = "InvalidUser";
+                        break;
+
+                    default:
+                        feedback = "";
+                        break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            feedback = "ERROR";
+        }
+
+        Intent intent = new Intent("android.intent.action.EmailConfirmation");
+        intent.putExtra(EmailConfirmation.EMAIL_CONFIRMATION_FEEDBACK, feedback);
+        getInstance().sendBroadcast(intent);
     }
 
-    public void Signup(String username, String email, String password) {
+    public void EmailConfirmationLogin(String email, String password) {
+        WebsocketClient client
+                = new WebsocketClient(WebsocketClient.METHOD.Post, "/api/v1/accounts/authorize");
+        client.AddHeader("content-type", "application/json");
+        client.AddPayload("email", email);
+        client.AddPayload("password", password);
+        client.Execute();
 
-    }
+        String feedback = "";
+        Boolean flag = client.Waiting();
 
-    public void UpdateProfile() {
+        if (flag) {
+            JSONObject jsonResult = client.getJSON();
+            try {
+                int status = jsonResult.getInt("status");
+                switch (status) {
+                    case 200:
+                        token = jsonResult.getJSONObject("response").getString("auth_token");
+                        name = jsonResult.getJSONObject("response").getString("name");
+                        username = jsonResult.getJSONObject("response").getString("username");
+                        userid = jsonResult.getJSONObject("response").getString("user_id");
 
-    }
+                        feedback = "Succeed";
+                        break;
 
-    public void ViewSelfProfile() {
+                    default:
+                        feedback = "";
+                        break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            feedback = "ERROR";
+        }
 
-    }
-
-    public void DeleteAccount() {
-
-    }
-
-    public void ViewOtherProfile() {
-
-    }
-
-    public void UploadAvatar() {
-
-    }
-
-    public void Search() {
-        
+        Intent intent = new Intent("android.intent.action.EmailConfirmationLogin");
+        intent.putExtra(EmailConfirmation.EMAIL_CONFIRMATION_LOGIN_FEEDBACK, feedback);
+        getInstance().sendBroadcast(intent);
     }
 
     @Override

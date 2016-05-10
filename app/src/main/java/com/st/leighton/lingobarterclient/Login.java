@@ -17,8 +17,6 @@ import android.widget.Toast;
 public class Login extends AppCompatActivity {
 
     Context baseContext;
-    Websocket socketService;
-    ProgressDialog waitIndicator;
 
     Button logginB;
     Button forgetPasswordB;
@@ -29,8 +27,10 @@ public class Login extends AppCompatActivity {
 
     String email = "", password = "";
 
-    private BroadcastReceiver noticeReceiver;
+    Websocket socketService;
+    BroadcastReceiver noticeReceiver;
 
+    ProgressDialog waitIndicator;
     final public static String LOGIN_FEEDBACK = "LOGIN_FEEDBACK";
 
     @Override
@@ -74,6 +74,9 @@ public class Login extends AppCompatActivity {
                         emailET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
                         break;
 
+                    case "ERROR":
+                        Toast.makeText(baseContext,"Cannot connect to server, please check your network", Toast.LENGTH_LONG).show();
+
                     default:
 
                         break;
@@ -98,6 +101,7 @@ public class Login extends AppCompatActivity {
         startService(webSocketServiceIntent);
 
         baseContext = this;
+
         socketService = Websocket.getInstance();
         waitIndicator = new ProgressDialog(baseContext);
 
@@ -139,7 +143,7 @@ public class Login extends AppCompatActivity {
                     public void run() {
                         socketService.Login(email, password);
                     }
-                }).run();
+                }).start();
             }
         });
 

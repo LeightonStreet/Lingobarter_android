@@ -1,5 +1,6 @@
 package com.st.leighton.lingobarterclient;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +17,6 @@ import android.widget.Toast;
 public class ForgetPassword extends AppCompatActivity {
 
     Context baseContext;
-    Websocket socketService;
 
     EditText emailET;
 
@@ -25,8 +25,51 @@ public class ForgetPassword extends AppCompatActivity {
 
     String email;
 
+    Websocket socketService;
     BroadcastReceiver noticeReceiver;
+
+    ProgressDialog waitIndicator;
     final public static String FORGET_PASSWORD_FEEDBACK = "FORGET_PASSWORD_SEND_EMAIL";
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        IntentFilter noticeFilter = new IntentFilter("android.intent.action.ForgetPassword");
+        noticeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                waitIndicator.cancel();
+                String message = intent.getStringExtra(FORGET_PASSWORD_FEEDBACK);
+
+                switch (message) {
+                    case "Succeed":
+                        Toast.makeText(baseContext,"Email has been sent", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case "InvalidUser":
+                        Toast.makeText(baseContext, "User not exist", Toast.LENGTH_LONG).show();
+                        emailET.setText("");
+                        emailET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                        break;
+
+                    case "ERROR":
+                        Toast.makeText(baseContext,"Cannot connect to server, please check your network", Toast.LENGTH_LONG).show();
+
+                    default:
+
+                        break;
+                }
+            }
+        };
+        this.registerReceiver(noticeReceiver, noticeFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.unregisterReceiver(this.noticeReceiver);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +77,9 @@ public class ForgetPassword extends AppCompatActivity {
         setContentView(R.layout.activity_forget_password);
 
         baseContext = this;
+
         socketService = Websocket.getInstance();
+        waitIndicator = new ProgressDialog(baseContext);
 
         emailET = (EditText) findViewById(R.id.hx_forget_edit_email);
 
@@ -59,7 +104,11 @@ public class ForgetPassword extends AppCompatActivity {
 
                 email = emailET.getText().toString();
                 if (Register.isEmailValid(email)) {
-                    Toast.makeText(baseContext,"Wait...", Toast.LENGTH_LONG).show();
+
+                    waitIndicator.setMessage("Please wait...");
+                    waitIndicator.setCancelable(false);
+                    waitIndicator.show();
+
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -84,31 +133,6 @@ public class ForgetPassword extends AppCompatActivity {
                 finish();
             }
         });
-
-        IntentFilter noticeFilter = new IntentFilter("android.intent.action.ForgetPassword");
-        noticeReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String message = intent.getStringExtra(FORGET_PASSWORD_FEEDBACK);
-
-                switch (message) {
-                    case "Succeed":
-                        Toast.makeText(baseContext,"Email has been sent", Toast.LENGTH_LONG).show();
-                        break;
-
-                    case "InvalidUser":
-                        Toast.makeText(baseContext, "User not exist", Toast.LENGTH_LONG).show();
-                        emailET.setText("");
-                        emailET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                        break;
-
-                    default:
-
-                        break;
-                }
-            }
-        };
-        this.registerReceiver(noticeReceiver, noticeFilter);
     }
 
     void resetBackgroundColors() {

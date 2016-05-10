@@ -1,7 +1,10 @@
 package com.st.leighton.lingobarterclient;
 
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -27,11 +30,64 @@ public class Register extends AppCompatActivity {
     EditText passwordET;
 
     Boolean passwordFlag = Boolean.TRUE;
+
     final public static String EMAIL_KEY = "REGISTER_EMAIL";
     final public static String PASSWORD_KEY = "REGISTER_PASSWORD";
 
     final private String hidePassword = "HIDE PASSWORD", showPassword = "SHOW PASSWORD";
     String username = "", email = "", password = "";
+
+    Websocket socketService;
+    BroadcastReceiver noticeReceiver;
+
+    ProgressDialog waitIndicator;
+    final public static String REGISTER_FEEDBACK = "REGISTER_FEEDBACK";
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        IntentFilter noticeFilter = new IntentFilter("android.intent.action.Register");
+        noticeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                waitIndicator.cancel();
+                String message = intent.getStringExtra(REGISTER_FEEDBACK);
+
+                switch (message) {
+                    case "Succeed":
+                        Bundle passToEmailConfirmation = new Bundle();
+                        passToEmailConfirmation.putString(EMAIL_KEY, email);
+                        passToEmailConfirmation.putString(PASSWORD_KEY, password);
+
+                        Intent confirmIntent = new Intent(baseContext, EmailConfirmation.class);
+                        confirmIntent.putExtras(passToEmailConfirmation);
+                        startActivity(confirmIntent);
+                        finish();
+                        break;
+
+                    case "EmailTaken":
+                        Toast.makeText(baseContext,"This email has been registered", Toast.LENGTH_LONG).show();
+                        emailET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                        break;
+
+                    case "ERROR":
+                        Toast.makeText(baseContext,"Cannot connect to server, please check your network", Toast.LENGTH_LONG).show();
+
+                    default:
+
+                        break;
+                }
+            }
+        };
+        this.registerReceiver(noticeReceiver, noticeFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.unregisterReceiver(this.noticeReceiver);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +95,9 @@ public class Register extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         baseContext = this;
+
+        socketService = Websocket.getInstance();
+        waitIndicator = new ProgressDialog(baseContext);
 
         registerB = (Button) findViewById(R.id.hx_register_button_register);
         showPasswordB = (Button) findViewById(R.id.hx_register_button_show_password);
@@ -98,14 +157,16 @@ public class Register extends AppCompatActivity {
                     return ;
                 }
 
-                Bundle passToEmailConfirmation = new Bundle();
-                passToEmailConfirmation.putString(EMAIL_KEY, email);
-                passToEmailConfirmation.putString(PASSWORD_KEY, password);
+                waitIndicator.setMessage("Please wait...");
+                waitIndicator.setCancelable(false);
+                waitIndicator.show();
 
-                Intent intent = new Intent(baseContext, EmailConfirmation.class);
-                intent.putExtras(passToEmailConfirmation);
-                startActivity(intent);
-                finish();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        socketService.Register(username, email, password);
+                    }
+                }).start();
             }
         });
 
