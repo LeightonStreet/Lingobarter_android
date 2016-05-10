@@ -30,7 +30,6 @@ import com.st.leighton.lingobarterclient.R;
 import chat.UrlUtils;
 import chat.bean.Message;
 import org.kymjs.kjframe.KJBitmap;
-import org.kymjs.kjframe.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;

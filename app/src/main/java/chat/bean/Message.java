@@ -33,7 +33,7 @@ public class Message {
     public final static int MSG_STATE_SENDING = 3;
 
     private Long id;
-    private int type; // 1-photo | 2-face | 3-text | 4-speech
+    private int type; // 1-photo | 2-face | 3-text | 4-voice
     private int state; // 1-success | 2-fail | 3-sending
     private String fromUserName;
     private String fromUserAvatar;
