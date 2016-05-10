@@ -39,7 +39,7 @@ public class SelfInformation extends AppCompatActivity {
                 tagline = taglineET.getText().toString();
                 biography = biographyET.getText().toString();
 
-                Toast.makeText(baseContext,"Succeed", Toast.LENGTH_LONG).show();
+                finish();
             }
         });
 

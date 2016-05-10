@@ -83,7 +83,7 @@ public class ChangePassword extends AppCompatActivity {
                     return ;
                 }
 
-                Toast.makeText(baseContext,"Succeed", Toast.LENGTH_LONG).show();
+                finish();
             }
         });
 

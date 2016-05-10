@@ -159,7 +159,7 @@ public class ApplicationSettings extends AppCompatActivity {
                     return;
                 }
 
-                Toast.makeText(baseContext,"Succeed", Toast.LENGTH_LONG).show();
+                finish();
             }
         });
 

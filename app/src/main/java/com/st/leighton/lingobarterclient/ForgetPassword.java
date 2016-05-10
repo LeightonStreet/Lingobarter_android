@@ -25,7 +25,7 @@ public class ForgetPassword extends AppCompatActivity {
 
     String email;
 
-    private BroadcastReceiver noticeReceiver;
+    BroadcastReceiver noticeReceiver;
     final public static String FORGET_PASSWORD_FEEDBACK = "FORGET_PASSWORD_SEND_EMAIL";
 
     @Override
@@ -68,7 +68,7 @@ public class ForgetPassword extends AppCompatActivity {
                     }).start();
 
                 } else {
-                    Toast.makeText(baseContext,"Please check your email", Toast.LENGTH_LONG).show();
+                    Toast.makeText(baseContext,"Please check your email format", Toast.LENGTH_LONG).show();
                     emailET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
                 }
             }
@@ -81,6 +81,7 @@ public class ForgetPassword extends AppCompatActivity {
 
                 Intent intent = new Intent(baseContext, Login.class);
                 startActivity(intent);
+                finish();
             }
         });
 

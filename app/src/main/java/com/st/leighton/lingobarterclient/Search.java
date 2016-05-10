@@ -88,7 +88,7 @@ public class Search extends AppCompatActivity {
         AlertDialog.Builder usersAlertDialog;
 
         usernames = getResources().getStringArray(R.array.test_user);
-        usernameAdapter = new ArrayAdapter<String>(baseContext, android.R.layout.simple_list_item_1,usernames);
+        usernameAdapter = new ArrayAdapter<>(baseContext, android.R.layout.simple_list_item_1,usernames);
 
         usernamesLV = new ListView(baseContext);
         usernamesLV.setAdapter(usernameAdapter);

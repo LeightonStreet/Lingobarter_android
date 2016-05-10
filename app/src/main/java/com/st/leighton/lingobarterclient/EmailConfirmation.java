@@ -24,6 +24,7 @@ public class EmailConfirmation extends AppCompatActivity {
     AlertDialog.Builder confirmAlertDialogBuilder;
 
     String email;
+    String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class EmailConfirmation extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(baseContext, Login.class);
                         startActivity(intent);
+                        finish();
                     }
                 });
 
@@ -61,6 +63,7 @@ public class EmailConfirmation extends AppCompatActivity {
             email = "";
         } else {
             email = extra.getString(Register.EMAIL_KEY);
+            password = extra.getString(Register.PASSWORD_KEY);
         }
 
         emailTV.setText(email);

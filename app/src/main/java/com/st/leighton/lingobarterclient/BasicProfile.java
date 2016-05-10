@@ -356,7 +356,9 @@ public class BasicProfile extends AppCompatActivity {
                 }
 
                 if (noOverlapLanguages(nativeLanguages, learnLanguages)) {
-                    Toast.makeText(baseContext,"Succeed.", Toast.LENGTH_LONG).show();
+                    Intent main_intent = new Intent(baseContext, MainActivity.class);
+                    startActivity(main_intent);
+                    finish();
                 } else {
                     Toast.makeText(baseContext,"Overlapped language choices", Toast.LENGTH_LONG).show();
                 }

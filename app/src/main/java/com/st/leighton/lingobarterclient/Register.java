@@ -27,7 +27,9 @@ public class Register extends AppCompatActivity {
     EditText passwordET;
 
     Boolean passwordFlag = Boolean.TRUE;
-    final public static String EMAIL_KEY = "EMAIL";
+    final public static String EMAIL_KEY = "REGISTER_EMAIL";
+    final public static String PASSWORD_KEY = "REGISTER_PASSWORD";
+
     final private String hidePassword = "HIDE PASSWORD", showPassword = "SHOW PASSWORD";
     String username = "", email = "", password = "";
 
@@ -96,9 +98,14 @@ public class Register extends AppCompatActivity {
                     return ;
                 }
 
+                Bundle passToEmailConfirmation = new Bundle();
+                passToEmailConfirmation.putString(EMAIL_KEY, email);
+                passToEmailConfirmation.putString(PASSWORD_KEY, password);
+
                 Intent intent = new Intent(baseContext, EmailConfirmation.class);
-                intent.putExtra(EMAIL_KEY, email);
+                intent.putExtras(passToEmailConfirmation);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -107,6 +114,7 @@ public class Register extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(baseContext, Login.class);
                 startActivity(intent);
+                finish();
             }
         });
 

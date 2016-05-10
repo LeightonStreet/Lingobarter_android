@@ -365,7 +365,7 @@ public class ProfileSettings extends AppCompatActivity {
                 }
 
                 if (noOverlapLanguages(nativeLanguages, learnLanguages)) {
-                    Toast.makeText(baseContext,"Succeed.", Toast.LENGTH_LONG).show();
+                    finish();
                 } else {
                     Toast.makeText(baseContext,"Overlapped language choices", Toast.LENGTH_LONG).show();
                 }
@@ -375,8 +375,6 @@ public class ProfileSettings extends AppCompatActivity {
         cancelB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(baseContext, MainActivity.class);
-                startActivity(intent);
                 finish();
             }
         });

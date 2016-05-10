@@ -30,6 +30,7 @@ public class Login extends AppCompatActivity {
     String email = "", password = "";
 
     private BroadcastReceiver noticeReceiver;
+
     final public static String LOGIN_FEEDBACK = "LOGIN_FEEDBACK";
 
     @Override
@@ -47,12 +48,18 @@ public class Login extends AppCompatActivity {
                     case "Succeed":
                         Intent main_intent = new Intent(baseContext, MainActivity.class);
                         startActivity(main_intent);
+                        finish();
                         break;
 
                     case "NeedConfirm":
+                        Bundle passToEmailConfirmation = new Bundle();
+                        passToEmailConfirmation.putString(Register.EMAIL_KEY, email);
+                        passToEmailConfirmation.putString(Register.PASSWORD_KEY, password);
+
                         Intent confirm_intent = new Intent(baseContext, EmailConfirmation.class);
-                        confirm_intent.putExtra(Register.EMAIL_KEY, email);
+                        confirm_intent.putExtras(passToEmailConfirmation);
                         startActivity(confirm_intent);
+                        finish();
                         break;
 
                     case "InvalidPassword":
@@ -86,6 +93,9 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_login);
+
+        Intent webSocketServiceIntent = new Intent(this, Websocket.class);
+        startService(webSocketServiceIntent);
 
         baseContext = this;
         socketService = Websocket.getInstance();
@@ -139,6 +149,7 @@ public class Login extends AppCompatActivity {
                 resetBackgroundColors();
                 Intent intent = new Intent(baseContext, ForgetPassword.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -148,19 +159,17 @@ public class Login extends AppCompatActivity {
                 resetBackgroundColors();
                 Intent intent = new Intent(baseContext, Register.class);
                 startActivity(intent);
+                finish();
             }
         });
-
-        Intent webSocketServiceIntent = new Intent(this, Websocket.class);
-        startService(webSocketServiceIntent);
-
 //
         Button god = (Button) findViewById(R.id.hx_login_button_god);
         god.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent main_intent = new Intent(baseContext, Search.class);
+                Intent main_intent = new Intent(baseContext, TESTING.class);
                 startActivity(main_intent);
+                finish();
             }
         });
 //

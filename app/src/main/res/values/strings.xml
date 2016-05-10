@@ -97,6 +97,7 @@
     <string name="hx_user_profile_back">"Back to list"</string>
     <string name="hx_user_profile_test">"123"</string>
     <string name="hx_user_profile_long_test">"123123123"</string>
+    <string name="hx_user_email_confirmation_hint">"Has not been not activated."</string>
 
 
     <!-- STT credentials --> 
