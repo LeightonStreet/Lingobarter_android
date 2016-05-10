@@ -1,8 +1,12 @@
 package com.st.leighton.lingobarterclient;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -48,12 +52,56 @@ public class ApplicationSettings extends AppCompatActivity {
     HashSet<String> hideInfoFields;
     boolean strictFlag, sameGenderFlag, nearbyFlag, searchFlag, confirmFlag;
 
+    Websocket socketService;
+    BroadcastReceiver noticeReceiver;
+
+    ProgressDialog waitIndicator;
+    final public static String APPLICATION_SETTINGS_FEEDBACK = "APPLICATION_SETTINGS_FEEDBACK";
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        IntentFilter noticeFilter = new IntentFilter("android.intent.action.ApplicationSettings");
+        noticeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                waitIndicator.cancel();
+                String message = intent.getStringExtra(APPLICATION_SETTINGS_FEEDBACK);
+
+                switch (message) {
+                    case "Succeed":
+                        Toast.makeText(baseContext,"Account settings has been updated", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case "ERROR":
+                        Toast.makeText(baseContext,"Cannot connect to server, please check your network", Toast.LENGTH_LONG).show();
+                        break;
+
+                    default:
+
+                        break;
+                }
+            }
+        };
+        this.registerReceiver(noticeReceiver, noticeFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.unregisterReceiver(this.noticeReceiver);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_application_settings);
 
         baseContext = this;
+
+        socketService = Websocket.getInstance();
+        waitIndicator = new ProgressDialog(baseContext);
 
         strictMatchRB = (RadioButton) findViewById(R.id.hx_application_settings_radio_strict_yes);
         sameGenderRB = (RadioButton) findViewById(R.id.hx_application_settings_radio_gender_yes);
@@ -159,7 +207,17 @@ public class ApplicationSettings extends AppCompatActivity {
                     return;
                 }
 
-                finish();
+                waitIndicator.setMessage("Please wait...");
+                waitIndicator.setCancelable(false);
+                waitIndicator.show();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        socketService.UpdateApplicationSettings(strictFlag, sameGenderFlag,
+                                nearbyFlag, searchFlag, confirmFlag, hideInfoFields, fromAge, toAge);
+                    }
+                }).start();
             }
         });
 

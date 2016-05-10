@@ -2,9 +2,12 @@ package com.st.leighton.lingobarterclient;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Paint;
 import android.location.Address;
@@ -15,7 +18,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -43,7 +45,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ProfileSettings extends AppCompatActivity {
-
     final Integer baseLevel = 0;
     final Integer highestLevel = 5;
     private static final int SELECT_PICTURE = 1;
@@ -89,12 +90,81 @@ public class ProfileSettings extends AppCompatActivity {
     HashSet<String> nativeLanguages;
     HashMap<String, Integer> learnLanguages;
 
+    Websocket socketService;
+    BroadcastReceiver noticeReceiver, imageNoticeReceiver;
+
+    ProgressDialog waitIndicator;
+    final public static String PROFILE_FEEDBACK = "PROFILE_FEEDBACK";
+    final public static String PROFILE_IMAGE_FEEDBACK = "PROFILE_IMAGE_FEEDBACK";
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        IntentFilter noticeFilter = new IntentFilter("android.intent.action.ProfileSettings");
+        noticeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (waitIndicator.isShowing()) {
+                    waitIndicator.cancel();
+                }
+                String message = intent.getStringExtra(PROFILE_FEEDBACK);
+
+                switch (message) {
+                    case "Succeed":
+                        Toast.makeText(baseContext,"Profile has been updated", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case "ERROR":
+                        Toast.makeText(baseContext,"Cannot connect to server, please check your network", Toast.LENGTH_LONG).show();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        };
+        this.registerReceiver(noticeReceiver, noticeFilter);
+
+        IntentFilter imageNoticeFilter = new IntentFilter("android.intent.action.ProfileSettingsImage");
+        imageNoticeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String message = intent.getStringExtra(PROFILE_IMAGE_FEEDBACK);
+
+                switch (message) {
+                    case "Succeed":
+                        Toast.makeText(baseContext,"Avatar has been uploaded", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case "ERROR":
+                        Toast.makeText(baseContext,"Cannot connect to server, please check your network", Toast.LENGTH_LONG).show();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        };
+        this.registerReceiver(imageNoticeReceiver, imageNoticeFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.unregisterReceiver(this.noticeReceiver);
+        this.unregisterReceiver(this.imageNoticeReceiver);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_settings);
 
         baseContext = this;
+
+        socketService = Websocket.getInstance();
+        waitIndicator = new ProgressDialog(baseContext);
 
         fullnameET = (EditText) findViewById(R.id.hx_profile_settings_edit_name);
         locationET = (EditText) findViewById(R.id.hx_profile_settings_edit_location);
@@ -365,7 +435,18 @@ public class ProfileSettings extends AppCompatActivity {
                 }
 
                 if (noOverlapLanguages(nativeLanguages, learnLanguages)) {
-                    finish();
+                    waitIndicator.setMessage("Please wait...");
+                    waitIndicator.setCancelable(false);
+                    waitIndicator.show();
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            socketService.SettingsSetBasicProfile(fullname, gender, nation,
+                                    latitude, longitude, birthday_timestamp,
+                                    nativeLanguages, learnLanguages);
+                        }
+                    }).start();
                 } else {
                     Toast.makeText(baseContext,"Overlapped language choices", Toast.LENGTH_LONG).show();
                 }
@@ -401,6 +482,13 @@ public class ProfileSettings extends AppCompatActivity {
             if (requestCode == SELECT_PICTURE) {
                 selectedImageUri = data.getData();
                 avatarIV.setImageURI(selectedImageUri);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        socketService.SettingsUploadAvatar(getPath(selectedImageUri));
+                    }
+                }).start();
             }
         }
     }

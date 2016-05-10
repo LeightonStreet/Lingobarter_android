@@ -51,6 +51,12 @@ public class Login extends AppCompatActivity {
                         finish();
                         break;
 
+                    case "Uncomplete":
+                        Intent basic_profile_intent = new Intent(baseContext, BasicProfile.class);
+                        startActivity(basic_profile_intent);
+                        finish();
+                        break;
+
                     case "NeedConfirm":
                         Bundle passToEmailConfirmation = new Bundle();
                         passToEmailConfirmation.putString(Register.EMAIL_KEY, email);
@@ -76,6 +82,7 @@ public class Login extends AppCompatActivity {
 
                     case "ERROR":
                         Toast.makeText(baseContext,"Cannot connect to server, please check your network", Toast.LENGTH_LONG).show();
+                        break;
 
                     default:
 

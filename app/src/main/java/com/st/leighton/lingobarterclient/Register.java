@@ -73,6 +73,7 @@ public class Register extends AppCompatActivity {
 
                     case "ERROR":
                         Toast.makeText(baseContext,"Cannot connect to server, please check your network", Toast.LENGTH_LONG).show();
+                        break;
 
                     default:
 

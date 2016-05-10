@@ -1,6 +1,10 @@
 package com.st.leighton.lingobarterclient;
 
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -26,12 +30,63 @@ public class ChangePassword extends AppCompatActivity {
     Boolean passwordFlag = Boolean.TRUE;
     final private String hidePassword = "HIDE PASSWORD", showPassword = "SHOW PASSWORD";
 
+    Websocket socketService;
+    BroadcastReceiver noticeReceiver;
+
+    ProgressDialog waitIndicator;
+    final public static String CHANGE_PASSWORD_FEEDBACK = "CHANGE_PASSWORD_FEEDBACK";
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        IntentFilter noticeFilter = new IntentFilter("android.intent.action.ChangePassword");
+        noticeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                waitIndicator.cancel();
+                String message = intent.getStringExtra(CHANGE_PASSWORD_FEEDBACK);
+
+                switch (message) {
+                    case "Succeed":
+                        Toast.makeText(baseContext,"Password has been updated", Toast.LENGTH_LONG).show();
+                        finish();
+                        break;
+
+                    case "InvalidPassword":
+                        Toast.makeText(baseContext,"Old password is wrong", Toast.LENGTH_LONG).show();
+                        oldPasswordET.setText("");
+                        oldPasswordET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                        break;
+
+                    case "ERROR":
+                        Toast.makeText(baseContext,"Cannot connect to server, please check your network", Toast.LENGTH_LONG).show();
+                        break;
+
+                    default:
+
+                        break;
+                }
+            }
+        };
+        this.registerReceiver(noticeReceiver, noticeFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.unregisterReceiver(this.noticeReceiver);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
 
         baseContext = this;
+
+        socketService = Websocket.getInstance();
+        waitIndicator = new ProgressDialog(baseContext);
 
         oldPasswordET = (EditText) findViewById(R.id.hx_change_password_edit_oldpassword);
         newPasswordET = (EditText) findViewById(R.id.hx_change_password_edit_newpassword);
@@ -83,7 +138,16 @@ public class ChangePassword extends AppCompatActivity {
                     return ;
                 }
 
-                finish();
+                waitIndicator.setMessage("Please wait...");
+                waitIndicator.setCancelable(false);
+                waitIndicator.show();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        socketService.ResetPassword(oldPassword, newPassword);
+                    }
+                }).start();
             }
         });
 

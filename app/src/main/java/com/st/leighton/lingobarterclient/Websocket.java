@@ -6,6 +6,9 @@ import android.os.IBinder;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 public class Websocket extends Service {
     private String token;
     private String name;
@@ -26,6 +29,15 @@ public class Websocket extends Service {
         return instance;
     }
 
+    public String getToken()
+    {
+        if (token != null) {
+            return token;
+        } else {
+            return "NONE";
+        }
+    }
+
     public void Login(String email, String password) {
         WebsocketClient client
                 = new WebsocketClient(WebsocketClient.METHOD.Post, "/api/v1/accounts/authorize");
@@ -43,12 +55,17 @@ public class Websocket extends Service {
                 int status = jsonResult.getInt("status");
                 switch (status) {
                     case 200:
+                        boolean completeFlag = jsonResult.getJSONObject("response").getBoolean("complete");
                         token = jsonResult.getJSONObject("response").getString("auth_token");
                         name = jsonResult.getJSONObject("response").getString("name");
                         username = jsonResult.getJSONObject("response").getString("username");
                         userid = jsonResult.getJSONObject("response").getString("user_id");
 
-                        feedback = "Succeed";
+                        if (completeFlag) {
+                            feedback = "Succeed";
+                        } else {
+                            feedback = "Uncomplete";
+                        }
                         break;
 
                     case 403:
@@ -239,6 +256,79 @@ public class Websocket extends Service {
 
         Intent intent = new Intent("android.intent.action.EmailConfirmationLogin");
         intent.putExtra(EmailConfirmation.EMAIL_CONFIRMATION_LOGIN_FEEDBACK, feedback);
+        getInstance().sendBroadcast(intent);
+    }
+
+    public void BasicUploadAvatar(String imagePath) {
+        String feedback = "";
+        // Succeed; ERROR;
+
+        Intent intent = new Intent("android.intent.action.BasicProfileImage");
+        intent.putExtra(BasicProfile.PROFILE_IMAGE_FEEDBACK, feedback);
+        getInstance().sendBroadcast(intent);
+    }
+
+    public void BasicSetBasicProfile(String name, boolean gender, String nationality,
+                                     double latitude, double longitude, double birthday,
+                                     HashSet<String> nativeLanguages, HashMap<String, Integer> learnLanguages) {
+        //  Gender: true for male
+
+        String feedback = "";
+        // Succeed; ERROR;
+
+        Intent intent = new Intent("android.intent.action.BasicProfile");
+        intent.putExtra(BasicProfile.PROFILE_FEEDBACK, feedback);
+        getInstance().sendBroadcast(intent);
+    }
+
+    public void SettingsUploadAvatar(String imagePath) {
+        String feedback = "";
+        // Succeed; ERROR;
+
+        Intent intent = new Intent("android.intent.action.ProfileSettingsImage");
+        intent.putExtra(ProfileSettings.PROFILE_IMAGE_FEEDBACK, feedback);
+        getInstance().sendBroadcast(intent);
+    }
+
+    public void SettingsSetBasicProfile(String name, boolean gender, String nationality,
+                                        double latitude, double longitude, double birthday,
+                                        HashSet<String> nativeLanguages, HashMap<String, Integer> learnLanguages) {
+        //  Gender: true for male
+
+        String feedback = "";
+        // Succeed; ERROR;
+
+        Intent intent = new Intent("android.intent.action.ProfileSettings");
+        intent.putExtra(ProfileSettings.PROFILE_FEEDBACK, feedback);
+        getInstance().sendBroadcast(intent);
+    }
+
+    public void ResetPassword(String oldPassword, String newPassword) {
+        String feedback = "";
+        // Succeed; InvalidPassword; ERROR
+
+        Intent intent = new Intent("android.intent.action.ChangePassword");
+        intent.putExtra(ChangePassword.CHANGE_PASSWORD_FEEDBACK, feedback);
+        getInstance().sendBroadcast(intent);
+    }
+
+    public void UpdateSelfInformation(String tagline, String biography) {
+        String feedback = "";
+        // Succeed; ERROR;
+
+        Intent intent = new Intent("android.intent.action.SelfInformation");
+        intent.putExtra(SelfInformation.SELF_INFORMATION_UPDATE_FEEDBACK, feedback);
+        getInstance().sendBroadcast(intent);
+    }
+
+    public void UpdateApplicationSettings(boolean strictFlag, boolean sameGenderFlag,
+            boolean nearbySearchFlag, boolean allSearchFlag, boolean partnerConfirmationFlag,
+            HashSet<String> hideInformations, int ageRangeFrom, int ageRangeTo) {
+        String feedback = "";
+        // Succeed; ERROR;
+
+        Intent intent = new Intent("android.intent.action.SelfInformation");
+        intent.putExtra(SelfInformation.SELF_INFORMATION_UPDATE_FEEDBACK, feedback);
         getInstance().sendBroadcast(intent);
     }
 

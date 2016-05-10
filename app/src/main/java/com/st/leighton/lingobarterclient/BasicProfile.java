@@ -2,9 +2,12 @@ package com.st.leighton.lingobarterclient;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
@@ -84,12 +87,83 @@ public class BasicProfile extends AppCompatActivity {
     HashSet<String> nativeLanguages;
     HashMap<String, Integer> learnLanguages;
 
+    Websocket socketService;
+    BroadcastReceiver noticeReceiver, imageNoticeReceiver;
+
+    ProgressDialog waitIndicator;
+    final public static String PROFILE_FEEDBACK = "PROFILE_FEEDBACK";
+    final public static String PROFILE_IMAGE_FEEDBACK = "PROFILE_IMAGE_FEEDBACK";
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        IntentFilter noticeFilter = new IntentFilter("android.intent.action.BasicProfile");
+        noticeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (waitIndicator.isShowing()) {
+                    waitIndicator.cancel();
+                }
+                String message = intent.getStringExtra(PROFILE_FEEDBACK);
+
+                switch (message) {
+                    case "Succeed":
+                        Intent main_intent = new Intent(baseContext, MainActivity.class);
+                        startActivity(main_intent);
+                        finish();
+                        break;
+
+                    case "ERROR":
+                        Toast.makeText(baseContext,"Cannot connect to server, please check your network", Toast.LENGTH_LONG).show();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        };
+        this.registerReceiver(noticeReceiver, noticeFilter);
+
+        IntentFilter imageNoticeFilter = new IntentFilter("android.intent.action.BasicProfileImage");
+        imageNoticeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String message = intent.getStringExtra(PROFILE_IMAGE_FEEDBACK);
+
+                switch (message) {
+                    case "Succeed":
+                        Toast.makeText(baseContext,"Avatar has been uploaded", Toast.LENGTH_LONG).show();
+                        break;
+
+                    case "ERROR":
+                        Toast.makeText(baseContext,"Cannot connect to server, please check your network", Toast.LENGTH_LONG).show();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        };
+        this.registerReceiver(imageNoticeReceiver, imageNoticeFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.unregisterReceiver(this.noticeReceiver);
+        this.unregisterReceiver(this.imageNoticeReceiver);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_basic_profile);
 
         baseContext = this;
+
+        socketService = Websocket.getInstance();
+        waitIndicator = new ProgressDialog(baseContext);
 
         fullnameET = (EditText) findViewById(R.id.hx_basic_profile_edit_name);
         locationET = (EditText) findViewById(R.id.hx_basic_profile_edit_location);
@@ -356,9 +430,18 @@ public class BasicProfile extends AppCompatActivity {
                 }
 
                 if (noOverlapLanguages(nativeLanguages, learnLanguages)) {
-                    Intent main_intent = new Intent(baseContext, MainActivity.class);
-                    startActivity(main_intent);
-                    finish();
+                    waitIndicator.setMessage("Please wait...");
+                    waitIndicator.setCancelable(false);
+                    waitIndicator.show();
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            socketService.BasicSetBasicProfile(fullname, gender, nation,
+                                    latitude, longitude, birthday_timestamp,
+                                    nativeLanguages, learnLanguages);
+                        }
+                    }).start();
                 } else {
                     Toast.makeText(baseContext,"Overlapped language choices", Toast.LENGTH_LONG).show();
                 }
@@ -379,6 +462,13 @@ public class BasicProfile extends AppCompatActivity {
             if (requestCode == SELECT_PICTURE) {
                 selectedImageUri = data.getData();
                 avatarIV.setImageURI(selectedImageUri);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        socketService.BasicUploadAvatar(getPath(selectedImageUri));
+                    }
+                }).start();
             }
         }
     }
