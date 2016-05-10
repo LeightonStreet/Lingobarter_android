@@ -2,6 +2,8 @@ package com.st.leighton.lingobarterclient;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
 import android.os.IBinder;
 
 import org.json.JSONObject;
@@ -329,6 +331,20 @@ public class Websocket extends Service {
 
         Intent intent = new Intent("android.intent.action.SelfInformation");
         intent.putExtra(SelfInformation.SELF_INFORMATION_UPDATE_FEEDBACK, feedback);
+        getInstance().sendBroadcast(intent);
+    }
+
+    public void Search(int ageRangeFrom, int ageRangeTo,
+                       HashMap<String, Integer> teachLanguages, HashMap<String, Integer> learnLanguages,
+                       HashSet<String> nationalities) {
+        HashMap<String, UserInfoBundle> userProfiles = new HashMap<>();
+        // Fill userProfiles, using user name as key.
+
+        Bundle passToSearch = new Bundle();
+        passToSearch.putSerializable(Search.USER_PROFILES_BUNDLE_KEY, userProfiles);
+
+        Intent intent = new Intent("android.intent.action.Search");
+        intent.putExtras(passToSearch);
         getInstance().sendBroadcast(intent);
     }
 

@@ -19,38 +19,34 @@
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".Register"
+        <activity
+            android:name=".Register"
             android:noHistory="true" />
-
-        <activity android:name=".EmailConfirmation"
+        <activity
+            android:name=".EmailConfirmation"
             android:noHistory="true" />
-
-        <activity android:name=".ForgetPassword"
+        <activity
+            android:name=".ForgetPassword"
             android:noHistory="true" />
-
         <activity android:name=".BasicProfile" />
-
         <activity android:name=".ProfileSettings" />
-
         <activity
             android:name=".ChangePassword"
             android:noHistory="true" />
-
-        <activity android:name=".SelfInformation"
-            android:noHistory="true"/>
-
+        <activity
+            android:name=".SelfInformation"
+            android:noHistory="true" />
         <activity
             android:name=".ApplicationSettings"
             android:noHistory="true" />
-
         <activity android:name=".Search" />
-
-        <activity android:name=".UserProfile"
-            android:noHistory="true"/>
+        <activity
+            android:name=".UserProfile"
+            android:noHistory="true" />
 
         <service
             android:name=".Websocket"
@@ -58,9 +54,9 @@
             android:exported="true" />
 
         <activity android:name=".TESTING" />
-
         <activity android:name=".MainActivity" />
         <activity android:name=".ChatActivity" />
+        <activity android:name=".test"></activity>
     </application>
 
 </manifest>

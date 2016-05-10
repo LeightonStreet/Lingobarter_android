@@ -1,9 +1,12 @@
 package com.st.leighton.lingobarterclient;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Geocoder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -80,74 +83,157 @@ public class Search extends AppCompatActivity {
     final static public String LEARN_LANGUAGES_KEY = "SEARCH_LEARN_LANGUAGES_KEY";
     final static public String TEACH_LANGUAGES_KEY = "SEARCH_TEACH_LANGUAGES_KEY";
 
-    private void test() {
-        final String[] usernames;
-        ArrayAdapter<String> usernameAdapter;
+    Websocket socketService;
+    BroadcastReceiver noticeReceiver;
 
-        final ListView usernamesLV;
-        AlertDialog.Builder usersAlertDialog;
+    ProgressDialog waitIndicator;
+    final public static String USER_PROFILES_BUNDLE_KEY = "USER_PROFILES_BUNDLE_KEY";
 
-        usernames = getResources().getStringArray(R.array.test_user);
-        usernameAdapter = new ArrayAdapter<>(baseContext, android.R.layout.simple_list_item_1,usernames);
+//    private void test() {
+//        final String[] usernames;
+//        ArrayAdapter<String> usernameAdapter;
+//
+//        final ListView usernamesLV;
+//        AlertDialog.Builder usersAlertDialog;
+//
+//        usernames = getResources().getStringArray(R.array.test_user);
+//        usernameAdapter = new ArrayAdapter<>(baseContext, android.R.layout.simple_list_item_1,usernames);
+//
+//        usernamesLV = new ListView(baseContext);
+//        usernamesLV.setAdapter(usernameAdapter);
+//        usernamesLV.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+//        usernamesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                String name = "Haoxiang Xu";
+//                String username = usernames[(int) id];
+//
+//                String imageURL = "Default URL";
+//                String gender = "Male";
+//                String birthday = "1993/2/6";
+//                String tagline = "I'm super COOL!";
+//                String biography = "I really want to meet someone here, please teach my English~";
+//                String city = "Tengzhou";
+//                String nationality = "China";
+//
+//                HashSet<String> teach_languages = new HashSet<>();
+//                teach_languages.add("Chinese");
+//                teach_languages.add("Cantonese");
+//
+//                HashMap<String, Integer> learn_languages = new HashMap<>();
+//                learn_languages.put("English", 3);
+//                learn_languages.put("Japanese", 1);
+//
+//                Bundle passToUserProfile = new Bundle();
+//                passToUserProfile.putString(NAME_KEY, name);
+//                passToUserProfile.putString(USERNAME_KEY, username);
+//                passToUserProfile.putString(IMAGEURL_KEY, imageURL);
+//                passToUserProfile.putString(GENDER_KEY, gender);
+//                passToUserProfile.putString(BIRTHDAY_KEY, birthday);
+//                passToUserProfile.putString(TAGLINE_KEY, tagline);
+//                passToUserProfile.putString(BIOGRAPHY_KEY, biography);
+//                passToUserProfile.putString(CITY_KEY, city);
+//                passToUserProfile.putString(NATIONALITY_KEY, nationality);
+//                passToUserProfile.putSerializable(LEARN_LANGUAGES_KEY, learn_languages);
+//                passToUserProfile.putSerializable(TEACH_LANGUAGES_KEY, teach_languages);
+//
+//                Intent intent = new Intent(baseContext, UserProfile.class);
+//                intent.putExtras(passToUserProfile);
+//                startActivity(intent);
+//            }
+//        });
+//
+//        usersAlertDialog = new AlertDialog.Builder(baseContext);
+//        usersAlertDialog.setTitle("Users");
+//        usersAlertDialog.setView(usernamesLV);
+//        usersAlertDialog.setPositiveButton("RETURN", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                if(usernamesLV.getParent() != null) {
+//                    ((ViewGroup) usernamesLV.getParent()).removeView(usernamesLV);
+//                }
+//            }
+//        });
+//
+//        final Dialog dialog = usersAlertDialog.create();
+//        dialog.show();
+//    }
 
-        usernamesLV = new ListView(baseContext);
-        usernamesLV.setAdapter(usernameAdapter);
-        usernamesLV.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        usernamesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        IntentFilter noticeFilter = new IntentFilter("android.intent.action.Search");
+        noticeReceiver = new BroadcastReceiver() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String name = "Haoxiang Xu";
-                String username = usernames[(int) id];
+            public void onReceive(Context context, Intent intent) {
+                Bundle bundle = intent.getExtras();
+                final HashMap<String, UserInfoBundle> userProfiles
+                        = (HashMap<String, UserInfoBundle>) bundle.getSerializable(USER_PROFILES_BUNDLE_KEY);
 
-                String imageURL = "Default URL";
-                String gender = "Male";
-                String birthday = "1993/2/6";
-                String tagline = "I'm super COOL!";
-                String biography = "I really want to meet someone here, please teach my English~";
-                String city = "Tengzhou";
-                String nationality = "China";
-
-                HashSet<String> teach_languages = new HashSet<>();
-                teach_languages.add("Chinese");
-                teach_languages.add("Cantonese");
-
-                HashMap<String, Integer> learn_languages = new HashMap<>();
-                learn_languages.put("English", 3);
-                learn_languages.put("Japanese", 1);
-
-                Bundle passToUserProfile = new Bundle();
-                passToUserProfile.putString(NAME_KEY, name);
-                passToUserProfile.putString(USERNAME_KEY, username);
-                passToUserProfile.putString(IMAGEURL_KEY, imageURL);
-                passToUserProfile.putString(GENDER_KEY, gender);
-                passToUserProfile.putString(BIRTHDAY_KEY, birthday);
-                passToUserProfile.putString(TAGLINE_KEY, tagline);
-                passToUserProfile.putString(BIOGRAPHY_KEY, biography);
-                passToUserProfile.putString(CITY_KEY, city);
-                passToUserProfile.putString(NATIONALITY_KEY, nationality);
-                passToUserProfile.putSerializable(LEARN_LANGUAGES_KEY, learn_languages);
-                passToUserProfile.putSerializable(TEACH_LANGUAGES_KEY, teach_languages);
-
-                Intent intent = new Intent(baseContext, UserProfile.class);
-                intent.putExtras(passToUserProfile);
-                startActivity(intent);
-            }
-        });
-
-        usersAlertDialog = new AlertDialog.Builder(baseContext);
-        usersAlertDialog.setTitle("Users");
-        usersAlertDialog.setView(usernamesLV);
-        usersAlertDialog.setPositiveButton("RETURN", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(usernamesLV.getParent() != null) {
-                    ((ViewGroup) usernamesLV.getParent()).removeView(usernamesLV);
+                final ArrayList<String> userNames = new ArrayList<>();
+                for (String userName : userProfiles.keySet()) {
+                    userNames.add(userName);
                 }
-            }
-        });
 
-        final Dialog dialog = usersAlertDialog.create();
-        dialog.show();
+                final ListView usernamesLV;
+                AlertDialog.Builder usersAlertDialog;
+                ArrayAdapter<String> userNamesAdapter
+                        = new ArrayAdapter<>(baseContext, android.R.layout.simple_spinner_item, userNames);
+
+                usernamesLV = new ListView(baseContext);
+                usernamesLV.setAdapter(userNamesAdapter);
+                usernamesLV.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+                usernamesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        String user_name = userNames.get((int) id);
+                        UserInfoBundle user_info = userProfiles.get(user_name);
+
+                        Bundle passToUserProfile = new Bundle();
+                        passToUserProfile.putString(NAME_KEY, user_info.name);
+                        passToUserProfile.putString(USERNAME_KEY, user_info.username);
+                        passToUserProfile.putString(IMAGEURL_KEY, user_info.imageURL);
+                        passToUserProfile.putString(GENDER_KEY, user_info.gender);
+                        passToUserProfile.putString(BIRTHDAY_KEY, user_info.birthday);
+                        passToUserProfile.putString(TAGLINE_KEY, user_info.tagline);
+                        passToUserProfile.putString(BIOGRAPHY_KEY, user_info.biography);
+                        passToUserProfile.putString(CITY_KEY, user_info.city);
+                        passToUserProfile.putString(NATIONALITY_KEY, user_info.nationality);
+                        passToUserProfile.putSerializable(LEARN_LANGUAGES_KEY, user_info.learn_languages);
+                        passToUserProfile.putSerializable(TEACH_LANGUAGES_KEY, user_info.teach_languages);
+
+                        Intent intent = new Intent(baseContext, UserProfile.class);
+                        intent.putExtras(passToUserProfile);
+                        startActivity(intent);
+                    }
+                });
+
+                usersAlertDialog = new AlertDialog.Builder(baseContext);
+                usersAlertDialog.setTitle("Users");
+                usersAlertDialog.setView(usernamesLV);
+                usersAlertDialog.setPositiveButton("RETURN", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(usernamesLV.getParent() != null) {
+                            ((ViewGroup) usernamesLV.getParent()).removeView(usernamesLV);
+                        }
+                    }
+                });
+
+                final Dialog dialog = usersAlertDialog.create();
+                dialog.show();
+
+                waitIndicator.cancel();
+            }
+        };
+        this.registerReceiver(noticeReceiver, noticeFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.unregisterReceiver(this.noticeReceiver);
     }
 
     @Override
@@ -156,6 +242,9 @@ public class Search extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         baseContext = this;
+
+        socketService = Websocket.getInstance();
+        waitIndicator = new ProgressDialog(baseContext);
 
         allGenderRB = (RadioButton) findViewById(R.id.hx_search_radio_all);
         maleRB = (RadioButton) findViewById(R.id.hx_search_radio_male);
@@ -375,7 +464,16 @@ public class Search extends AppCompatActivity {
                     }
                 }
 
-                test();
+                waitIndicator.setMessage("Please wait...");
+                waitIndicator.setCancelable(false);
+                waitIndicator.show();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        socketService.Search(fromAge, toAge, teachLanguages, learnLanguages, nationalities);
+                    }
+                }).start();
             }
         });
 
