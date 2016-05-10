@@ -1,5 +1,16 @@
 <resources>
     <string name="app_name">LingoBarterClient</string>
+    <string name="hx_search">"Search"</string>
+    <string name="hx_return">"Return"</string>
+    <string name="hx_male">"Male"</string>
+    <string name="hx_female">"Female"</string>
+    <string name="hx_all">"All"</string>
+    <string name="hx_yes">"YES"</string>
+    <string name="hx_no">"NO"</string>
+    <string name="hx_zero">"0"</string>
+    <string name="hx_one_hundred">"100"</string>
+    <string name="hx_from">"From"</string>
+    <string name="hx_to">"To"</string>
     <string name="hx_god_button">"God Button"</string>
     <string name="hx_email">"Email"</string>
     <string name="hx_password">"Password"</string>
@@ -46,11 +57,52 @@
     <string name="hx_forget_login">"Back to login"</string>
     <string name="hx_profile_settings_confirm">"Update"</string>
     <string name="hx_profile_settings_cancel">"Cancel"</string>
+    <string name="hx_profile_settings_change_password">"Change Password"</string>
     <string name="hx_search_entrance_description">"Find your friends on Lingobarter!"</string>
+    <string name="hx_change_password_title">"Change Password"</string>
+    <string name="hx_change_password_old_password_hint">"Old Password"</string>
+    <string name="hx_change_password_new_password_hint">"New Password"</string>
+    <string name="hx_application_settings_title">"Account Settings"</string>
+    <string name="hx_application_settings_strict_match">"Strict language match:"</string>
+    <string name="hx_application_settings_same_gender">"Can only be found by user of same gender:"</string>
+    <string name="hx_application_settings_age_range">"Can only be found by user of age range:"</string>
+    <string name="hx_application_settings_hide_you_from_nearby">"Hide you from nearby searches:"</string>
+    <string name="hx_application_settings_hide_you_from_search">"Hide you from all searches:"</string>
+    <string name="hx_application_settings_hide_info">"Hide information:"</string>
+    <string name="hx_application_settings_need_confirmation">"Adding partners confirmation:"</string>
+    <string name="hx_application_settings_hide_info_hint">"None"</string>
+    <string name="hx_self_information_title">"Self Introduction"</string>
+    <string name="hx_self_information_biography">"Biography"</string>
+    <string name="hx_self_information_biography_hint">"More about you"</string>
+    <string name="hx_self_information_tagline">"Tag Line"</string>
+    <string name="hx_self_information_tagline_hint">"Describe yourself"</string>
+    <string name="hx_search_title">"Search User"</string>
+    <string name="hx_search_age_title">"Age range:"</string>
+    <string name="hx_search_gender_title">"Gender:"</string>
+    <string name="hx_search_nationality">"Nationalities:"</string>
+    <string name="hx_search_teach_language">"Teaching languages:"</string>
+    <string name="hx_search_learn_language">"Learning languages:"</string>
+    <string name="hx_search_nationality_hint">"Choose nationalities of target users"</string>
+    <string name="hx_search_teach_language_hint">"Choose teaching languages"</string>
+    <string name="hx_search_learn_language_hint">"Choose learn languages of target users"</string>
+    <string name="hx_search_feeling_lucky">"I'm feeling lucky!"</string>
+    <string name="hx_search_random_search">"Random Search"</string>
+    <string name="hx_search_specific_search">"Specific Search"</string>
+    <string name="hx_user_profile_name_title">"Name"</string>
+    <string name="hx_user_profile_login_title">"Last login at: "</string>
+    <string name="hx_user_profile_teach_language_title">"I can speak: "</string>
+    <string name="hx_user_profile_learn_language_title">"I want to learn: "</string>
+    <string name="hx_user_profile_biography_title">"More about me: "</string>
+    <string name="hx_user_profile_send_request">"ADD (S)HE AS PARTNER!"</string>
+    <string name="hx_user_profile_back">"Back to list"</string>
+    <string name="hx_user_profile_test">"123"</string>
+    <string name="hx_user_profile_long_test">"123123123"</string>
+
 
     <!-- STT credentials --> 
     <string name="STT_Username">0e62a22d-2a54-4731-841d-9e3f91e5b661</string>
-     <string name="STT_Password">tKwa0qCYyBPx</string>
+     
+    <string name="STT_Password">tKwa0qCYyBPx</string>
      <string name="STT_TokenFactory">https://stream.watsonplatform.net/speech-to-text/api</string> 
 
     <!-- TTS credentials --> 
@@ -83,6 +135,36 @@
         <item>"Basic Information"</item>
         <item>"Self Introduction"</item>
         <item>"Application Settings"</item>
+    </string-array>
+
+    <string-array name="info_array">
+        <item>"Name"</item>
+        <item>"Email"</item>
+        <item>"User name"</item>
+        <item>"Gender"</item>
+        <item>"Birthday"</item>
+        <item>"Tag line"</item>
+        <item>"Biography"</item>
+        <item>"Avatar"</item>
+        <item>"Location"</item>
+        <item>"Nationality"</item>
+        <item>"Language to teach"</item>
+        <item>"Language to learn"</item>
+    </string-array>
+
+    <string-array name="test_user">
+        <item>"1"</item>
+        <item>"2"</item>
+        <item>"3"</item>
+        <item>"4"</item>
+        <item>"Chinese"</item>
+        <item>"English"</item>
+        <item>"Spanish"</item>
+        <item>"Italian"</item>
+        <item>"French"</item>
+        <item>"Korean"</item>
+        <item>"Russian"</item>
+        <item>"German"</item>
     </string-array>
 
     <string name="url_base">http://localhost:8080/api/v1</string>

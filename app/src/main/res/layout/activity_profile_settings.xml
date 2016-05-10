@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.st.leighton.lingobarterclient.ProfileSettings"
 
+    android:background="@color/DarkGray"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,10 +11,6 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="15dp" />
 
     <LinearLayout
         android:id="@+id/hx_profile_settings_name_layout"
@@ -258,5 +255,19 @@
             android:layout_width="0dp"
             android:layout_height="match_parent" />
     </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+    
+    <Button
+        android:id="@+id/hx_profile_settings_button_changepassword"
+        android:text="@string/hx_profile_settings_change_password"
+        android:background="@android:color/transparent"
+        android:textColor="@drawable/hx_text_color_change_register_btn"
+        android:gravity="end"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
