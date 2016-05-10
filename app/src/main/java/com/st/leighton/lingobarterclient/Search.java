@@ -68,6 +68,18 @@ public class Search extends AppCompatActivity {
     HashSet<String> nationalities;
     HashMap<String, Integer> teachLanguages, learnLanguages;
 
+    final static public String NAME_KEY = "SEARCH_NAME_KEY";
+    final static public String USERNAME_KEY = "SEARCH_USERNAME_KEY";
+    final static public String IMAGEURL_KEY = "SEARCH_IMAGEURL_KEY";
+    final static public String GENDER_KEY = "SEARCH_GENDER_KEY";
+    final static public String BIRTHDAY_KEY = "SEARCH_BIRTHDAY_KEY";
+    final static public String TAGLINE_KEY = "SEARCH_TAGLINE_KEY";
+    final static public String BIOGRAPHY_KEY = "SEARCH_BIOGRAPHY_KEY";
+    final static public String CITY_KEY = "SEARCH_CITY_KEY";
+    final static public String NATIONALITY_KEY = "SEARCH_NATIONALITY_KEY";
+    final static public String LEARN_LANGUAGES_KEY = "SEARCH_LEARN_LANGUAGES_KEY";
+    final static public String TEACH_LANGUAGES_KEY = "SEARCH_TEACH_LANGUAGES_KEY";
+
     private void test() {
         final String[] usernames;
         ArrayAdapter<String> usernameAdapter;
@@ -84,9 +96,40 @@ public class Search extends AppCompatActivity {
         usernamesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String name = "Haoxiang Xu";
                 String username = usernames[(int) id];
+
+                String imageURL = "Default URL";
+                String gender = "Male";
+                String birthday = "1993/2/6";
+                String tagline = "I'm super COOL!";
+                String biography = "I really want to meet someone here, please teach my English~";
+                String city = "Tengzhou";
+                String nationality = "China";
+
+                HashSet<String> teach_languages = new HashSet<>();
+                teach_languages.add("Chinese");
+                teach_languages.add("Cantonese");
+
+                HashMap<String, Integer> learn_languages = new HashMap<>();
+                learn_languages.put("English", 3);
+                learn_languages.put("Japanese", 1);
+
+                Bundle passToUserProfile = new Bundle();
+                passToUserProfile.putString(NAME_KEY, name);
+                passToUserProfile.putString(USERNAME_KEY, username);
+                passToUserProfile.putString(IMAGEURL_KEY, imageURL);
+                passToUserProfile.putString(GENDER_KEY, gender);
+                passToUserProfile.putString(BIRTHDAY_KEY, birthday);
+                passToUserProfile.putString(TAGLINE_KEY, tagline);
+                passToUserProfile.putString(BIOGRAPHY_KEY, biography);
+                passToUserProfile.putString(CITY_KEY, city);
+                passToUserProfile.putString(NATIONALITY_KEY, nationality);
+                passToUserProfile.putSerializable(LEARN_LANGUAGES_KEY, learn_languages);
+                passToUserProfile.putSerializable(TEACH_LANGUAGES_KEY, teach_languages);
+
                 Intent intent = new Intent(baseContext, UserProfile.class);
-//                intent.putExtra("TEST", username);
+                intent.putExtras(passToUserProfile);
                 startActivity(intent);
             }
         });
@@ -333,7 +376,6 @@ public class Search extends AppCompatActivity {
                 }
 
                 test();
-//                Toast.makeText(baseContext,"Succeed", Toast.LENGTH_LONG).show();
             }
         });
 

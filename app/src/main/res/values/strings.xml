@@ -94,8 +94,9 @@
     <string name="hx_user_profile_learn_language_title">"I want to learn: "</string>
     <string name="hx_user_profile_biography_title">"More about me: "</string>
     <string name="hx_user_profile_send_request">"ADD (S)HE AS PARTNER!"</string>
-    <string name="hx_user_profile_test">"TESTING"</string>
-    <string name="hx_user_profile_long_test">"TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING"</string>
+    <string name="hx_user_profile_back">"Back to list"</string>
+    <string name="hx_user_profile_test">"123"</string>
+    <string name="hx_user_profile_long_test">"123123123"</string>
 
 
     <!-- STT credentials --> 
@@ -157,6 +158,14 @@
         <item>"2"</item>
         <item>"3"</item>
         <item>"4"</item>
+        <item>"Chinese"</item>
+        <item>"English"</item>
+        <item>"Spanish"</item>
+        <item>"Italian"</item>
+        <item>"French"</item>
+        <item>"Korean"</item>
+        <item>"Russian"</item>
+        <item>"German"</item>
     </string-array>
 
     <string name="url_base">http://localhost:8080/api/v1</string>
