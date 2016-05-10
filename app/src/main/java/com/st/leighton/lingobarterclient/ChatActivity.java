@@ -18,6 +18,7 @@ package com.st.leighton.lingobarterclient;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -26,7 +27,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListView;
 
+import com.ibm.watson.developer_cloud.http.HttpMediaType;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
 
 import chat.OnOperationListener;
 import chat.adapter.ChatAdapter;
@@ -53,8 +57,6 @@ public class ChatActivity extends KJActivity {
     private String user1;
     private String user2;
 
-//    private SpeechToText service;
-
     public static final int REQUEST_CODE_GETIMAGE_BYSDCARD = 0x1;
 
     private KJChatKeyboard box;
@@ -63,14 +65,23 @@ public class ChatActivity extends KJActivity {
     List<Message> messages = new ArrayList<>();
     private ChatAdapter adapter;
 
+    SpeechToText service = new SpeechToText();
+
+    RecognizeOptions options = new RecognizeOptions.Builder().contentType(
+            HttpMediaType.AUDIO_RAW + "; rate=44000").build();
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         user1 = getIntent().getExtras().getString("USER1_ID");
         user2 = getIntent().getExtras().getString("USER2_ID");
 
-//        service = new SpeechToText();
-//        service.setUsernameAndPassword(getString(R.string.STT_Username), getString(R.string.STT_Password));
+        try {
+            service.setUsernameAndPassword(getString(R.string.STT_Username), getString(R.string.STT_Password));
+            service.setEndPoint(getString(R.string.STT_TokenFactory));
+        } catch (RuntimeException exception){
+            System.out.println(exception);
+        }
     }
 
     @Override
@@ -98,17 +109,36 @@ public class ChatActivity extends KJActivity {
                         "avatar", content, true, true, new Date());
                 messages.add(message);
                 adapter.refresh(messages);
-                createReplayMsg(message);
+                createReplyMsg(message);
             }
 
             @Override
-            public void selectedFace(Faceicon content) {
-                Message message = new Message(Message.MSG_TYPE_FACE, Message.MSG_STATE_SUCCESS,
-                        user1, "avatar", user2, "avatar", content.getPath(), true, true, new
-                        Date());
-                messages.add(message);
+            public void sendVoiceM(String fileName, final int length) {
+                final File audio = new File("fileName");
+
+                new AsyncTask<Void, Void, SpeechResults>(){
+                    @Override
+                    protected SpeechResults doInBackground(Void... none) {
+                        SpeechResults transcript = service.recognize(audio, options).execute();
+                        return transcript;
+                    }
+
+                    @Override
+                    protected void onPostExecute(SpeechResults result) {
+                        String content = result.toString();
+                        Message message = new Message(Message.MSG_TYPE_VOICE, Message.MSG_STATE_SUCCESS,
+                                user1, "avatar", user2, "avatar", content, true, true, new Date());
+                        message.setLength(length);
+                        messages.add(message);
+                    }
+                }.execute();
+
                 adapter.refresh(messages);
-                createReplayMsg(message);
+            }
+
+            @Override
+            public void selectedFace(Faceicon content){
+
             }
 
             @Override
@@ -188,9 +218,9 @@ public class ChatActivity extends KJActivity {
         mRealListView.setAdapter(adapter);
     }
 
-    private void createReplayMsg(Message message) {
-        final Message reMessage = new Message(message.getType(), Message.MSG_STATE_SUCCESS, user1,
-                "avatar", user2, "avatar", message.getType() == Message.MSG_TYPE_TEXT ? "返回:"
+    private void createReplyMsg(Message message) {
+        final Message reMessage = new Message(message.getType(), Message.MSG_STATE_SUCCESS, user2,
+                "avatar", user1, "avatar", message.getType() == Message.MSG_TYPE_TEXT ? "Reply:"
                 + message.getContent() : message.getContent(), false,
                 true, new Date());
         new Thread(new Runnable() {

@@ -105,7 +105,6 @@
     <string name="STT_Password">tKwa0qCYyBPx</string>
      <string name="STT_TokenFactory">https://stream.watsonplatform.net/speech-to-text/api</string> 
 
-
     <!-- TTS credentials --> 
     <string name="TTS_Username">335715c1-4d50-48f9-aa18-9fb94263a375</string> 
     <string name="TTS_Password">pfotm1PcKXjm</string> 
@@ -169,4 +168,7 @@
     </string-array>
 
     <string name="url_base">http://localhost:8080/api/v1</string>
+
+    <string name="text_ack_msg">read</string>
+    <string name="text_delivered_msg">delivered</string>
 </resources>

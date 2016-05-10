@@ -27,6 +27,8 @@ public interface OnOperationListener {
 
     void send(String content);
 
+    void sendVoiceM(String fileName, int length);
+
     void selectedFace(Faceicon content);
 
     void selectedEmoji(Emojicon content);
