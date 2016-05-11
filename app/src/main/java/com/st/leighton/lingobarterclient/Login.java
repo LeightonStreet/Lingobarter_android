@@ -52,8 +52,11 @@ public class Login extends AppCompatActivity {
                         break;
 
                     case "Uncomplete":
-                        Intent basic_profile_intent = new Intent(baseContext, BasicProfile.class);
-                        startActivity(basic_profile_intent);
+//                        Intent basic_profile_intent = new Intent(baseContext, BasicProfile.class);
+//                        startActivity(basic_profile_intent);
+//                        finish();
+                        Intent main1_intent = new Intent(baseContext, MainActivity.class);
+                        startActivity(main1_intent);
                         finish();
                         break;
 

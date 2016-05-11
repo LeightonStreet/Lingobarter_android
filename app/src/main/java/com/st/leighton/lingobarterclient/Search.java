@@ -171,6 +171,11 @@ public class Search extends AppCompatActivity {
                 final HashMap<String, UserInfoBundle> userProfiles
                         = (HashMap<String, UserInfoBundle>) bundle.getSerializable(USER_PROFILES_BUNDLE_KEY);
 
+                if (userProfiles.size() == 0) {
+                    Toast.makeText(baseContext,"Cannot connect to server, please check your network", Toast.LENGTH_LONG).show();
+                    return ;
+                }
+
                 final ArrayList<String> userNames = new ArrayList<>();
                 for (String userName : userProfiles.keySet()) {
                     userNames.add(userName);

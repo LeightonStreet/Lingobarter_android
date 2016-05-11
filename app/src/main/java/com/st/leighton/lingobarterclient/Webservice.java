@@ -2,13 +2,23 @@ package com.st.leighton.lingobarterclient;
 
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
+import android.widget.ImageView;
 
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 
 public class Webservice extends Service {
     private String token;
@@ -16,10 +26,13 @@ public class Webservice extends Service {
     private String userid;
     private String username;
 
+    private Geocoder geocoder;
     private static Webservice instance = null;
 
     @Override
     public void onCreate() {
+        geocoder = new Geocoder(this, Locale.getDefault());
+
         instance = this;
         super.onCreate();
     }
@@ -338,6 +351,7 @@ public class Webservice extends Service {
                        HashSet<String> nationalities) {
         HashMap<String, UserInfoBundle> userProfiles = new HashMap<>();
         // Fill userProfiles, using user name as key.
+        // If network error, pass a empty userProfiles.
 
         Bundle passToSearch = new Bundle();
         passToSearch.putSerializable(Search.USER_PROFILES_BUNDLE_KEY, userProfiles);
@@ -345,6 +359,16 @@ public class Webservice extends Service {
         Intent intent = new Intent("android.intent.action.Search");
         intent.putExtras(passToSearch);
         getInstance().sendBroadcast(intent);
+    }
+
+    public void GetSelfInfo() {
+        SelfInfoBundle selfInfo = new SelfInfoBundle();
+        // Fill selfInfo.
+        // If network error, pass un-initialized selfInfo.
+
+        Bundle passToSettings = new Bundle();
+        // Use selfInfo.setBundle() to initialize all the information fields.
+//        passToSettings.putSerializable(TESTING.SELF_INFO_KEY, selfInfo);
     }
 
     @Override
@@ -360,5 +384,15 @@ public class Webservice extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    public String getCityByGeo(double latitude, double longtitude) {
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
+            return addresses.get(0).getLocality();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }
