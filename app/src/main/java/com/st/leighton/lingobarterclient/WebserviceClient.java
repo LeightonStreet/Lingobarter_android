@@ -1,5 +1,7 @@
 package com.st.leighton.lingobarterclient;
 
+import com.st.leighton.util.MyProperty;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -48,9 +50,9 @@ public class WebserviceClient {
     private JSONObject json_result;
 
     public WebserviceClient(METHOD p_method, String p_target) {
-        host = "192.168.0.9";
-        port = 5000;
-        protocol = "http";
+        host = MyProperty.getProperty("host");
+        port = MyProperty.getIntProperty("port");
+        protocol = MyProperty.getProperty("protocol");
 
         method = p_method;
         content = new JSONObject();
@@ -168,6 +170,7 @@ public class WebserviceClient {
 
                         if (httpEntity != null) {
                             raw_result = EntityUtils.toString(httpEntity);
+                            System.out.println(raw_result);
                             json_result = new JSONObject(raw_result);
                         }
                     }
@@ -178,5 +181,66 @@ public class WebserviceClient {
                 }
             }
         }).start();
+    }
+
+    public void ExecuteWithCustomEntity() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    httpClient = new DefaultHttpClient();
+                    httpHost = new HttpHost(host, port, protocol);
+
+                    switch (method) {
+                        case Post:
+                            httpResponse = httpClient.execute(httpHost, httpPost);
+                            break;
+
+                        case Get:
+                            httpResponse = httpClient.execute(httpHost, httpGet);
+                            break;
+
+                        case Put:
+                            httpResponse = httpClient.execute(httpHost, httpPut);
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    if (httpResponse != null) {
+                        status = httpResponse.getStatusLine().toString();
+                        headers = httpResponse.getAllHeaders();
+                        httpEntity = httpResponse.getEntity();
+
+                        if (httpEntity != null) {
+                            raw_result = EntityUtils.toString(httpEntity);
+                            System.out.println(raw_result);
+                            json_result = new JSONObject(raw_result);
+                        }
+                    }
+                    finished = true;
+                } catch (Exception e) {
+                    finished = true;
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public HttpGet getHttpGet() {
+        return httpGet;
+    }
+
+    public HttpPut getHttpPut() {
+        return httpPut;
+    }
+
+    public HttpPost getHttpPost() {
+        return httpPost;
+    }
+
+    public HttpHost getHttpHost() {
+        return httpHost;
     }
 }

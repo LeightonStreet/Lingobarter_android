@@ -169,7 +169,6 @@ public class EmailConfirmation extends AppCompatActivity {
                 if (!waitIndicator.isShowing()) {
                     waitIndicator.show();
                 }
-                Log.d("123", "Arrived");
 
                 new Thread(new Runnable() {
                     @Override

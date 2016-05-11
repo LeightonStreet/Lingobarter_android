@@ -2,26 +2,75 @@ package com.st.leighton.lingobarterclient;
 
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
-import android.widget.ImageView;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.json.JSONObject;
 
-import java.io.InputStream;
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
+class GlobalStore {
+    private String token;
+    private String name;
+    private String userid;
+    private String username;
+
+    private static GlobalStore globalStore;
+
+    private GlobalStore() {}
+
+    static {
+        globalStore = new GlobalStore();
+    }
+
+    public static GlobalStore getInstance() {
+        return globalStore;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+}
+
 public class Webservice extends Service {
-    public String token;
+    private String token;
     private String name;
     private String userid;
     private String username;
@@ -74,7 +123,10 @@ public class Webservice extends Service {
                         name = jsonResult.getJSONObject("response").getString("name");
                         username = jsonResult.getJSONObject("response").getString("username");
                         userid = jsonResult.getJSONObject("response").getString("user_id");
-
+                        GlobalStore.getInstance().setToken(token);
+                        GlobalStore.getInstance().setName(name);
+                        GlobalStore.getInstance().setUsername(username);
+                        GlobalStore.getInstance().setUserid(userid);
                         if (completeFlag) {
                             feedback = "Succeed";
                         } else {
@@ -253,7 +305,10 @@ public class Webservice extends Service {
                         name = jsonResult.getJSONObject("response").getString("name");
                         username = jsonResult.getJSONObject("response").getString("username");
                         userid = jsonResult.getJSONObject("response").getString("user_id");
-
+                        GlobalStore.getInstance().setToken(token);
+                        GlobalStore.getInstance().setName(name);
+                        GlobalStore.getInstance().setUsername(username);
+                        GlobalStore.getInstance().setUserid(userid);
                         feedback = "Succeed";
                         break;
 
@@ -274,8 +329,44 @@ public class Webservice extends Service {
     }
 
     public void BasicUploadAvatar(String imagePath) {
+        WebserviceClient client
+                = new WebserviceClient(WebserviceClient.METHOD.Put, "/api/v1/users/upload");
+
+        File file = new File(imagePath);
+        client.AddHeader("Authentication-Token", GlobalStore.getInstance().getToken());
+
+        HttpEntity httpEntity = MultipartEntityBuilder.create()
+                .addBinaryBody("image", file, ContentType.DEFAULT_BINARY, file.getName())
+                .build();
+
+        client.AddHeader("Authentication-Token", GlobalStore.getInstance().getToken());
+        client.getHttpPut().setEntity(httpEntity);
+
+        client.ExecuteWithCustomEntity();
+
         String feedback = "";
-        // Succeed; ERROR;
+        Boolean flag = client.Waiting();
+
+        if (flag) {
+            JSONObject jsonResult = client.getJSON();
+            System.out.println(jsonResult);
+            try {
+                int status = jsonResult.getInt("status");
+                switch (status) {
+                    case 200:
+                        feedback = "Succeed";
+                        break;
+
+                    default:
+                        feedback = "";
+                        break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            feedback = "ERROR";
+        }
 
         Intent intent = new Intent("android.intent.action.BasicProfileImage");
         intent.putExtra(BasicProfile.PROFILE_IMAGE_FEEDBACK, feedback);
