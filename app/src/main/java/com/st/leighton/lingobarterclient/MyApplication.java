@@ -11,7 +11,7 @@ public class MyApplication extends Application {
     private Socket socket;
 
     public void setSocket(Socket socket){
-        SocketHandler.setSocket(socket);
+        this.socket = socket;
     }
 
     public Socket getSocket() {

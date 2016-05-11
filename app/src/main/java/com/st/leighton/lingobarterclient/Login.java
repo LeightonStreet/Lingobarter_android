@@ -129,8 +129,10 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 resetBackgroundColors();
-                email = emailET.getText().toString();
-                password = passwordET.getText().toString();
+//                email = emailET.getText().toString();
+//                password = passwordET.getText().toString();
+                email = "lingobarter.user1@gmail.com";
+                password = "user1lingobarter";
 
                 if (email.equals("")) {
                     Toast.makeText(baseContext,"Please input email", Toast.LENGTH_LONG).show();

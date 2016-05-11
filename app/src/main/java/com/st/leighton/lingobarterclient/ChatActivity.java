@@ -28,14 +28,13 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.github.nkzawa.socketio.client.IO;
 import com.ibm.watson.developer_cloud.http.HttpMediaType;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
 
 import chat.OnOperationListener;
-import chat.adapter.ChatAdapter;
+import chat.adapter.MessageAdapter;
 import chat.bean.Emojicon;
 import chat.bean.Faceicon;
 import chat.bean.Message;
@@ -51,7 +50,6 @@ import org.kymjs.kjframe.utils.FileUtils;
 import org.kymjs.kjframe.utils.KJLoger;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -75,7 +73,7 @@ public class ChatActivity extends KJActivity {
     private Socket mSocket;
 
     List<Message> messages = new ArrayList<>();
-    private ChatAdapter adapter;
+    private MessageAdapter adapter;
 
     private
 
@@ -233,7 +231,7 @@ public class ChatActivity extends KJActivity {
 //        messages.add(message6);
 //        messages.add(message7);
 
-        adapter = new ChatAdapter(this, messages, getOnChatItemClickListener());
+        adapter = new MessageAdapter(this, messages, getOnChatItemClickListener());
         mRealListView.setAdapter(adapter);
     }
 

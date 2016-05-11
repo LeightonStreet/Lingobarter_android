@@ -168,7 +168,7 @@
         <item>"German"</item>
     </string-array>
 
-    <string name="url">http://160.39.132.109:8080</string>
+    <string name="url">http://192.168.0.9:8080</string>
 
     <string name="text_ack_msg">read</string>
     <string name="text_delivered_msg">delivered</string>

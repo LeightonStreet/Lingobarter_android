@@ -1,214 +1,118 @@
-/*
- * Copyright (c) 2015, 张涛.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package chat.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import java.lang.Object;
 
-import com.st.leighton.lingobarterclient.ChatActivity.OnChatItemClickListener;
+import com.st.leighton.lingobarterclient.ChatActivity;
 import com.st.leighton.lingobarterclient.R;
-import chat.UrlUtils;
-import chat.bean.Message;
-import org.kymjs.kjframe.KJBitmap;
+import com.st.leighton.lingobarterclient.Search;
+import com.st.leighton.lingobarterclient.UserProfile;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+import chat.bean.Chat;
+
 /**
- * @author kymjs (http://www.kymjs.com/) on 6/8/15.
+ * Created by vicky on 5/11/16.
  */
-public class ChatAdapter extends BaseAdapter {
+public class ChatAdapter extends BaseAdapter{
+    private final Context context;
+    private List<Chat> chats = null;
+    private AdapterView.OnItemClickListener listener;
 
-    private final Context cxt;
-    private List<Message> datas = null;
-    private KJBitmap kjb;
-    private OnChatItemClickListener listener;
-
-    public ChatAdapter(Context cxt, List<Message> datas, OnChatItemClickListener listener) {
-        this.cxt = cxt;
-        if (datas == null) {
-            datas = new ArrayList<Message>(0);
+    public ChatAdapter(Context context, List<Chat> chats) {
+        this.context = context;
+        if (chats == null) {
+            chats = new ArrayList<>(0);
         }
-        this.datas = datas;
-        kjb = new KJBitmap();
-        this.listener = listener;
+        this.chats = chats;
     }
 
-    public void refresh(List<Message> datas) {
-        if (datas == null) {
-            datas = new ArrayList<>(0);
+    public void refresh(List<Chat> chats) {
+        if (chats == null) {
+            chats = new ArrayList<>(0);
         }
-        this.datas = datas;
+        this.chats = chats;
         notifyDataSetChanged();
     }
 
-    @Override
     public int getCount() {
-        return datas.size();
+        return chats.size();
     }
 
-    @Override
     public Object getItem(int position) {
-        return datas.get(position);
+        return chats.get(position);
     }
 
-    @Override
     public long getItemId(int position) {
         return position;
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return datas.get(position).getIsSend() ? 1 : 0;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return 2;
-    }
-
-    @Override
     public View getView(final int position, View v, ViewGroup parent) {
         final ViewHolder holder;
-        final Message data = datas.get(position);
+        final Chat chat = chats.get(position);
         if (v == null) {
             holder = new ViewHolder();
-            if (data.getIsSend()) {
-                v = View.inflate(cxt, R.layout.chat_item_list_right, null);
-            } else {
-                v = View.inflate(cxt, R.layout.chat_item_list_left, null);
-            }
-            holder.layout_content = (RelativeLayout) v.findViewById(R.id.chat_item_layout_content);
-            holder.img_avatar = (ImageView) v.findViewById(R.id.chat_item_avatar);
-            holder.img_chatimage = (ImageView) v.findViewById(R.id.chat_item_content_image);
-            holder.img_sendfail = (ImageView) v.findViewById(R.id.chat_item_fail);
-            holder.progress = (ProgressBar) v.findViewById(R.id.chat_item_progress);
-
-            holder.tv_chatcontent = (TextView) v.findViewById(R.id.chat_item_content_text);
-            holder.tv_date = (TextView) v.findViewById(R.id.chat_item_date);
+            v = View.inflate(context, R.layout.chats_list_contact, null);
+            holder.tv_name = (TextView) v.findViewById(R.id.txt_name);
+            holder.tv_unread_msg_num = (TextView) v.findViewById(R.id.unread_msg_number);
+            holder.img_avatar = (ImageView) v.findViewById(R.id.contact_item_avatar_iv);
+            holder.layout_content = (RelativeLayout) v.findViewById(R.id.contact_item_layout);
+            holder.tv_chat_content = (TextView) v.findViewById(R.id.txt_content);
+            holder.tv_time = (TextView) v.findViewById(R.id.txt_time);
             v.setTag(holder);
         } else {
             holder = (ViewHolder) v.getTag();
         }
 
-        Date date = new Date();
-        holder.tv_date.setText(date.toString());
-        holder.tv_date.setVisibility(View.VISIBLE);
-
-        //如果是文本类型，则隐藏图片，如果是图片则隐藏文本
-        if (data.getType() == Message.MSG_TYPE_TEXT) {
-            holder.img_chatimage.setVisibility(View.GONE);
-            holder.tv_chatcontent.setVisibility(View.VISIBLE);
-            if (data.getContent().contains("href")) {
-                holder.tv_chatcontent = UrlUtils.handleHtmlText(holder.tv_chatcontent, data
-                        .getContent());
-            } else {
-                holder.tv_chatcontent = UrlUtils.handleText(holder.tv_chatcontent, data
-                        .getContent());
+        holder.tv_chat_content.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ChatActivity.class);
+                String id = chat.getId();
+                intent.putExtra("id", id);
+                context.startActivity(intent);
             }
-        } else if (data.getType() == Message.MSG_TYPE_VOICE) {
-            String length = Integer.toString(data.getLength());
-            holder.tv_chatcontent.setText(data.getContent() + length);
-        }
-        else{
-            holder.tv_chatcontent.setVisibility(View.GONE);
-            holder.img_chatimage.setVisibility(View.VISIBLE);
-
-            //如果内存缓存中有要显示的图片，且要显示的图片不是holder复用的图片，则什么也不做，否则显示一张加载中的图片
-            if (kjb.getMemoryCache(data.getContent()) != null && data.getContent() != null &&
-                    data.getContent().equals(holder.img_chatimage.getTag())) {
-            } else {
-                holder.img_chatimage.setImageResource(R.drawable.default_head);
-            }
-            kjb.display(holder.img_chatimage, data.getContent(), 300, 300);
-        }
-
-        //如果是表情或图片，则不显示气泡，如果是文字则显示气泡
-        if (data.getType() == Message.MSG_TYPE_FACE || data.getType() == Message.MSG_TYPE_PHOTO) {
-            holder.layout_content.setBackgroundResource(android.R.color.transparent);
-        } else {
-            if (data.getIsSend()) {
-                holder.layout_content.setBackgroundResource(R.drawable.chat_to_bg_selector);
-            } else {
-                holder.layout_content.setBackgroundResource(R.drawable.chat_from_bg_selector);
-            }
-        }
-
-        //显示头像
-        if (data.getIsSend()) {
-            kjb.display(holder.img_avatar, data.getFromUserAvatar());
-        } else {
-            kjb.display(holder.img_avatar, data.getToUserAvatar());
-        }
-
-        if (listener != null) {
-            holder.tv_chatcontent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onTextClick(position);
+        });
+        holder.img_avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, UserProfile.class);
+                String username = null;
+                try {
+                    JSONArray members = chat.getMembers();
+                    username = members.getJSONObject(1).getString("username");
+                } catch (JSONException e){
+                    System.out.println("Get friend name error");
                 }
-            });
-            holder.img_chatimage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    switch (data.getType()) {
-                        case Message.MSG_TYPE_PHOTO:
-                            listener.onPhotoClick(position);
-                            break;
-                        case Message.MSG_TYPE_FACE:
-                            listener.onFaceClick(position);
-                            break;
-                    }
-                }
-            });
-        }
-
-        //消息发送的状态
-        switch (data.getState()) {
-            case Message.MSG_STATE_FAIL:
-                holder.progress.setVisibility(View.GONE);
-                holder.img_sendfail.setVisibility(View.VISIBLE);
-                break;
-            case Message.MSG_STATE_SUCCESS:
-                holder.progress.setVisibility(View.GONE);
-                holder.img_sendfail.setVisibility(View.GONE);
-                break;
-            case Message.MSG_STATE_SENDING:
-                holder.progress.setVisibility(View.VISIBLE);
-                holder.img_sendfail.setVisibility(View.GONE);
-                break;
-        }
+                intent.putExtra("username", username);
+                context.startActivity(intent);
+            }
+        });
         return v;
     }
 
     static class ViewHolder {
-        TextView tv_date;
+        TextView tv_time;
+        TextView tv_name;
+        TextView tv_unread_msg_num;
         ImageView img_avatar;
-        TextView tv_chatcontent;
-        ImageView img_chatimage;
-        ImageView img_sendfail;
-        ProgressBar progress;
+        TextView tv_chat_content;
         RelativeLayout layout_content;
     }
 }
