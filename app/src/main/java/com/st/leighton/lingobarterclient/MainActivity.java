@@ -147,7 +147,7 @@ public class MainActivity extends Activity {
                         view = LayoutInflater.from(
                                 getBaseContext()).inflate(R.layout.activity_main, null, false);
                         ListView chatList = (ListView) view.findViewById(R.id.my_chats_list);
-                        chatList.setAdapter(new ArrayAdapter<>(MainActivity.this, R.layout.chats_list_item, MyChats));
+                        chatList.setAdapter(new ArrayAdapter<>(MainActivity.this, R.layout.chats_list_contact, MyChats));
                         chatList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> a, View v, int i, long l) {

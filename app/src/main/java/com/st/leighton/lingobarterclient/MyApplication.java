@@ -9,7 +9,7 @@ import com.github.nkzawa.socketio.client.Socket;
 public class MyApplication extends Application {
 
     public void setSocket(Socket socket){
-        this.socket = socket;
+        SocketHandler.setSocket(socket);
     }
 
     public Socket getSocket() {
