@@ -25,8 +25,6 @@ public class TESTING extends AppCompatActivity {
     ProgressDialog waitIndicator;
     final public static String SELF_INFO_KEY = "SELF_INFO_KEY";
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

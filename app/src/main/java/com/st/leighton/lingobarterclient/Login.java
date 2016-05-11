@@ -176,17 +176,6 @@ public class Login extends AppCompatActivity {
                 finish();
             }
         });
-//
-        Button god = (Button) findViewById(R.id.hx_login_button_god);
-        god.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent main_intent = new Intent(baseContext, test.class);
-                startActivity(main_intent);
-                finish();
-            }
-        });
-//
     }
 
     void resetBackgroundColors() {

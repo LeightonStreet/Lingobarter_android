@@ -39,7 +39,6 @@ public class MainActivity extends Activity {
     Context baseContext;
 
     private Socket mSocket  = null;
-    private Webservice webService = null;
 
     private ArrayList<MyChat> MyChats = new ArrayList<>();
     private ArrayList<String> partners = new ArrayList<>();
@@ -54,8 +53,7 @@ public class MainActivity extends Activity {
         MyApplication app = (MyApplication) getApplication();
 
         try {
-            webService = Webservice.getInstance();
-            String authToken = webService.token;
+            String authToken = GlobalStore.getInstance().getToken();
             IO.Options opts = new IO.Options();
             opts.forceNew = false;
             opts.reconnection = false;

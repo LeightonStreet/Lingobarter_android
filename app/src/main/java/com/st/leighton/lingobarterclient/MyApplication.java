@@ -8,13 +8,11 @@ import com.github.nkzawa.socketio.client.Socket;
 
 public class MyApplication extends Application {
 
-    private Socket socket;
-
     public void setSocket(Socket socket){
         SocketHandler.setSocket(socket);
     }
 
     public Socket getSocket() {
-        return socket;
+        return SocketHandler.getSocket();
     }
 }

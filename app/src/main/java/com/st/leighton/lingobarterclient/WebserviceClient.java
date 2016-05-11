@@ -168,6 +168,7 @@ public class WebserviceClient {
 
                         if (httpEntity != null) {
                             raw_result = EntityUtils.toString(httpEntity);
+                            System.out.println(raw_result);
                             json_result = new JSONObject(raw_result);
                         }
                     }
@@ -178,5 +179,66 @@ public class WebserviceClient {
                 }
             }
         }).start();
+    }
+
+    public void ExecuteWithCustomEntity() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    httpClient = new DefaultHttpClient();
+                    httpHost = new HttpHost(host, port, protocol);
+
+                    switch (method) {
+                        case Post:
+                            httpResponse = httpClient.execute(httpHost, httpPost);
+                            break;
+
+                        case Get:
+                            httpResponse = httpClient.execute(httpHost, httpGet);
+                            break;
+
+                        case Put:
+                            httpResponse = httpClient.execute(httpHost, httpPut);
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    if (httpResponse != null) {
+                        status = httpResponse.getStatusLine().toString();
+                        headers = httpResponse.getAllHeaders();
+                        httpEntity = httpResponse.getEntity();
+
+                        if (httpEntity != null) {
+                            raw_result = EntityUtils.toString(httpEntity);
+                            System.out.println(raw_result);
+                            json_result = new JSONObject(raw_result);
+                        }
+                    }
+                    finished = true;
+                } catch (Exception e) {
+                    finished = true;
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public HttpGet getHttpGet() {
+        return httpGet;
+    }
+
+    public HttpPut getHttpPut() {
+        return httpPut;
+    }
+
+    public HttpPost getHttpPost() {
+        return httpPost;
+    }
+
+    public HttpHost getHttpHost() {
+        return httpHost;
     }
 }
