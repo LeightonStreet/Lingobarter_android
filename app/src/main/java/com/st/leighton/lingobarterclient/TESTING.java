@@ -1,5 +1,7 @@
 package com.st.leighton.lingobarterclient;
 
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -17,10 +19,20 @@ public class TESTING extends AppCompatActivity {
 
     Button searchB;
 
+    Websocket socketService;
+    BroadcastReceiver noticeReceiver;
+
+    ProgressDialog waitIndicator;
+    final public static String SELF_INFO_KEY = "SELF_INFO_KEY";
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_testing);
+
+
 
         baseContext = this;
 

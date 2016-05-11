@@ -48,7 +48,7 @@ public class WebsocketClient {
     private JSONObject json_result;
 
     public WebsocketClient(METHOD p_method, String p_target) {
-        host = "10.0.2.2";
+        host = "192.168.0.9";
         port = 5000;
         protocol = "http";
 
