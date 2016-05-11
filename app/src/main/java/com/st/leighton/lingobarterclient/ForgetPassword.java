@@ -25,7 +25,7 @@ public class ForgetPassword extends AppCompatActivity {
 
     String email;
 
-    Websocket socketService;
+    Webservice socketService;
     BroadcastReceiver noticeReceiver;
 
     ProgressDialog waitIndicator;
@@ -79,7 +79,7 @@ public class ForgetPassword extends AppCompatActivity {
 
         baseContext = this;
 
-        socketService = Websocket.getInstance();
+        socketService = Webservice.getInstance();
         waitIndicator = new ProgressDialog(baseContext);
 
         emailET = (EditText) findViewById(R.id.hx_forget_edit_email);

@@ -27,7 +27,7 @@ public class Login extends AppCompatActivity {
 
     String email = "", password = "";
 
-    Websocket socketService;
+    Webservice socketService;
     BroadcastReceiver noticeReceiver;
 
     ProgressDialog waitIndicator;
@@ -104,12 +104,12 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_login);
 
-        Intent webSocketServiceIntent = new Intent(this, Websocket.class);
+        Intent webSocketServiceIntent = new Intent(this, Webservice.class);
         startService(webSocketServiceIntent);
 
         baseContext = this;
 
-        socketService = Websocket.getInstance();
+        socketService = Webservice.getInstance();
         waitIndicator = new ProgressDialog(baseContext);
 
         logginB = (Button) findViewById(R.id.hx_login_button_login);

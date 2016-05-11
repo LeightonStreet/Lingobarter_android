@@ -50,7 +50,7 @@
             android:noHistory="true" />
 
         <service
-            android:name=".Websocket"
+            android:name=".Webservice"
             android:enabled="true"
             android:exported="true" />
 

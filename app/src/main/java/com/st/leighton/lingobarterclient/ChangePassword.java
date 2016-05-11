@@ -30,7 +30,7 @@ public class ChangePassword extends AppCompatActivity {
     Boolean passwordFlag = Boolean.TRUE;
     final private String hidePassword = "HIDE PASSWORD", showPassword = "SHOW PASSWORD";
 
-    Websocket socketService;
+    Webservice socketService;
     BroadcastReceiver noticeReceiver;
 
     ProgressDialog waitIndicator;
@@ -85,7 +85,7 @@ public class ChangePassword extends AppCompatActivity {
 
         baseContext = this;
 
-        socketService = Websocket.getInstance();
+        socketService = Webservice.getInstance();
         waitIndicator = new ProgressDialog(baseContext);
 
         oldPasswordET = (EditText) findViewById(R.id.hx_change_password_edit_oldpassword);

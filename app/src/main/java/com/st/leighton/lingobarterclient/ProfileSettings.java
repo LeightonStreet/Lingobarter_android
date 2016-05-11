@@ -90,7 +90,7 @@ public class ProfileSettings extends AppCompatActivity {
     HashSet<String> nativeLanguages;
     HashMap<String, Integer> learnLanguages;
 
-    Websocket socketService;
+    Webservice socketService;
     BroadcastReceiver noticeReceiver, imageNoticeReceiver;
 
     ProgressDialog waitIndicator;
@@ -163,7 +163,7 @@ public class ProfileSettings extends AppCompatActivity {
 
         baseContext = this;
 
-        socketService = Websocket.getInstance();
+        socketService = Webservice.getInstance();
         waitIndicator = new ProgressDialog(baseContext);
 
         fullnameET = (EditText) findViewById(R.id.hx_profile_settings_edit_name);

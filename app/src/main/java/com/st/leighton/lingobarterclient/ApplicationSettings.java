@@ -52,7 +52,7 @@ public class ApplicationSettings extends AppCompatActivity {
     HashSet<String> hideInfoFields;
     boolean strictFlag, sameGenderFlag, nearbyFlag, searchFlag, confirmFlag;
 
-    Websocket socketService;
+    Webservice socketService;
     BroadcastReceiver noticeReceiver;
 
     ProgressDialog waitIndicator;
@@ -100,7 +100,7 @@ public class ApplicationSettings extends AppCompatActivity {
 
         baseContext = this;
 
-        socketService = Websocket.getInstance();
+        socketService = Webservice.getInstance();
         waitIndicator = new ProgressDialog(baseContext);
 
         strictMatchRB = (RadioButton) findViewById(R.id.hx_application_settings_radio_strict_yes);

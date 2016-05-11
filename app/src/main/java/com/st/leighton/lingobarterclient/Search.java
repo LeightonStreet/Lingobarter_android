@@ -83,7 +83,7 @@ public class Search extends AppCompatActivity {
     final static public String LEARN_LANGUAGES_KEY = "SEARCH_LEARN_LANGUAGES_KEY";
     final static public String TEACH_LANGUAGES_KEY = "SEARCH_TEACH_LANGUAGES_KEY";
 
-    Websocket socketService;
+    Webservice socketService;
     BroadcastReceiver noticeReceiver;
 
     ProgressDialog waitIndicator;
@@ -243,7 +243,7 @@ public class Search extends AppCompatActivity {
 
         baseContext = this;
 
-        socketService = Websocket.getInstance();
+        socketService = Webservice.getInstance();
         waitIndicator = new ProgressDialog(baseContext);
 
         allGenderRB = (RadioButton) findViewById(R.id.hx_search_radio_all);

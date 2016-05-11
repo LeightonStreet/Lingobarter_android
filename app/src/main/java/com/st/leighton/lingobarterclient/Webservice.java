@@ -2,7 +2,6 @@ package com.st.leighton.lingobarterclient;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.IBinder;
 
@@ -11,13 +10,13 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class Websocket extends Service {
+public class Webservice extends Service {
     private String token;
     private String name;
     private String userid;
     private String username;
 
-    private static Websocket instance = null;
+    private static Webservice instance = null;
 
     @Override
     public void onCreate() {
@@ -25,9 +24,9 @@ public class Websocket extends Service {
         super.onCreate();
     }
 
-    public static Websocket getInstance()
+    public static Webservice getInstance()
     {
-        if (instance == null) instance = new Websocket();
+        if (instance == null) instance = new Webservice();
         return instance;
     }
 
@@ -41,8 +40,8 @@ public class Websocket extends Service {
     }
 
     public void Login(String email, String password) {
-        WebsocketClient client
-                = new WebsocketClient(WebsocketClient.METHOD.Post, "/api/v1/accounts/authorize");
+        WebserviceClient client
+                = new WebserviceClient(WebserviceClient.METHOD.Post, "/api/v1/accounts/authorize");
         client.AddHeader("content-type", "application/json");
         client.AddPayload("email", email);
         client.AddPayload("password", password);
@@ -99,8 +98,8 @@ public class Websocket extends Service {
     }
 
     public void ResetPassword(String email) {
-        WebsocketClient client
-                = new WebsocketClient(WebsocketClient.METHOD.Post, "/api/v1/accounts/password/reset");
+        WebserviceClient client
+                = new WebserviceClient(WebserviceClient.METHOD.Post, "/api/v1/accounts/password/reset");
         client.AddHeader("content-type", "application/json");
         client.AddPayload("email", email);
         client.Execute();
@@ -139,8 +138,8 @@ public class Websocket extends Service {
     }
 
     public void Register(String username, String email, String password) {
-        WebsocketClient client
-                = new WebsocketClient(WebsocketClient.METHOD.Post, "/api/v1/users");
+        WebserviceClient client
+                = new WebserviceClient(WebserviceClient.METHOD.Post, "/api/v1/users");
         client.AddHeader("content-type", "application/json");
         client.AddPayload("username", username);
         client.AddPayload("email", email);
@@ -182,8 +181,8 @@ public class Websocket extends Service {
     }
 
     public void Confirm(String email) {
-        WebsocketClient client
-                = new WebsocketClient(WebsocketClient.METHOD.Post, "/api/v1/accounts/confirm");
+        WebserviceClient client
+                = new WebserviceClient(WebserviceClient.METHOD.Post, "/api/v1/accounts/confirm");
         client.AddHeader("content-type", "application/json");
         client.AddPayload("email", email);
         client.Execute();
@@ -221,8 +220,8 @@ public class Websocket extends Service {
     }
 
     public void EmailConfirmationLogin(String email, String password) {
-        WebsocketClient client
-                = new WebsocketClient(WebsocketClient.METHOD.Post, "/api/v1/accounts/authorize");
+        WebserviceClient client
+                = new WebserviceClient(WebserviceClient.METHOD.Post, "/api/v1/accounts/authorize");
         client.AddHeader("content-type", "application/json");
         client.AddPayload("email", email);
         client.AddPayload("password", password);

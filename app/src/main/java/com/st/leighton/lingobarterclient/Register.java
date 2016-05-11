@@ -37,7 +37,7 @@ public class Register extends AppCompatActivity {
     final private String hidePassword = "HIDE PASSWORD", showPassword = "SHOW PASSWORD";
     String username = "", email = "", password = "";
 
-    Websocket socketService;
+    Webservice socketService;
     BroadcastReceiver noticeReceiver;
 
     ProgressDialog waitIndicator;
@@ -97,7 +97,7 @@ public class Register extends AppCompatActivity {
 
         baseContext = this;
 
-        socketService = Websocket.getInstance();
+        socketService = Webservice.getInstance();
         waitIndicator = new ProgressDialog(baseContext);
 
         registerB = (Button) findViewById(R.id.hx_register_button_register);

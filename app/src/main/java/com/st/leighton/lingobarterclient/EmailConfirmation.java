@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,7 +29,7 @@ public class EmailConfirmation extends AppCompatActivity {
     String email;
     String password;
 
-    Websocket socketService;
+    Webservice socketService;
     BroadcastReceiver noticeReceiver, loginNoticeReceiver;
 
     ProgressDialog waitIndicator;
@@ -114,7 +113,7 @@ public class EmailConfirmation extends AppCompatActivity {
 
         baseContext = this;
 
-        socketService = Websocket.getInstance();
+        socketService = Webservice.getInstance();
         waitIndicator = new ProgressDialog(baseContext);
 
         emailTV = (TextView) findViewById(R.id.hx_email_text_email);

@@ -19,7 +19,7 @@ public class TESTING extends AppCompatActivity {
 
     Button searchB;
 
-    Websocket socketService;
+    Webservice socketService;
     BroadcastReceiver noticeReceiver;
 
     ProgressDialog waitIndicator;
