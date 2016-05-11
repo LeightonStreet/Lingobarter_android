@@ -94,7 +94,31 @@ public class WebserviceClient {
         }
     }
 
-    public void AddPayload(String p_key, String p_value) {
+    public void AddPayload(String p_key, double p_value) {
+        try {
+            content.put(p_key, p_value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void AddPayload(String p_key, int p_value) {
+        try {
+            content.put(p_key, p_value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void AddPayload(String p_key, boolean p_value) {
+        try {
+            content.put(p_key, p_value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void AddPayload(String p_key, Object p_value) {
         try {
             content.put(p_key, p_value);
         } catch (Exception e) {

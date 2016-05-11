@@ -1,12 +1,20 @@
 package com.st.leighton.lingobarterclient;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Paint;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -20,10 +28,14 @@ import com.st.leighton.util.MyProperty;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Locale;
 
-public class Login extends AppCompatActivity {
+public class Login extends AppCompatActivity implements LocationListener{
 
+    Login self;
     Context baseContext;
+    LocationManager locationManager;
 
     Button logginB;
     Button forgetPasswordB;
@@ -59,11 +71,8 @@ public class Login extends AppCompatActivity {
                         break;
 
                     case "Uncomplete":
-//                        Intent basic_profile_intent = new Intent(baseContext, BasicProfile.class);
-//                        startActivity(basic_profile_intent);
-//                        finish();
-                        Intent main1_intent = new Intent(baseContext, MainActivity.class);
-                        startActivity(main1_intent);
+                        Intent basic_profile_intent = new Intent(baseContext, BasicProfile.class);
+                        startActivity(basic_profile_intent);
                         finish();
                         break;
 
@@ -123,6 +132,7 @@ public class Login extends AppCompatActivity {
         Intent webSocketServiceIntent = new Intent(this, Webservice.class);
         startService(webSocketServiceIntent);
 
+        self = this;
         baseContext = this;
 
         socketService = Webservice.getInstance();
@@ -189,6 +199,39 @@ public class Login extends AppCompatActivity {
                 finish();
             }
         });
+
+        if(ContextCompat.checkSelfPermission(baseContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  }, 11 );
+        } else {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1000, this);
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d("Testing", "Latitude:" + location.getLatitude() + ", Longitude:" + location.getLongitude());
+        if(ContextCompat.checkSelfPermission(baseContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  }, 11 );
+        } else {
+            locationManager.removeUpdates(self);
+            locationManager = null;
+        }
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Log.d("LocationService","disable");
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        Log.d("LocationService","enable");
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        Log.d("LocationService","status changed");
     }
 
     void resetBackgroundColors() {

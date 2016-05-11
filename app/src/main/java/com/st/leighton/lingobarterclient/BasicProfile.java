@@ -17,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -78,7 +79,8 @@ public class BasicProfile extends AppCompatActivity {
     Uri selectedImageUri = null;
     boolean gender = true;
     String fullname="", birthday="", nation="";
-    double latitude, longitude, birthday_timestamp;
+    double latitude, longitude;
+    long birthday_timestamp;
 
     String[] languages;
     ArrayList<String> countries;
@@ -219,7 +221,8 @@ public class BasicProfile extends AppCompatActivity {
                 SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.US);
 
                 birthday = dateFormat.format(birthdayC.getTime());
-                birthday_timestamp = birthdayC.getTimeInMillis();
+                birthday_timestamp = birthdayC.getTimeInMillis()/1000;
+                Log.d("Birthday", Long.toString(birthday_timestamp));
                 birthdayET.setText(birthday);
             }
         };
@@ -372,79 +375,84 @@ public class BasicProfile extends AppCompatActivity {
             public void onClick(View v) {
                 resetBackgroundColors();
 
-                fullname = fullnameET.getText().toString();
-                if(fullname.equals("")) {
-                    Toast.makeText(baseContext,"Please specify your name.", Toast.LENGTH_LONG).show();
-                    fullnameET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                    return ;
-                }
+                waitIndicator.setMessage("Please wait...");
+                waitIndicator.setCancelable(false);
+                waitIndicator.show();
 
-                if(!maleRB.isChecked()) {
-                    gender = false;
-                }
-
-                if(birthday.equals("")) {
-                    Toast.makeText(baseContext,"Please select your birthday.", Toast.LENGTH_LONG).show();
-                    birthdayET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                    return ;
-                }
-
-                if(nation.equals("")) {
-                    Toast.makeText(baseContext,"Please select your nationality.", Toast.LENGTH_LONG).show();
-                    nationalityS.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                    return ;
-                }
-
-                String location = locationET.getText().toString();
-                if(location.equals("")) {
-                    Toast.makeText(baseContext,"Please specify your location.", Toast.LENGTH_LONG).show();
-                    locationET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                    return ;
-                } else {
-                    try {
-                        List<Address> addresses = geocoder.getFromLocationName(location, 1);
-                        Address address = addresses.get(0);
-                        latitude = address.getLatitude();
-                        longitude = address.getLongitude();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                if(nativeLanguages.isEmpty()) {
-                    Toast.makeText(baseContext,"Please specify your native languages.", Toast.LENGTH_LONG).show();
-                    nativeLanguageET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                    return ;
-                }
-
-                if(learnLanguages.isEmpty()) {
-                    Toast.makeText(baseContext,"Please specify languages you want to learn.", Toast.LENGTH_LONG).show();
-                    learnLanguageET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                    return ;
-                }
-
-                if(selectedImageUri == null) {
-                    Toast.makeText(baseContext,"Please upload an avatar.", Toast.LENGTH_LONG).show();
-                    uploadAvatarB.setTextColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                    return ;
-                }
-
-                if (noOverlapLanguages(nativeLanguages, learnLanguages)) {
-                    waitIndicator.setMessage("Please wait...");
-                    waitIndicator.setCancelable(false);
-                    waitIndicator.show();
-
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            socketService.BasicSetBasicProfile(fullname, gender, nation,
-                                    latitude, longitude, birthday_timestamp,
-                                    nativeLanguages, learnLanguages);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        fullname = fullnameET.getText().toString();
+                        if(fullname.equals("")) {
+                            Toast.makeText(baseContext,"Please specify your name.", Toast.LENGTH_LONG).show();
+                            fullnameET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                            return ;
                         }
-                    }).start();
-                } else {
-                    Toast.makeText(baseContext,"Overlapped language choices", Toast.LENGTH_LONG).show();
-                }
+
+                        if(!maleRB.isChecked()) {
+                            gender = false;
+                        }
+
+                        if(birthday.equals("")) {
+                            Toast.makeText(baseContext,"Please select your birthday.", Toast.LENGTH_LONG).show();
+                            birthdayET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                            return ;
+                        }
+
+                        if(nation.equals("")) {
+                            Toast.makeText(baseContext,"Please select your nationality.", Toast.LENGTH_LONG).show();
+                            nationalityS.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                            return ;
+                        }
+
+                        String location = locationET.getText().toString();
+                        if(location.equals("")) {
+                            Toast.makeText(baseContext,"Please specify your location.", Toast.LENGTH_LONG).show();
+                            locationET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                            return ;
+                        } else {
+                            try {
+                                List<Address> addresses = geocoder.getFromLocationName(location, 1);
+                                if (addresses.isEmpty()) {
+                                    Toast.makeText(baseContext,"City name is not valid.", Toast.LENGTH_LONG).show();
+                                    locationET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                                    return ;
+                                }
+                                Address address = addresses.get(0);
+                                latitude = address.getLatitude();
+                                longitude = address.getLongitude();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        if(nativeLanguages.isEmpty()) {
+                            Toast.makeText(baseContext,"Please specify your native languages.", Toast.LENGTH_LONG).show();
+                            nativeLanguageET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                            return ;
+                        }
+
+                        if(learnLanguages.isEmpty()) {
+                            Toast.makeText(baseContext,"Please specify languages you want to learn.", Toast.LENGTH_LONG).show();
+                            learnLanguageET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                            return ;
+                        }
+
+                        if(selectedImageUri == null) {
+                            Toast.makeText(baseContext,"Please upload an avatar.", Toast.LENGTH_LONG).show();
+                            uploadAvatarB.setTextColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                            return ;
+                        }
+
+                        if (noOverlapLanguages(nativeLanguages, learnLanguages)) {
+                                socketService.BasicSetBasicProfile(fullname, gender, nation,
+                                        latitude, longitude, birthday_timestamp,
+                                        nativeLanguages, learnLanguages);
+                        } else {
+                            Toast.makeText(baseContext,"Overlapped language choices", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }).start();
             }
         });
     }

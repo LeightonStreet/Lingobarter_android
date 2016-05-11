@@ -67,7 +67,7 @@ public class Register extends AppCompatActivity {
                         break;
 
                     case "EmailTaken":
-                        Toast.makeText(baseContext,"This email has been registered", Toast.LENGTH_LONG).show();
+                        Toast.makeText(baseContext,"This name (or email) has been registered", Toast.LENGTH_LONG).show();
                         emailET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
                         break;
 
