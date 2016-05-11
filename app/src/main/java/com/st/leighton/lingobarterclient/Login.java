@@ -6,13 +6,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.st.leighton.util.MyProperty;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class Login extends AppCompatActivity {
 
@@ -107,6 +114,12 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_login);
 
+        try {
+            loadPropties();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         Intent webSocketServiceIntent = new Intent(this, Webservice.class);
         startService(webSocketServiceIntent);
 
@@ -181,5 +194,18 @@ public class Login extends AppCompatActivity {
     void resetBackgroundColors() {
         emailET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
         passwordET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.DimGray));
+    }
+
+    private void loadPropties() throws IOException {
+        String[] fileList = { "custom-settings.properties", "settings.properties"  };
+        for (int i = fileList.length - 1; i >= 0; i--) {
+            String file = fileList[i];
+            try {
+                InputStream fileStream = getAssets().open(file);
+                MyProperty.load(fileStream);
+            } catch (FileNotFoundException e) {
+                Log.d("Warning", "Ignoring missing property file " + file);
+            }
+        }
     }
 }

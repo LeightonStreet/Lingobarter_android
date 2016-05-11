@@ -23,6 +23,7 @@ import com.gigamole.library.NavigationTabBar;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+import com.st.leighton.util.MyProperty;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 
 /**
  * Created by vicky on 06.05.2016.
+ * @author Qi Wang
  */
 public class MainActivity extends Activity {
 
@@ -58,7 +60,8 @@ public class MainActivity extends Activity {
             opts.forceNew = false;
             opts.reconnection = false;
             opts.query = "auth_token=" + authToken;
-            app.setSocket(IO.socket(getString(R.string.url), opts));
+            String url = MyProperty.getProperty("protocol") + "://" + MyProperty.getProperty("host") + ":" + MyProperty.getProperty("port");
+            app.setSocket(IO.socket(url, opts));
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

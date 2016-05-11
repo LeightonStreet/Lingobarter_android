@@ -1,5 +1,7 @@
 package com.st.leighton.lingobarterclient;
 
+import com.st.leighton.util.MyProperty;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -48,9 +50,9 @@ public class WebserviceClient {
     private JSONObject json_result;
 
     public WebserviceClient(METHOD p_method, String p_target) {
-        host = "192.168.0.9";
-        port = 5000;
-        protocol = "http";
+        host = MyProperty.getProperty("host");
+        port = MyProperty.getIntProperty("port");
+        protocol = MyProperty.getProperty("protocol");
 
         method = p_method;
         content = new JSONObject();
