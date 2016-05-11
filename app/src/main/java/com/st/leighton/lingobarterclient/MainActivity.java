@@ -3,6 +3,7 @@ package com.st.leighton.lingobarterclient;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -20,7 +21,6 @@ import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
 import com.gigamole.library.NavigationTabBar;
-
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -39,54 +39,60 @@ public class MainActivity extends Activity {
 
     Context baseContext;
 
+    private Socket mSocket  = null;
+    private WebService socketService = null;
+
     private ArrayList<MyChat> MyChats = new ArrayList<>();
     private ArrayList<String> partners = new ArrayList<>();
     private ArrayList<String> searches = new ArrayList<>();
     private ArrayList<String> myProfile = new ArrayList<>();
-
-    private Socket mSocket;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_horizontal_ntb);
 
+        MyApplication app = (MyApplication) getApplication();
+
+        try {
+            socketService = WebService.getInstance();
+            String authToken = socketService.token;
+            IO.Options opts = new IO.Options();
+            opts.forceNew = false;
+            opts.reconnection = false;
+            opts.query = "auth_token=" + authToken;
+            app.setSocket(IO.socket(getString(R.string.url), opts));
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+        mSocket = app.getSocket();
+
         baseContext = this;
 
-        String authToken = "ChFmVw.4h15p7BS2UGnk2FxDCFP7J3oDv4";
-        IO.Options opts = new IO.Options();
-        opts.forceNew = false;
-        opts.reconnection = false;
-        opts.query = "auth_token=" + authToken;
-        try {
-            mSocket = IO.socket(getString(R.string.url), opts);
-            mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-                public void call(Object... args) {
-                    System.out.println("connected!");
-                    JSONObject object = new JSONObject();
-                    try {
-                        object.put("from_id", "572e68ad1d41c8588f50ddb3");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    mSocket.emit("browse chats");
+        mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+            public void call(Object... args) {
+                System.out.println("connected!");
+                JSONObject object = new JSONObject();
+                try {
+                    object.put("from_id", "572e68ad1d41c8588f50ddb3");
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            }).on("ret:browse chats", new Emitter.Listener() {
-                public void call(Object... args) {
-                    JSONArray obj = (JSONArray)args[0];
-                    System.out.println(obj);
-                }
+                mSocket.emit("browse chats");
+            }
+        }).on("ret:browse chats", new Emitter.Listener() {
+            public void call(Object... args) {
+                JSONArray obj = (JSONArray)args[0];
+                System.out.println(obj);
+            }
 //                    .on("ret:browse chats", onBrowseChats);
 //            mSocket.on("ret:add partner", onAddPartner);
-            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
-                public void call(Object... args) {
-                    System.out.println("You disconnect me");
-                }
-            });
-        } catch (URISyntaxException e){
-            e.printStackTrace();
-        }
-        mSocket.connect();
+        }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+            public void call(Object... args) {
+                System.out.println("You disconnect me");
+            }
+        });
 
         partners.add("Qi");
         partners.add("Andy");

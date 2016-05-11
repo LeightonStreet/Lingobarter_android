@@ -3,17 +3,16 @@ package com.st.leighton.lingobarterclient;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 import org.json.JSONObject;
 
-public class Websocket extends Service {
-    private String token;
+public class WebService extends Service {
+    public String token;
     private String name;
     private String userid;
     private String username;
 
-    private static Websocket instance = null;
+    private static WebService instance = null;
 
     @Override
     public void onCreate() {
@@ -21,15 +20,15 @@ public class Websocket extends Service {
         super.onCreate();
     }
 
-    public static Websocket getInstance()
+    public static WebService getInstance()
     {
-        if (instance == null) instance = new Websocket();
+        if (instance == null) instance = new WebService();
         return instance;
     }
 
     public void Login(String email, String password) {
-        WebsocketClient client
-                = new WebsocketClient(WebsocketClient.METHOD.Post, "/api/v1/accounts/authorize");
+        WebServiceClient client
+                = new WebServiceClient(WebServiceClient.METHOD.Post, "/api/v1/accounts/authorize");
         client.AddHeader("content-type", "application/json");
         client.AddPayload("email", email);
         client.AddPayload("password", password);
@@ -80,8 +79,8 @@ public class Websocket extends Service {
     }
 
     public void Logout() {
-        WebsocketClient client
-                = new WebsocketClient(WebsocketClient.METHOD.Get, "/api/v1/accounts/unauthorize");
+        WebServiceClient client
+                = new WebServiceClient(WebServiceClient.METHOD.Get, "/api/v1/accounts/unauthorize");
         client.AddHeader("content-type", "application/json");
         client.AddHeader("Authentication-Token", token);
         client.Execute();
@@ -110,8 +109,8 @@ public class Websocket extends Service {
     }
 
     public void UpdatePassword(String old_password, String new_password) {
-        WebsocketClient client
-                = new WebsocketClient(WebsocketClient.METHOD.Put, "/api/v1/accounts/password");
+        WebServiceClient client
+                = new WebServiceClient(WebServiceClient.METHOD.Put, "/api/v1/accounts/password");
         client.AddHeader("content-type", "application/json");
         client.AddHeader("Authentication-Token", token);
         client.AddPayload("cur_password", old_password);
@@ -150,8 +149,8 @@ public class Websocket extends Service {
     }
 
     public void ResetPassword(String email) {
-        WebsocketClient client
-                = new WebsocketClient(WebsocketClient.METHOD.Post, "/api/v1/accounts/password/reset");
+        WebServiceClient client
+                = new WebServiceClient(WebServiceClient.METHOD.Post, "/api/v1/accounts/password/reset");
         client.AddHeader("content-type", "application/json");
         client.AddPayload("email", email);
         client.Execute();
@@ -188,8 +187,8 @@ public class Websocket extends Service {
     }
 
     public void UpdateUsername(String username) {
-        WebsocketClient client
-                = new WebsocketClient(WebsocketClient.METHOD.Put, "/api/v1/accounts/username");
+        WebServiceClient client
+                = new WebServiceClient(WebServiceClient.METHOD.Put, "/api/v1/accounts/username");
         client.AddHeader("content-type", "application/json");
         client.AddHeader("Authentication-Token", token);
         client.AddPayload("username", username);

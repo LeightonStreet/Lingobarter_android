@@ -16,7 +16,7 @@ import android.widget.Toast;
 public class ForgetPassword extends AppCompatActivity {
 
     Context baseContext;
-    Websocket socketService;
+    WebService socketService;
 
     EditText emailET;
 
@@ -34,7 +34,7 @@ public class ForgetPassword extends AppCompatActivity {
         setContentView(R.layout.activity_forget_password);
 
         baseContext = this;
-        socketService = Websocket.getInstance();
+        socketService = WebService.getInstance();
 
         emailET = (EditText) findViewById(R.id.hx_forget_edit_email);
 

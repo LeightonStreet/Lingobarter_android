@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by xuhao on 2016/5/8.
  */
-public class WebsocketClient {
+public class WebServiceClient {
     public enum METHOD {
         Post, Get, Put, Delete
     }
@@ -47,7 +47,7 @@ public class WebsocketClient {
     private Header[] headers;
     private JSONObject json_result;
 
-    public WebsocketClient(METHOD p_method, String p_target) {
+    public WebServiceClient(METHOD p_method, String p_target) {
         host = "160.39.132.109";
         port = 5000;
         protocol = "http";

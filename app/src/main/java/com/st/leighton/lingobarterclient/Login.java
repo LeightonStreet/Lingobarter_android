@@ -17,7 +17,7 @@ import android.widget.Toast;
 public class Login extends AppCompatActivity {
 
     Context baseContext;
-    Websocket socketService;
+    WebService socketService;
     ProgressDialog waitIndicator;
 
     Button logginB;
@@ -88,7 +88,7 @@ public class Login extends AppCompatActivity {
         this.setContentView(R.layout.activity_login);
 
         baseContext = this;
-        socketService = Websocket.getInstance();
+        socketService = WebService.getInstance();
         waitIndicator = new ProgressDialog(baseContext);
 
         logginB = (Button) findViewById(R.id.hx_login_button_login);
@@ -151,7 +151,7 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        Intent webSocketServiceIntent = new Intent(this, Websocket.class);
+        Intent webSocketServiceIntent = new Intent(this, WebService.class);
         startService(webSocketServiceIntent);
 
 //
