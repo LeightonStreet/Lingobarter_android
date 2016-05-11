@@ -16,11 +16,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.EditText;
 import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
 
 import com.gigamole.library.NavigationTabBar;
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 /**
@@ -30,7 +38,10 @@ public class MainActivity extends Activity {
 
     Context baseContext;
 
-    private ArrayList<String> talks = new ArrayList<>();
+    private Socket mSocket  = null;
+    private Webservice webService = null;
+
+    private ArrayList<MyChat> MyChats = new ArrayList<>();
     private ArrayList<String> partners = new ArrayList<>();
     private ArrayList<String> searches = new ArrayList<>();
     private ArrayList<String> myProfile = new ArrayList<>();
@@ -40,9 +51,47 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_horizontal_ntb);
 
+        MyApplication app = (MyApplication) getApplication();
+
+        try {
+            webService = Webservice.getInstance();
+            String authToken = webService.token;
+            IO.Options opts = new IO.Options();
+            opts.forceNew = false;
+            opts.reconnection = false;
+            opts.query = "auth_token=" + authToken;
+            app.setSocket(IO.socket(getString(R.string.url), opts));
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+        mSocket = app.getSocket();
+
         baseContext = this;
-        talks.add("vicky");
-        talks.add("hello world");
+
+        mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+            public void call(Object... args) {
+                System.out.println("connected!");
+                JSONObject object = new JSONObject();
+                try {
+                    object.put("from_id", "572e68ad1d41c8588f50ddb3");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mSocket.emit("browse chats");
+            }
+        }).on("ret:browse chats", new Emitter.Listener() {
+            public void call(Object... args) {
+                JSONArray obj = (JSONArray)args[0];
+                System.out.println(obj);
+            }
+//                    .on("ret:browse chats", onBrowseChats);
+//            mSocket.on("ret:add partner", onAddPartner);
+        }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+            public void call(Object... args) {
+                System.out.println("You disconnect me");
+            }
+        });
 
         partners.add("Qi");
         partners.add("Andy");
@@ -56,6 +105,14 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        mSocket.disconnect();
+        mSocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
+        mSocket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
+        mSocket.off("ret:add partner", onAddPartner);
+//        mSocket.off("ret:browse partners", onBrowsePartners);
+        mSocket.off("ret:browse chats", onBrowseChats);
+
         System.runFinalization();
         Runtime.getRuntime().gc();
         System.gc();
@@ -86,13 +143,26 @@ public class MainActivity extends Activity {
 
                 switch (position) {
                     case 0:
-                        setConversationsList(view);
+                        view = LayoutInflater.from(
+                                getBaseContext()).inflate(R.layout.activity_main, null, false);
+                        ListView chatList = (ListView)view.findViewById(R.id.my_chats_list);
+                        chatList.setAdapter(new ArrayAdapter<>(MainActivity.this, R.layout.chats_list_item, MyChats));
+                        chatList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> a, View v, int i, long l) {
+                                openChat(MyChats, i);
+                                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                                intent.putExtra("USER1_ID", "vicky");
+                                intent.putExtra("USER2_ID", "Qi");
+                                startActivity(intent);
+                            }
+                        });
                         break;
 
                     case 1:
                         view = LayoutInflater.from(
                                 getBaseContext()).inflate(R.layout.activity_main, null, false);
-                        ListView partnerList = (ListView) view.findViewById(R.id.talksListView);
+                        ListView partnerList = (ListView) view.findViewById(R.id.my_chats_list);
                         partnerList.setAdapter(
                                 new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, partners));
                         break;
@@ -100,7 +170,7 @@ public class MainActivity extends Activity {
                     case 2:
 //                        view = LayoutInflater.from(
 //                                getBaseContext()).inflate(R.layout.activity_main, null, false);
-//                        ListView searchList = (ListView) view.findViewById(R.id.talksListView);
+//                        ListView searchList = (ListView) view.findViewById(R.id.MyChatsListView);
 //                        searchList.setAdapter(
 //                                new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, searches));
                         setSearches(view);
@@ -109,7 +179,7 @@ public class MainActivity extends Activity {
                     case 3:
 //                        view = LayoutInflater.from(
 //                                getBaseContext()).inflate(R.layout.activity_main, null, false);
-//                        ListView profileList = (ListView) view.findViewById(R.id.talksListView);
+//                        ListView profileList = (ListView) view.findViewById(R.id.MyChatsListView);
 //                        profileList.setAdapter(
 //                                new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, myProfile));
                         setSettingList(view);
@@ -193,7 +263,7 @@ public class MainActivity extends Activity {
     }
 
     private void setSearches(View view) {
-        ListView list = (ListView) view.findViewById(R.id.talksListView);
+        ListView list = (ListView) view.findViewById(R.id.my_chats_list);
         ViewGroup root = ((ViewGroup)list.getParent());
         root.removeView(list);
 
@@ -216,7 +286,7 @@ public class MainActivity extends Activity {
     }
 
     private void setSettingList(View view) {
-        final ListView settingList = (ListView) view.findViewById(R.id.talksListView);
+        final ListView settingList = (ListView) view.findViewById(R.id.my_chats_list);
 
         String[] settings = getResources().getStringArray(R.array.settings_array);
         ArrayAdapter<String> settingAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, settings);
@@ -246,59 +316,114 @@ public class MainActivity extends Activity {
         });
     }
 
-    //display clickable a list of all talks
-    private void setConversationsList(View view) {
-        final ListView talkList = (ListView)view.findViewById(R.id.talksListView);
-//        currentUserId = ParseUser.getCurrentUser().getObjectId();
-
-//        ParseQuery<ParseUser> query = ParseUser.getQuery();
-//        query.whereNotEqualTo("objectId", currentUserId);
-//        query.findInBackground(new FindCallback<ParseUser>() {
-//            public void done(com.parse.ParseException e) {
-//                if (e == null) {
-//                    for (int i=0; i<userList.size(); i++) {
-//                        talks.add(userList.get(i).getUsername().toString());
-//                    }
-
-        talkList.setAdapter(
-                new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, talks));
-
-        talkList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> a, View v, int i, long l) {
-                openConversation(talks, i);
-            }
-        });
-
-//                } else {
-//                    Toast.makeText(getApplicationContext(),
-//                            "Error loading user list",
-//                            Toast.LENGTH_LONG).show();
-//                }
-//            }
-//        });
+    // open a specific chat
+    public void openChat(ArrayList<MyChat> MyChats, int pos) {
+        MyChat chat = MyChats.get(pos);
+        JSONObject request = new JSONObject();
+        try {
+            request.put("page_size", "20");
+            request.put("page_id", "0");
+            request.put("to_chat", chat.id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("browse messages", request);
     }
 
-    //open a conversation with one person
-    public void openConversation(ArrayList<String> talks, int pos) {
-//        ParseQuery<ParseUser> query = ParseUser.getQuery();
-//        query.whereEqualTo("username", talks.get(pos));
-//        query.findInBackground(new FindCallback<ParseUser>() {
-//            public void done(List<ParseUser> user, com.parse.ParseException e) {
-//                if (e == null) {
-//                    Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-//                    intent.putExtra("RECIPIENT_ID", user.get(0).getObjectId());
-//                    startActivity(intent);
-//                } else {
-//                    Toast.makeText(getApplicationContext(),
-//                            "Error finding that user",
-//                            Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-        intent.putExtra("USER1_ID", "vicky");
-        intent.putExtra("USER2_ID", "Qi");
-        startActivity(intent);
+    // Listeners
+    private Emitter.Listener onConnectError = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), R.string.error_connect, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onBrowseChats = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            JSONObject data = (JSONObject) args[0];
+            JSONArray chats = null;
+            try {
+                chats = data.getJSONArray("response");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            System.out.println(chats);
+            setChatsList(chats);
+        }
+    };
+
+    //display clickable a list of all MyChats
+    private void setChatsList(JSONArray chats) {
+        // looping through all chats
+        for (int i = 0; i < chats.length(); i++) {
+            try {
+                JSONObject chat = chats.getJSONObject(i);
+                MyChat ct = new MyChat(chat.getString("id"),
+                                       chat.getString("name"),
+                                       chat.getJSONArray("members"),
+                                       chat.getString("last_updated"));
+                MyChats.add(ct);
+            } catch (JSONException e) {
+                System.out.println("Get chat error");
+            }
+        }
+    }
+
+    private Emitter.Listener onAddPartner = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    String username;
+                    try {
+                        username = data.getString("username");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+//                    addPartner(username);
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onAddChat = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    String username;
+                    try {
+                        username = data.getString("username");
+                    } catch (JSONException e) {
+                        return;
+                    }
+//                    addChat(username);
+                }
+            });
+        }
+    };
+
+    public class MyChat{
+        private String id;
+        private String name;
+        private JSONArray members;
+        private String last_updated;
+
+        public MyChat(String id, String name, JSONArray members, String last_updated){
+            this.id = id;
+            this.name = name;
+            this.members = members;
+            this.last_updated = last_updated;
+        }
     }
 }

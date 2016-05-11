@@ -30,7 +30,6 @@ import com.st.leighton.lingobarterclient.R;
 import chat.UrlUtils;
 import chat.bean.Message;
 import org.kymjs.kjframe.KJBitmap;
-import org.kymjs.kjframe.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -105,6 +104,7 @@ public class ChatAdapter extends BaseAdapter {
             holder.img_chatimage = (ImageView) v.findViewById(R.id.chat_item_content_image);
             holder.img_sendfail = (ImageView) v.findViewById(R.id.chat_item_fail);
             holder.progress = (ProgressBar) v.findViewById(R.id.chat_item_progress);
+
             holder.tv_chatcontent = (TextView) v.findViewById(R.id.chat_item_content_text);
             holder.tv_date = (TextView) v.findViewById(R.id.chat_item_date);
             v.setTag(holder);
@@ -127,7 +127,11 @@ public class ChatAdapter extends BaseAdapter {
                 holder.tv_chatcontent = UrlUtils.handleText(holder.tv_chatcontent, data
                         .getContent());
             }
-        } else {
+        } else if (data.getType() == Message.MSG_TYPE_VOICE) {
+            String length = Integer.toString(data.getLength());
+            holder.tv_chatcontent.setText(data.getContent() + length);
+        }
+        else{
             holder.tv_chatcontent.setVisibility(View.GONE);
             holder.img_chatimage.setVisibility(View.VISIBLE);
 
@@ -140,8 +144,8 @@ public class ChatAdapter extends BaseAdapter {
             kjb.display(holder.img_chatimage, data.getContent(), 300, 300);
         }
 
-        //如果是表情或图片，则不显示气泡，如果是图片则显示气泡
-        if (data.getType() != Message.MSG_TYPE_TEXT) {
+        //如果是表情或图片，则不显示气泡，如果是文字则显示气泡
+        if (data.getType() == Message.MSG_TYPE_FACE || data.getType() == Message.MSG_TYPE_PHOTO) {
             holder.layout_content.setBackgroundResource(android.R.color.transparent);
         } else {
             if (data.getIsSend()) {

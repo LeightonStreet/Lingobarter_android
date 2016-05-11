@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class Webservice extends Service {
-    private String token;
+    public String token;
     private String name;
     private String userid;
     private String username;

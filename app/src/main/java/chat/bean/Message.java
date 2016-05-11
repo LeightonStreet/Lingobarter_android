@@ -26,14 +26,14 @@ public class Message {
     public final static int MSG_TYPE_PHOTO = 1;
     public final static int MSG_TYPE_FACE = 2;
     public final static int MSG_TYPE_TEXT = 3;
-    public final static int MSG_TYPE_SPEECH = 4;
+    public final static int MSG_TYPE_VOICE = 4;
 
     public final static int MSG_STATE_SUCCESS = 1;
     public final static int MSG_STATE_FAIL = 2;
     public final static int MSG_STATE_SENDING = 3;
 
     private Long id;
-    private int type; // 1-photo | 2-face | 3-text | 4-speech
+    private int type; // 1-photo | 2-face | 3-text | 4-voice
     private int state; // 1-success | 2-fail | 3-sending
     private String fromUserName;
     private String fromUserAvatar;
@@ -44,6 +44,7 @@ public class Message {
     private Boolean isSend;
     private Boolean sendSuccess;
     private Date time;
+    private int length; // audio message >= 0
 
     public Message(int type, int state, String fromUserName,
                    String fromUserAvatar, String toUserName, String toUserAvatar,
@@ -148,4 +149,8 @@ public class Message {
     public void setTime(Date time) {
         this.time = time;
     }
+
+    public void setLength(int length) {this.length = length;}
+
+    public int getLength() {return length;}
 }
