@@ -58,7 +58,6 @@
         <activity android:name=".TESTING" />
         <activity android:name=".MainActivity" />
         <activity android:name=".ChatActivity" />
-        <activity android:name=".test"></activity>
     </application>
 
 </manifest>
