@@ -2,12 +2,10 @@ package com.st.leighton.lingobarterclient;
 
 import android.app.Service;
 import android.content.Intent;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -16,10 +14,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 
 class GlobalStore {
@@ -29,6 +25,8 @@ class GlobalStore {
     private String username;
 
     private static GlobalStore globalStore;
+
+    public HashMap<String, UserInfoBundle> searchResults;
 
     private GlobalStore() {}
 
@@ -312,7 +310,6 @@ public class Webservice extends Service{
                 = new WebserviceClient(WebserviceClient.METHOD.Put, "/api/v1/users/upload");
 
         File file = new File(imagePath);
-        client.AddHeader("Authentication-Token", GlobalStore.getInstance().getToken());
 
         HttpEntity httpEntity = MultipartEntityBuilder.create()
                 .addBinaryBody("image", file, ContentType.DEFAULT_BINARY, file.getName())
@@ -328,7 +325,6 @@ public class Webservice extends Service{
 
         if (flag) {
             JSONObject jsonResult = client.getJSON();
-            System.out.println(jsonResult);
             try {
                 int status = jsonResult.getInt("status");
                 switch (status) {
@@ -355,9 +351,6 @@ public class Webservice extends Service{
     public void BasicSetBasicProfile(String name, boolean gender, String nationality,
                                      double latitude, double longitude, long birthday,
                                      HashSet<String> nativeLanguages, HashMap<String, Integer> learnLanguages) {
-        //  Gender: true for male
-        // Succeed; ERROR;
-
         WebserviceClient client
                 = new WebserviceClient(WebserviceClient.METHOD.Put, "/api/v1/users");
         client.AddHeader("content-type", "application/json");
@@ -435,7 +428,6 @@ public class Webservice extends Service{
                 = new WebserviceClient(WebserviceClient.METHOD.Put, "/api/v1/users/upload");
 
         File file = new File(imagePath);
-        client.AddHeader("Authentication-Token", GlobalStore.getInstance().getToken());
 
         HttpEntity httpEntity = MultipartEntityBuilder.create()
                 .addBinaryBody("image", file, ContentType.DEFAULT_BINARY, file.getName())
@@ -451,7 +443,6 @@ public class Webservice extends Service{
 
         if (flag) {
             JSONObject jsonResult = client.getJSON();
-            System.out.println(jsonResult);
             try {
                 int status = jsonResult.getInt("status");
                 switch (status) {
@@ -478,8 +469,6 @@ public class Webservice extends Service{
     public void SettingsSetBasicProfile(String name, boolean gender, String nationality,
                                         double latitude, double longitude, double birthday,
                                         HashSet<String> nativeLanguages, HashMap<String, Integer> learnLanguages) {
-        //  Gender: true for male
-
         WebserviceClient client
                 = new WebserviceClient(WebserviceClient.METHOD.Put, "/api/v1/users");
         client.AddHeader("content-type", "application/json");
@@ -555,7 +544,6 @@ public class Webservice extends Service{
 
     public void ResetPassword(String oldPassword, String newPassword) {
         String feedback = "";
-        // Succeed; InvalidPassword; ERROR
 
         WebserviceClient client
                 = new WebserviceClient(WebserviceClient.METHOD.Put, "/api/v1/accounts/password");
@@ -594,7 +582,6 @@ public class Webservice extends Service{
 
     public void UpdateSelfInformation(String tagline, String biography) {
         String feedback = "";
-        // Succeed; ERROR;
 
         WebserviceClient client
                 = new WebserviceClient(WebserviceClient.METHOD.Put, "/api/v1/users");
@@ -637,7 +624,6 @@ public class Webservice extends Service{
             boolean nearbySearchFlag, boolean allSearchFlag, boolean partnerConfirmationFlag,
             HashSet<String> hideInformations, int ageRangeFrom, int ageRangeTo) {
         String feedback = "";
-        // Succeed; ERROR;
 
         WebserviceClient client
                 = new WebserviceClient(WebserviceClient.METHOD.Put, "/api/v1/users");
@@ -665,7 +651,6 @@ public class Webservice extends Service{
         }
 
         client.AddPayload("settings", settings);
-
         client.Execute();
 
         Boolean flag = client.Waiting();
@@ -690,87 +675,176 @@ public class Webservice extends Service{
             feedback = "ERROR";
         }
 
-        Intent intent = new Intent("android.intent.action.SelfInformation");
-        intent.putExtra(SelfInformation.SELF_INFORMATION_UPDATE_FEEDBACK, feedback);
+        Intent intent = new Intent("android.intent.action.ApplicationSettings");
+        intent.putExtra(ApplicationSettings.APPLICATION_SETTINGS_FEEDBACK, feedback);
         getInstance().sendBroadcast(intent);
     }
 
     public void Search(int ageRangeFrom, int ageRangeTo,
                        HashMap<String, Integer> teachLanguages, HashMap<String, Integer> learnLanguages,
                        HashSet<String> nationalities) {
-        HashMap<String, UserInfoBundle> userProfiles = new HashMap<>();
-        // Fill userProfiles, using user name as key.
-        // If network error, pass a empty userProfiles.
-
         WebserviceClient client
-                = new WebserviceClient(WebserviceClient.METHOD.Put, "/api/v1/search");
+                = new WebserviceClient(WebserviceClient.METHOD.Post, "/api/v1/search");
         client.AddHeader("content-type", "application/json");
         client.AddHeader("Authentication-Token", GlobalStore.getInstance().getToken());
 
-        JSONArray array_teach = new JSONArray();
-        JSONArray array_learn = new JSONArray();
-        try {
-            for (Map.Entry<String, Integer> entry : teachLanguages.entrySet()) {
-                JSONObject temp = new JSONObject();
-                temp.put("language_id", entry.getKey());
-                temp.put("level", entry.getValue());
-                array_teach.put(temp);
-            }
-
-            for (Map.Entry<String, Integer> entry : learnLanguages.entrySet()) {
-                JSONObject temp = new JSONObject();
-                temp.put("language_id", entry.getKey());
-                JSONArray temp_arr = new JSONArray();
-                temp_arr.put(0);
-                temp_arr.put(entry.getValue());
-                temp.put("level", temp_arr);
-                array_learn.put(temp);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (ageRangeFrom != -1 && ageRangeTo != -1) {
+            JSONArray ageRange = new JSONArray();
+            ageRange.put(ageRangeFrom);
+            ageRange.put(ageRangeTo);
+            client.AddPayload("age_range", ageRange);
         }
-        client.AddPayload("teach_langs", array_teach);
-        client.AddPayload("learn_langs", array_learn);
 
-        JSONArray ageRange = new JSONArray();
-        ageRange.put(ageRangeFrom);
-        ageRange.put(ageRangeTo);
-        client.AddPayload("age_range", ageRange);
-
-        JSONArray n_arr = new JSONArray();
-        for (String nation : nationalities) {
-            n_arr.put(nation);
+        if (teachLanguages != null && !teachLanguages.isEmpty()) {
+            JSONArray array_teach = new JSONArray();
+            try {
+                for (Map.Entry<String, Integer> entry : teachLanguages.entrySet()) {
+                    JSONObject temp = new JSONObject();
+                    temp.put("language_id", entry.getKey());
+                    temp.put("level", entry.getValue());
+                    array_teach.put(temp);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            client.AddPayload("teach_langs", array_teach);
         }
-        client.AddPayload("nationality", n_arr);
+
+        if(learnLanguages != null && !learnLanguages.isEmpty()) {
+            JSONArray array_learn = new JSONArray();
+            try {
+                for (Map.Entry<String, Integer> entry : learnLanguages.entrySet()) {
+                    JSONObject temp = new JSONObject();
+                    temp.put("language_id", entry.getKey());
+                    JSONArray temp_arr = new JSONArray();
+                    temp_arr.put(entry.getValue());
+                    temp_arr.put(5);
+                    temp.put("level", temp_arr);
+                    array_learn.put(temp);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            client.AddPayload("learn_langs", array_learn);
+        }
+
+        if(nationalities != null && !nationalities.isEmpty()) {
+            JSONArray n_arr = new JSONArray();
+            for (String nation : nationalities) {
+                n_arr.put(nation);
+            }
+            client.AddPayload("nationality", n_arr);
+        }
 
         client.Execute();
-
         Boolean flag = client.Waiting();
+
+        Log.d("Feedback", client.getRawResult());
+
+        String feedback = "";
+        HashMap<String, UserInfoBundle> userProfiles = GlobalStore.getInstance().searchResults;
+        if (userProfiles == null) {
+            userProfiles = new HashMap<>();
+        } else {
+            userProfiles.clear();
+        }
 
         if (flag) {
             JSONObject jsonResult = client.getJSON();
             try {
                 int status = jsonResult.getInt("status");
+                Log.d("Feedback", Integer.toString(status));
                 switch (status) {
                     case 200:
+                        feedback = "Succeed";
                         JSONArray array = jsonResult.getJSONArray("response");
-                        for (int i = 0; i < array.length(); i++) {
+
+                        for (int i = 0; i < array.length(); ++i) {
+                            String username_str = "";
                             JSONObject user = array.getJSONObject(i);
-                            String name = user.getString("name");
-                            String username = user.getString("username");
-                            String avatar_url = user.getString("avatar_url");
-                            String gender = user.getString("gender");
-                            String birthday;
-                            if (user.get("birthday") == null) {
-                                birthday = "Unknown";
-                            } else {
-                                Date date = new Date();
-                                date.setTime((long) user.getDouble("birthday"));
-                                birthday = DateFormatUtils.format(date, "YYYY/MM/DD");
+                            UserInfoBundle userInfo = new UserInfoBundle();
+
+                            JSONObject name = user.getJSONObject("name");
+                            if (name != JSONObject.NULL) {
+                                userInfo.setName(user.getString("name"));
                             }
-                            String tagline = user.getString("tagline");
-                            String bio = user.getString("bio");
-                            // GO TO SLEEP
+
+                            JSONObject username = user.getJSONObject("username");
+                            if (username != JSONObject.NULL) {
+                                username_str = user.getString("username");
+                                userInfo.setUsername(user.getString("username"));
+                            }
+
+                            JSONObject id = user.getJSONObject("id");
+                            if (id != JSONObject.NULL) {
+                                userInfo.setUserid(user.getString("id"));
+                            }
+
+                            JSONObject avatar_url = user.getJSONObject("avatar_url");
+                            if (avatar_url != JSONObject.NULL) {
+                                userInfo.setImageURL(user.getString("avatar_url"));
+                            }
+
+                            JSONObject gender = user.getJSONObject("gender");
+                            if (gender != JSONObject.NULL) {
+                                userInfo.setGender(user.getString("gender"));
+                            }
+
+                            JSONObject birthday = user.getJSONObject("birthday");
+                            if (birthday != JSONObject.NULL) {
+                                userInfo.setBirthday(user.getString("birthday"));
+                            }
+
+                            JSONObject tagline = user.getJSONObject("tagline");
+                            if (tagline != JSONObject.NULL) {
+                                userInfo.setTagline(user.getString("tagline"));
+                            }
+
+                            JSONObject bio = user.getJSONObject("bio");
+                            if (bio != JSONObject.NULL) {
+                                userInfo.setBiography(user.getString("bio"));
+                            }
+
+                            JSONObject location = user.getJSONObject("location");
+                            if (location != JSONObject.NULL) {
+                                userInfo.setCity(user.getString("location"));
+                            }
+
+                            JSONObject nationality = user.getJSONObject("nationality");
+                            if (nationality != JSONObject.NULL) {
+                                userInfo.setNationality(user.getString("nationality"));
+                            }
+
+                            JSONObject teach_langs = user.getJSONObject("teach_langs");
+                            if (teach_langs != JSONObject.NULL) {
+                                JSONArray langs = user.getJSONArray("teach_langs");
+                                HashSet<String> teach_langs_bundle = new HashSet<>();
+
+                                for (int j = 0; j < langs.length(); ++j) {
+                                    JSONObject lang = array.getJSONObject(i);
+                                    String lang_id = lang.getString("language_id");
+                                    teach_langs_bundle.add(lang_id);
+                                }
+
+                                userInfo.setTeach_languages(teach_langs_bundle);
+                            }
+
+                            JSONObject learn_langs = user.getJSONObject("learn_langs");
+                            if (learn_langs != JSONObject.NULL) {
+                                JSONArray langs = user.getJSONArray("learn_langs");
+                                HashMap<String, Integer> learn_langs_bundle = new HashMap<>();
+
+                                for (int j = 0; j < langs.length(); ++j) {
+                                    JSONObject lang = array.getJSONObject(i);
+                                    String lang_id = lang.getString("language_id");
+                                    int level = lang.getInt("level");
+                                    learn_langs_bundle.put(lang_id, level);
+                                }
+
+                                userInfo.setLearn_languages(learn_langs_bundle);
+                            }
+
+                            userProfiles.put(username_str, userInfo);
                         }
                         break;
 
@@ -780,24 +854,131 @@ public class Webservice extends Service{
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            feedback = "ERROR";
         }
 
-        Bundle passToSearch = new Bundle();
-        passToSearch.putSerializable(Search.USER_PROFILES_BUNDLE_KEY, userProfiles);
+        GlobalStore.getInstance().searchResults = userProfiles;
 
         Intent intent = new Intent("android.intent.action.Search");
-        intent.putExtras(passToSearch);
+        intent.putExtra(Search.USER_PROFILES_BUNDLE_KEY, feedback);
         getInstance().sendBroadcast(intent);
     }
 
     public void GetSelfInfo() {
-        SelfInfoBundle selfInfo = new SelfInfoBundle();
-        // Fill selfInfo.
-        // If network error, pass un-initialized selfInfo.
+        WebserviceClient client
+                = new WebserviceClient(WebserviceClient.METHOD.Get, "/api/v1/users/" + GlobalStore.getInstance().getUsername());
+        client.AddHeader("content-type", "application/json");
+        client.AddHeader("Authentication-Token", GlobalStore.getInstance().getToken());
 
-        Bundle passToSettings = new Bundle();
-        // Use selfInfo.setBundle() to initialize all the information fields.
-//        passToSettings.putSerializable(TESTING.SELF_INFO_KEY, selfInfo);
+        client.Execute();
+        Boolean flag = client.Waiting();
+
+        String feedback = "";
+        SelfInfoBundle infoBundle = new SelfInfoBundle();
+
+        if (flag) {
+            JSONObject jsonResult = client.getJSON();
+            try {
+                int status = jsonResult.getInt("status");
+                switch (status) {
+                    case 200:
+                        JSONObject content = jsonResult.getJSONObject("response");
+
+                        JSONObject username = content.getJSONObject("username");
+                        if (username != JSONObject.NULL) {
+                            infoBundle.setUsername(content.getString("username"));
+                        }
+
+                        JSONObject name = content.getJSONObject("name");
+                        if (name != JSONObject.NULL) {
+                            infoBundle.setName(content.getString("name"));
+                        }
+
+                        JSONObject gender = content.getJSONObject("gender");
+                        if (gender != JSONObject.NULL) {
+                            infoBundle.setGender(content.getString("gender"));
+                        }
+
+                        JSONObject birthday = content.getJSONObject("birthday");
+                        if (birthday != JSONObject.NULL) {
+                            infoBundle.setImageURL(content.getString("birthday"));
+                        }
+
+                        JSONObject avatar_url = content.getJSONObject("avatar_url");
+                        if (avatar_url != JSONObject.NULL) {
+                            infoBundle.setImageURL(content.getString("avatar_url"));
+                        }
+
+                        JSONObject nationality = content.getJSONObject("nationality");
+                        if (nationality != JSONObject.NULL) {
+                            infoBundle.setNationality(content.getString("nationality"));
+                        }
+
+                        JSONObject location = content.getJSONObject("location");
+                        if (location != JSONObject.NULL) {
+                            infoBundle.setLocation(content.getString("location"));
+                        }
+
+                        JSONObject teach_langs = content.getJSONObject("teach_langs");
+                        if (teach_langs != JSONObject.NULL) {
+                            JSONArray langs = content.getJSONArray("teach_langs");
+                            HashSet<String> teach_langs_bundle = new HashSet<>();
+
+                            for (int j = 0; j < langs.length(); ++j) {
+                                JSONObject lang = langs.getJSONObject(j);
+                                String lang_id = lang.getString("language_id");
+                                teach_langs_bundle.add(lang_id);
+                            }
+
+                            infoBundle.setNativeLanguages(teach_langs_bundle);
+                        }
+
+                        JSONObject learn_langs = content.getJSONObject("learn_langs");
+                        if (learn_langs != JSONObject.NULL) {
+                            JSONArray langs = content.getJSONArray("learn_langs");
+                            HashMap<String, Integer> learn_langs_bundle = new HashMap<>();
+
+                            for (int j = 0; j < langs.length(); ++j) {
+                                JSONObject lang = langs.getJSONObject(j);
+                                String lang_id = lang.getString("language_id");
+                                int level = lang.getInt("level");
+                                learn_langs_bundle.put(lang_id, level);
+                            }
+
+                            infoBundle.setLearnLanguages(learn_langs_bundle);
+                        }
+
+                        JSONObject tagline = content.getJSONObject("tagline");
+                        if (tagline != JSONObject.NULL) {
+                            infoBundle.setTagline(content.getString("tagline"));
+                        }
+
+                        JSONObject bio = content.getJSONObject("bio");
+                        if (bio != JSONObject.NULL) {
+                            infoBundle.setBiography(content.getString("bio"));
+                        }
+
+                        feedback = "Succeed";
+                        break;
+
+                    case 404:
+                        feedback = "NoUser";
+                        break;
+
+                    default:
+                        break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            feedback = "ERROR";
+        }
+
+        Intent intent = new Intent("android.intent.action.AccountSettings");
+        intent.putExtra(ProfileSettings.ACCOUNT_INFORMATION_FEEDBACK, feedback);
+        getInstance().sendBroadcast(intent);
     }
 
     @Override

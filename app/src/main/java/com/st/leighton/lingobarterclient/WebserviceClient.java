@@ -1,5 +1,7 @@
 package com.st.leighton.lingobarterclient;
 
+import android.util.Log;
+
 import com.st.leighton.util.MyProperty;
 
 import org.apache.http.Header;
@@ -167,6 +169,7 @@ public class WebserviceClient {
                     httpHost = new HttpHost(host, port, protocol);
 
                     stringEntity = new StringEntity(content.toString());
+                    Log.d("test", content.toString());
 
                     switch (method) {
                         case Post:

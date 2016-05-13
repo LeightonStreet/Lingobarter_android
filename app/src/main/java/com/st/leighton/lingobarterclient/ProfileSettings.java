@@ -103,6 +103,7 @@ public class ProfileSettings extends AppCompatActivity implements LocationListen
     ProgressDialog waitIndicator;
     final public static String PROFILE_FEEDBACK = "PROFILE_FEEDBACK";
     final public static String PROFILE_IMAGE_FEEDBACK = "PROFILE_IMAGE_FEEDBACK";
+    final static public String ACCOUNT_INFORMATION_FEEDBACK = "SELF_INFO_BUNDLE_KEY";
 
     @Override
     protected void onResume() {
@@ -575,7 +576,6 @@ public class ProfileSettings extends AppCompatActivity implements LocationListen
         }
         return true;
     }
-
 
     @Override
     public void onLocationChanged(Location location) {

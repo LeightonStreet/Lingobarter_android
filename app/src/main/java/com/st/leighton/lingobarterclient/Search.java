@@ -72,6 +72,7 @@ public class Search extends AppCompatActivity {
     HashMap<String, Integer> teachLanguages, learnLanguages;
 
     final static public String NAME_KEY = "SEARCH_NAME_KEY";
+    final static public String ID_KEY = "SEARCH_ID_KEY";
     final static public String USERNAME_KEY = "SEARCH_USERNAME_KEY";
     final static public String IMAGEURL_KEY = "SEARCH_IMAGEURL_KEY";
     final static public String GENDER_KEY = "SEARCH_GENDER_KEY";
@@ -167,69 +168,70 @@ public class Search extends AppCompatActivity {
         noticeReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Bundle bundle = intent.getExtras();
-                final HashMap<String, UserInfoBundle> userProfiles
-                        = (HashMap<String, UserInfoBundle>) bundle.getSerializable(USER_PROFILES_BUNDLE_KEY);
+                String message = intent.getStringExtra(USER_PROFILES_BUNDLE_KEY);
 
-                if (userProfiles.size() == 0) {
-                    Toast.makeText(baseContext,"Cannot connect to server, please check your network", Toast.LENGTH_LONG).show();
-                    return ;
-                }
+                if (message.equals("Succeed")) {
+                    final HashMap<String, UserInfoBundle> userProfiles = GlobalStore.getInstance().searchResults;
 
-                final ArrayList<String> userNames = new ArrayList<>();
-                for (String userName : userProfiles.keySet()) {
-                    userNames.add(userName);
-                }
-
-                final ListView usernamesLV;
-                AlertDialog.Builder usersAlertDialog;
-                ArrayAdapter<String> userNamesAdapter
-                        = new ArrayAdapter<>(baseContext, android.R.layout.simple_spinner_item, userNames);
-
-                usernamesLV = new ListView(baseContext);
-                usernamesLV.setAdapter(userNamesAdapter);
-                usernamesLV.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-                usernamesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        String user_name = userNames.get((int) id);
-                        UserInfoBundle user_info = userProfiles.get(user_name);
-
-                        Bundle passToUserProfile = new Bundle();
-                        passToUserProfile.putString(NAME_KEY, user_info.name);
-                        passToUserProfile.putString(USERNAME_KEY, user_info.username);
-                        passToUserProfile.putString(IMAGEURL_KEY, user_info.imageURL);
-                        passToUserProfile.putString(GENDER_KEY, user_info.gender);
-                        passToUserProfile.putString(BIRTHDAY_KEY, user_info.birthday);
-                        passToUserProfile.putString(TAGLINE_KEY, user_info.tagline);
-                        passToUserProfile.putString(BIOGRAPHY_KEY, user_info.biography);
-                        passToUserProfile.putString(CITY_KEY, user_info.city);
-                        passToUserProfile.putString(NATIONALITY_KEY, user_info.nationality);
-                        passToUserProfile.putSerializable(LEARN_LANGUAGES_KEY, user_info.learn_languages);
-                        passToUserProfile.putSerializable(TEACH_LANGUAGES_KEY, user_info.teach_languages);
-
-                        Intent intent = new Intent(baseContext, UserProfile.class);
-                        intent.putExtras(passToUserProfile);
-                        startActivity(intent);
+                    final ArrayList<String> userNames = new ArrayList<>();
+                    for (String userName : userProfiles.keySet()) {
+                        userNames.add(userName);
                     }
-                });
 
-                usersAlertDialog = new AlertDialog.Builder(baseContext);
-                usersAlertDialog.setTitle("Users");
-                usersAlertDialog.setView(usernamesLV);
-                usersAlertDialog.setPositiveButton("RETURN", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if(usernamesLV.getParent() != null) {
-                            ((ViewGroup) usernamesLV.getParent()).removeView(usernamesLV);
+                    final ListView usernamesLV;
+                    AlertDialog.Builder usersAlertDialog;
+                    ArrayAdapter<String> userNamesAdapter
+                            = new ArrayAdapter<>(baseContext, android.R.layout.simple_spinner_item, userNames);
+
+                    usernamesLV = new ListView(baseContext);
+                    usernamesLV.setAdapter(userNamesAdapter);
+                    usernamesLV.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+                    usernamesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            String user_name = userNames.get((int) id);
+                            UserInfoBundle user_info = userProfiles.get(user_name);
+
+                            Bundle passToUserProfile = new Bundle();
+                            passToUserProfile.putString(NAME_KEY, user_info.name);
+                            passToUserProfile.putString(ID_KEY, user_info.userid);
+                            passToUserProfile.putString(USERNAME_KEY, user_info.username);
+                            passToUserProfile.putString(IMAGEURL_KEY, user_info.imageURL);
+                            passToUserProfile.putString(GENDER_KEY, user_info.gender);
+                            passToUserProfile.putString(BIRTHDAY_KEY, user_info.birthday);
+                            passToUserProfile.putString(TAGLINE_KEY, user_info.tagline);
+                            passToUserProfile.putString(BIOGRAPHY_KEY, user_info.biography);
+                            passToUserProfile.putString(CITY_KEY, user_info.city);
+                            passToUserProfile.putString(NATIONALITY_KEY, user_info.nationality);
+                            passToUserProfile.putSerializable(LEARN_LANGUAGES_KEY, user_info.learn_languages);
+                            passToUserProfile.putSerializable(TEACH_LANGUAGES_KEY, user_info.teach_languages);
+
+                            Intent intent = new Intent(baseContext, UserProfile.class);
+                            intent.putExtras(passToUserProfile);
+                            startActivity(intent);
                         }
-                    }
-                });
+                    });
 
-                final Dialog dialog = usersAlertDialog.create();
-                dialog.show();
+                    usersAlertDialog = new AlertDialog.Builder(baseContext);
+                    usersAlertDialog.setTitle("Users");
+                    usersAlertDialog.setView(usernamesLV);
+                    usersAlertDialog.setPositiveButton("RETURN", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(usernamesLV.getParent() != null) {
+                                ((ViewGroup) usernamesLV.getParent()).removeView(usernamesLV);
+                            }
+                        }
+                    });
 
-                waitIndicator.cancel();
+                    final Dialog dialog = usersAlertDialog.create();
+                    dialog.show();
+
+                    waitIndicator.cancel();
+                } else {
+                    Toast.makeText(baseContext,"Cannot connect to server, please check your network", Toast.LENGTH_LONG).show();
+                    waitIndicator.cancel();
+                }
             }
         };
         this.registerReceiver(noticeReceiver, noticeFilter);
@@ -467,6 +469,9 @@ public class Search extends AppCompatActivity {
                         Toast.makeText(baseContext,"Please specify valid age range.", Toast.LENGTH_LONG).show();
                         return;
                     }
+                } else {
+                    fromAge = -1;
+                    toAge = -1;
                 }
 
                 waitIndicator.setMessage("Please wait...");

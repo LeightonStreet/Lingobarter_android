@@ -22,6 +22,7 @@ public class UserProfile extends AppCompatActivity {
     String imageURL;
 
     String name;
+    String userid;
     String username;
 
     String gender;
@@ -75,6 +76,7 @@ public class UserProfile extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
 
         name = bundle.getString(Search.NAME_KEY);
+        userid = bundle.getString(Search.ID_KEY);
         username = bundle.getString(Search.USERNAME_KEY);
         birthday = bundle.getString(Search.BIRTHDAY_KEY);
         city = bundle.getString(Search.CITY_KEY);
