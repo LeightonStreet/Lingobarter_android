@@ -11,7 +11,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.ibm.watson.developer_cloud.language_translation.v2.model.Language;
+
 public class CHATTING_TEST extends AppCompatActivity {
+
+    BroadcastReceiver responseReceiver, translateReceiver, detectReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,7 +27,7 @@ public class CHATTING_TEST extends AppCompatActivity {
         Button sendB = (Button) findViewById(R.id.send_B);
 
         IntentFilter responseFilter = new IntentFilter("android.intent.action.BotChat");
-        BroadcastReceiver responseReceiver = new BroadcastReceiver() {
+        responseReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String response = intent.getStringExtra("RESPONSE");
@@ -31,6 +36,28 @@ public class CHATTING_TEST extends AppCompatActivity {
             }
         };
         this.registerReceiver(responseReceiver, responseFilter);
+
+        IntentFilter translateFilter = new IntentFilter("android.intent.action.Translate");
+        translateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String response = intent.getStringExtra("ANSWER");
+                String history = replyTV.getText().toString() + "\n" + response;
+                replyTV.setText(history);
+            }
+        };
+        this.registerReceiver(translateReceiver, translateFilter);
+
+        IntentFilter detectFilter = new IntentFilter("android.intent.action.Detect");
+        detectReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String response = intent.getStringExtra("DETECTION");
+                String history = replyTV.getText().toString() + "\n" + response;
+                replyTV.setText(history);
+            }
+        };
+        this.registerReceiver(detectReceiver, detectFilter);
 
         if (sendB != null) {
             sendB.setOnClickListener(new View.OnClickListener() {
@@ -41,11 +68,22 @@ public class CHATTING_TEST extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            Webservice.botchat(input);
+                            Webservice.translate(input);
+//                            Webservice.botchat(input);
+//                            Webservice.translateToEnglish(input, Language.FRENCH);
+//                            Webservice.detectLanguageType("Hello");
                         }
                     }).start();
                 }
             });
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.unregisterReceiver(this.translateReceiver);
+        this.unregisterReceiver(this.responseReceiver);
+        this.unregisterReceiver(this.detectReceiver);
     }
 }

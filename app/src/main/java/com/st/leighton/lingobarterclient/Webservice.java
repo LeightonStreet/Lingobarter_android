@@ -6,16 +6,32 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.ibm.watson.developer_cloud.language_translation.v2.LanguageTranslation;
+import com.ibm.watson.developer_cloud.language_translation.v2.model.Language;
+import com.ibm.watson.developer_cloud.language_translation.v2.model.TranslationResult;
+
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.kymjs.kjframe.http.HttpUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 class GlobalStore {
@@ -981,9 +997,71 @@ public class Webservice extends Service{
         getInstance().sendBroadcast(intent);
     }
 
+    public static void detectLanguageType(final String input) {
+        String url = "http://gateway-a.watsonplatform.net/calls/text/TextGetLanguage";
+        HttpClient client = new DefaultHttpClient();
+        HttpPost post = new HttpPost(url);
+
+        String result = "";
+
+        List<NameValuePair> urlParameters = new ArrayList<>();
+        urlParameters.add(new BasicNameValuePair("apikey", "4f20bfa1b1eeb6f1093b74dbc7077c439917bf7a"));
+        urlParameters.add(new BasicNameValuePair("text", "Hello"));
+        urlParameters.add(new BasicNameValuePair("outputMode", "json"));
+        try {
+            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+            HttpResponse response = client.execute(post);
+            HttpEntity entity = response.getEntity();
+            result = EntityUtils.toString(entity);
+            Log.d("Translation", result);
+//            System.out.println("Response Code : "
+//                    + response.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Intent intent = new Intent("android.intent.action.Detect");
+        intent.putExtra("DETECTION", result);
+        getInstance().sendBroadcast(intent);
+    }
+
+    public static void translateToEnglish(final String input, final Language language) {
+        final LanguageTranslation service = new LanguageTranslation();
+        service.setUsernameAndPassword("619d24ac-3713-45b7-883a-180c5dfa0121", "8fESEmEXIEBr");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TranslationResult translationResult = service.translate(input, language, Language.ENGLISH).execute();
+                    String raw_result = translationResult.toString();
+                    JSONObject json_result = new JSONObject(raw_result);
+
+                    JSONArray translation_result = json_result.getJSONArray("translations");
+                    for (int i = 0; i < translation_result.length(); ++i) {
+                        JSONObject translation = translation_result.getJSONObject(i);
+                        String result = translation.getString("translation");
+
+                        Intent intent = new Intent("android.intent.action.Translate");
+                        intent.putExtra("TRANSLATION", result);
+                        getInstance().sendBroadcast(intent);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
     public static void botchat(String input) {
         Intent intent = new Intent("android.intent.action.BotChat");
         intent.putExtra("RESPONSE", WebserviceClient.getResponse(input));
+        getInstance().sendBroadcast(intent);
+    }
+
+    public static void translate(String input) {
+        Intent intent = new Intent("android.intent.action.Translate");
+        intent.putExtra("ANSWER", WebserviceClient.translate(input));
         getInstance().sendBroadcast(intent);
     }
 

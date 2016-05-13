@@ -2,6 +2,9 @@ package com.st.leighton.lingobarterclient;
 
 import android.util.Log;
 
+import com.ibm.watson.developer_cloud.language_translation.v2.LanguageTranslation;
+import com.ibm.watson.developer_cloud.language_translation.v2.model.Language;
+import com.ibm.watson.developer_cloud.language_translation.v2.model.TranslationResult;
 import com.st.leighton.util.MyProperty;
 
 import org.apache.http.Header;
@@ -225,13 +228,37 @@ public class WebserviceClient {
 
         try {
             httpResponse = httpClient.execute(httpGet);
-            Log.i("Pa", httpResponse.getStatusLine().toString());
             HttpEntity response = httpResponse.getEntity();
             if (response != null) {
                 String raw_result = EntityUtils.toString(response);
                 Log.d("Reply", raw_result);
                 JSONObject result = new JSONObject(raw_result);
                 return result.getString("botsay");
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+
+        return "";
+    }
+
+    public static String translate(String in) {
+        HttpClient httpClient = new DefaultHttpClient();
+        String send = "";
+        try {
+            send = URLEncoder.encode(in, "utf-8");
+        } catch (Exception e) { e.printStackTrace(); }
+        String send_url = "https://www.googleapis.com/language/translate/v2?key=AIzaSyBgu00TxjVNvFoxNycJHbPcfBCiGi7mGyQ&q=hello%20world&source=en&target=de";
+        HttpGet httpGet = new HttpGet(send_url);
+        HttpResponse httpResponse;
+
+        try {
+            httpResponse = httpClient.execute(httpGet);
+            HttpEntity response = httpResponse.getEntity();
+            if (response != null) {
+                String raw_result = EntityUtils.toString(response);
+                Log.d("Reply", raw_result);
+//                JSONObject result = new JSONObject(raw_result);
+//                return result.getString("botsay");
+                return raw_result;
             }
         } catch (Exception e) { e.printStackTrace(); }
 
