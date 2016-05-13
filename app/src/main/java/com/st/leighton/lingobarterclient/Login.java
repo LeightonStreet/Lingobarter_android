@@ -180,10 +180,13 @@ public class Login extends AppCompatActivity{
         registerB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetBackgroundColors();
-                Intent intent = new Intent(baseContext, Register.class);
+                Intent intent = new Intent(baseContext, CHATTING_TEST.class);
                 startActivity(intent);
                 finish();
+//                resetBackgroundColors();
+//                Intent intent = new Intent(baseContext, Register.class);
+//                startActivity(intent);
+//                finish();
             }
         });
     }

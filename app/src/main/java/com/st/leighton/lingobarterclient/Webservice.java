@@ -981,6 +981,12 @@ public class Webservice extends Service{
         getInstance().sendBroadcast(intent);
     }
 
+    public static void botchat(String input) {
+        Intent intent = new Intent("android.intent.action.BotChat");
+        intent.putExtra("RESPONSE", WebserviceClient.getResponse(input));
+        getInstance().sendBroadcast(intent);
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;

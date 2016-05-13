@@ -9,14 +9,13 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
-        android:name="com.st.leighton.lingobarterclient.MyApplication"
         tools:replace="android:theme">
         <activity
             android:name=".Login"
@@ -60,7 +59,8 @@
         <activity android:name=".TESTING" />
         <activity android:name=".MainActivity" />
         <activity android:name=".ChatActivity" />
-        <activity android:name=".test"></activity>
+        <activity android:name=".test" />
+        <activity android:name=".CHATTING_TEST"></activity>
     </application>
 
 </manifest>
