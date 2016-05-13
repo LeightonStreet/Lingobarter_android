@@ -6,23 +6,22 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
 import com.gigamole.library.NavigationTabBar;
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
+import com.lingobarter.socketclient.WebsocketClient;
 import com.st.leighton.util.MyProperty;
 
 import org.json.JSONArray;
@@ -32,8 +31,12 @@ import org.json.JSONObject;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import chat.adapter.ChatAdapter;
+import chat.adapter.ContactAdapter;
 import chat.bean.Chat;
-import chat.bean.User;
+import chat.bean.Contact;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 /**
  * Created by vicky on 06.05.2016.
@@ -43,10 +46,13 @@ public class MainActivity extends Activity {
 
     Context baseContext;
 
-    private Socket mSocket = null;
+    private WebsocketClient mSocket = null;
 
     private ArrayList<Chat> MyChats = new ArrayList<>();
-    private ArrayList<User> MyPartners = new ArrayList<>();
+    private ArrayList<Contact> MyPartners = new ArrayList<>();
+
+    private ContactAdapter contactAdapter = new ContactAdapter(MainActivity.this, MyPartners);
+    private ChatAdapter chatAdapter = new ChatAdapter(MainActivity.this, MyChats);
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -57,28 +63,19 @@ public class MainActivity extends Activity {
 
         try {
             String authToken = GlobalStore.getInstance().getToken();
-            IO.Options opts = new IO.Options();
-            opts.forceNew = false;
-            opts.reconnection = false;
-            opts.query = "auth_token=" + authToken;
             String url = MyProperty.getProperty("protocol") + "://" + MyProperty.getProperty("host") + ":" + MyProperty.getProperty("port");
-            app.setSocket(IO.socket(url, opts));
+            app.setSocket(new WebsocketClient(url, authToken, true));
             System.out.println("set socket");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
 
         mSocket = app.getSocket();
+        mSocket.connect();
         baseContext = this;
-        mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+        mSocket.getSocket().on(Socket.EVENT_CONNECT, new Emitter.Listener() {
             public void call(Object... args) {
                 System.out.println("connected!");
-                JSONObject object = new JSONObject();
-                try {
-                    object.put("from_id", "572e68ad1d41c8588f50ddb3");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
                 mSocket.emit("browse chats");
                 mSocket.emit("browse partners");
             }
@@ -87,6 +84,30 @@ public class MainActivity extends Activity {
         .on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
             public void call(Object... args) {
                 System.out.println("You disconnect me");
+            }
+        }).on("ret:add partner", new Emitter.Listener() {
+            public void call(Object... args) {
+                JSONObject obj = (JSONObject) args[0];
+                System.out.println(obj);
+                try{
+                    JSONObject response = obj.getJSONObject("response");
+                    int status = response.getInt("status");
+                    if(status == 200){
+                        JSONObject user = response.getJSONObject("to_user");
+                        double birthday = user.getDouble("birthday");
+                        Contact new_partner = new Contact(birthday/1000.0,
+                                user.getString("username"), user.getString("name"),
+                                user.getString("avatar_url"), user.getString("tagline"),
+                                user.getString("gender"), user.getString("bio"),
+                                user.getJSONObject("location"), user.getString("nationality"),
+                                user.getJSONArray("learn_langs"), user.getJSONArray("teach_langs"));
+                        MyPartners.add(new_partner);
+                        System.out.println("add partner successfully");
+                    }
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                    System.out.println("fail to send message");
+                }
             }
         });
         mSocket.connect();
@@ -97,12 +118,7 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
 
-        mSocket.disconnect();
-        mSocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
-        mSocket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-        mSocket.off("ret:add partner", onAddPartner);
-        mSocket.off("ret:browse partners", onBrowsePartners);
-        mSocket.off("ret:browse chats", onBrowseChats);
+        mSocket.getSocket().disconnect();
 
         System.runFinalization();
         Runtime.getRuntime().gc();
@@ -136,32 +152,20 @@ public class MainActivity extends Activity {
                     case 0:
                         view = LayoutInflater.from(
                                 getBaseContext()).inflate(R.layout.activity_main, null, false);
-                        ListView chatList = (ListView) view.findViewById(R.id.my_chats_list);
-                        chatList.setAdapter(new ArrayAdapter<>(MainActivity.this, R.layout.chats_list_contact, MyChats));
-                        chatList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> a, View v, int i, long l) {
-                                openChat(MyChats, i);
-                                Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-                                Chat chat = MyChats.get(i);
-                                intent.putExtra("CHAT_ID", chat.getId());
-                                startActivity(intent);
-                            }
-                        });
+                        final ListView chatList = (ListView) view.findViewById(R.id.my_chats_list);
+                        chatList.setAdapter(chatAdapter);
                         break;
 
                     case 1:
                         view = LayoutInflater.from(
-                                getBaseContext()).inflate(R.layout.activity_main, null, false);
-                        ListView partnerList = (ListView) view.findViewById(R.id.lvContact);
-                        partnerList.setAdapter(
-                                new ArrayAdapter<>(MainActivity.this, R.layout.activity_friends, MyPartners));
-                        partnerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                getBaseContext()).inflate(R.layout.activity_contact, null, false);
+                        final ListView contactsList = (ListView) view.findViewById(R.id.my_contacts_list);
+                        contactsList.setAdapter(contactAdapter);
+                        LinearLayout add_friend = (LinearLayout) view.findViewById(R.id.layout_add_friend);
+                        add_friend.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onItemClick(AdapterView<?> a, View v, int i, long l) {
-                                User friend = MyPartners.get(i);
-                                Intent intent = new Intent(getApplicationContext(), UserProfile.class);
-                                intent.putExtra("USER_NAME", friend.getUserName());
+                            public void onClick(View v) {
+                                Intent intent = new Intent(baseContext, Search.class);
                                 startActivity(intent);
                             }
                         });
@@ -206,7 +210,7 @@ public class MainActivity extends Activity {
                 getResources().getDrawable(R.drawable.ic_face_black_36dp), Color.parseColor(colors[4]), "Me"));
 
         navigationTabBar.setModels(models);
-        navigationTabBar.setViewPager(viewPager, 0);
+        navigationTabBar.setViewPager(viewPager, 2);
 
         navigationTabBar.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -355,11 +359,13 @@ public class MainActivity extends Activity {
             }
             System.out.println(chats);
             setChatsList(chats);
+            chatAdapter = new ChatAdapter(MainActivity.this, MyChats);
         }
     };
 
     //display clickable a list of all MyChats
     private void setChatsList(JSONArray chats) {
+        MyChats.clear();
         // looping through all chats
         for (int i = 0; i < chats.length(); i++) {
             try {
@@ -375,25 +381,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    private Emitter.Listener onAddPartner = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String username;
-                    try {
-                        username = data.getString("username");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-//                    addPartner(username);
-                }
-            });
-        }
-    };
-
     private Emitter.Listener onBrowsePartners = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -406,17 +393,19 @@ public class MainActivity extends Activity {
             }
             System.out.println(partners);
             setPartnersList(partners);
+            contactAdapter = new ContactAdapter(MainActivity.this, MyPartners);
         }
     };
 
     //display clickable a list of all MyPartners
     private void setPartnersList(JSONArray partners) {
+        MyPartners.clear();
         // looping through all partners
         for (int i = 0; i < partners.length(); i++) {
             try {
                 JSONObject partner = partners.getJSONObject(i);
-                User pt = new User(
-                        partner.getString("birthday"),
+                Contact pt = new Contact(
+                        partner.getDouble("birthday")/1000,
                         partner.getString("username"),
                         partner.getString("name"),
                         partner.getString("avatar_url"),

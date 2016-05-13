@@ -25,7 +25,7 @@ import chat.bean.Faceicon;
  */
 public interface OnOperationListener {
 
-    void send(String content);
+    void send(String content, String type);
 
     void sendVoiceM(String fileName, int length);
 

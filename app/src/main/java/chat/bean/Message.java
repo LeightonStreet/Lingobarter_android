@@ -23,22 +23,22 @@ import java.util.Date;
  * @author kymjs (http://www.kymjs.com/)
  */
 public class Message {
-    public final static int MSG_TYPE_PHOTO = 1;
-    public final static int MSG_TYPE_FACE = 2;
-    public final static int MSG_TYPE_TEXT = 3;
-    public final static int MSG_TYPE_VOICE = 4;
+    public final static String MSG_TYPE_PHOTO = "image";
+    public final static String MSG_TYPE_FACE = "face";
+    public final static String MSG_TYPE_TEXT = "text";
+    public final static String MSG_TYPE_VOICE = "voice";
 
     public final static int MSG_STATE_SUCCESS = 1;
     public final static int MSG_STATE_FAIL = 2;
     public final static int MSG_STATE_SENDING = 3;
 
-    private Long id;
-    private int type; // 1-photo | 2-face | 3-text | 4-voice
+    private String chat_id;
+    private String type;
     private int state; // 1-success | 2-fail | 3-sending
-    private String fromUserName;
-    private String fromUserAvatar;
-    private String toUserName;
-    private String toUserAvatar;
+//    private String fromUserName;
+//    private String fromUserAvatar;
+//    private String toUserName;
+//    private String toUserAvatar;
     private String content;
 
     private Boolean isSend;
@@ -46,35 +46,35 @@ public class Message {
     private Date time;
     private int length; // audio message >= 0
 
-    public Message(int type, int state, String fromUserName,
-                   String fromUserAvatar, String toUserName, String toUserAvatar,
+    public Message(String type, int state, String chat_id,
                    String content, Boolean isSend, Boolean sendSuccess, Date time) {
         super();
         this.type = type;
         this.state = state;
-        this.fromUserName = fromUserName;
-        this.fromUserAvatar = fromUserAvatar;
-        this.toUserName = toUserName;
-        this.toUserAvatar = toUserAvatar;
+//        this.fromUserName = fromUserName;
+//        this.fromUserAvatar = fromUserAvatar;
+//        this.toUserName = toUserName;
+//        this.toUserAvatar = toUserAvatar;
         this.content = content;
         this.isSend = isSend;
         this.sendSuccess = sendSuccess;
         this.time = time;
+        this.chat_id = chat_id;
     }
 
-    public Long getId() {
-        return id;
+    public String getId() {
+        return chat_id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(String id) {
+        this.chat_id = chat_id;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -86,37 +86,37 @@ public class Message {
         this.state = state;
     }
 
-    public String getFromUserName() {
-        return fromUserName;
-    }
-
-    public void setFromUserName(String fromUserName) {
-        this.fromUserName = fromUserName;
-    }
-
-    public String getFromUserAvatar() {
-        return fromUserAvatar;
-    }
-
-    public void setFromUserAvatar(String fromUserAvatar) {
-        this.fromUserAvatar = fromUserAvatar;
-    }
-
-    public String getToUserName() {
-        return toUserName;
-    }
-
-    public void setToUserName(String toUserName) {
-        this.toUserName = toUserName;
-    }
-
-    public String getToUserAvatar() {
-        return toUserAvatar;
-    }
-
-    public void setToUserAvatar(String toUserAvatar) {
-        this.toUserAvatar = toUserAvatar;
-    }
+//    public String getFromUserName() {
+//        return fromUserName;
+//    }
+//
+//    public void setFromUserName(String fromUserName) {
+//        this.fromUserName = fromUserName;
+//    }
+//
+//    public String getFromUserAvatar() {
+//        return fromUserAvatar;
+//    }
+//
+//    public void setFromUserAvatar(String fromUserAvatar) {
+//        this.fromUserAvatar = fromUserAvatar;
+//    }
+//
+//    public String getToUserName() {
+//        return toUserName;
+//    }
+//
+//    public void setToUserName(String toUserName) {
+//        this.toUserName = toUserName;
+//    }
+//
+//    public String getToUserAvatar() {
+//        return toUserAvatar;
+//    }
+//
+//    public void setToUserAvatar(String toUserAvatar) {
+//        this.toUserAvatar = toUserAvatar;
+//    }
 
     public String getContent() {
         return content;

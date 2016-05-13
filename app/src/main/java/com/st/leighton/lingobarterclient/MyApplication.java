@@ -4,15 +4,15 @@ package com.st.leighton.lingobarterclient;
  * Created by vicky on 5/10/16.
  */
 import android.app.Application;
-import com.github.nkzawa.socketio.client.Socket;
+import com.lingobarter.socketclient.WebsocketClient;
 
 public class MyApplication extends Application {
 
-    public void setSocket(Socket socket){
+    public void setSocket(WebsocketClient socket){
         SocketHandler.setSocket(socket);
     }
 
-    public Socket getSocket() {
+    public WebsocketClient getSocket() {
         return SocketHandler.getSocket();
     }
 }

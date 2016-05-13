@@ -29,7 +29,7 @@
             android:listSelector="#00000000"
             android:padding="16dp"
             android:layout_gravity="top"
-            android:background="@color/primaryColorLight"/>
+            android:background="@color/primaryColor"/>
 
         <com.gigamole.library.NavigationTabBar
             android:id="@+id/ntb_horizontal"

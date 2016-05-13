@@ -32,6 +32,7 @@ import com.ibm.watson.developer_cloud.http.HttpMediaType;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
+import com.lingobarter.socketclient.WebsocketClient;
 
 import chat.OnOperationListener;
 import chat.adapter.MessageAdapter;
@@ -40,6 +41,7 @@ import chat.bean.Faceicon;
 import chat.bean.Message;
 import chat.emoji.DisplayRules;
 import chat.widget.KJChatKeyboard;
+import io.socket.emitter.Emitter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,30 +51,33 @@ import org.kymjs.kjframe.ui.ViewInject;
 import org.kymjs.kjframe.utils.FileUtils;
 import org.kymjs.kjframe.utils.KJLoger;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.Socket;
 
 /**
  * Chat
  */
 public class ChatActivity extends KJActivity {
-    private String user1;
-    private String user2;
+    private String chat_id;
 
     public static final int REQUEST_CODE_GETIMAGE_BYSDCARD = 0x1;
 
     private KJChatKeyboard box;
     private ListView mRealListView;
+    private boolean STT_flag = false;
 
-    private Socket mSocket;
+    private WebsocketClient mSocket;
 
-    List<Message> messages = new ArrayList<>();
+    private Message message;
+    ArrayList<Message> messages = new ArrayList<>();
     private MessageAdapter adapter;
 
     private
@@ -85,27 +90,30 @@ public class ChatActivity extends KJActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        user1 = getIntent().getExtras().getString("USER1_ID");
-        user2 = getIntent().getExtras().getString("USER2_ID");
+        chat_id = getIntent().getExtras().getString("CHAT_ID");
 
-//        String authToken = "ChFmVw.4h15p7BS2UGnk2FxDCFP7J3oDv4";
-//        IO.Options opts = new IO.Options();
-//        opts.forceNew = false;
-//        opts.reconnection = false;
-//        opts.query = "auth_token=" + authToken;
-//        try {
-//            mSocket = IO.socket("http://192.168.0.9:5000", opts);
-//        } catch (URISyntaxException e){
-//            e.printStackTrace();
-//        }
-//        mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
-//        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-//        mSocket.on("ret:browse messages", onBrowseMessages);
-//        mSocket.connect();
+        MyApplication app = (MyApplication) getApplication();
+        mSocket = app.getSocket();
 
         service.setUsernameAndPassword(getString(R.string.STT_Username), getString(R.string.STT_Password));
         service.setEndPoint(getString(R.string.STT_TokenFactory));
 
+        mSocket.on("ret:send message", new Emitter.Listener() {
+            public void call(Object... args) {
+                JSONObject obj = (JSONObject) args[0];
+                System.out.println(obj);
+                try{
+                    int status = obj.getInt("status");
+                    if(status == 200){
+//                        messages.add(message);
+                        System.out.println("send message successfully");
+                    }
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                    System.out.println("fail to send message");
+                }
+            }
+        });
     }
 
     @Override
@@ -127,37 +135,74 @@ public class ChatActivity extends KJActivity {
     private void initMessageInputToolBox() {
         box.setOnOperationListener(new OnOperationListener() {
             @Override
-            public void send(String content) {
-                Message message = new Message(Message.MSG_TYPE_TEXT, Message.MSG_STATE_SUCCESS,
-                        user1, "avatar", user2,
-                        "avatar", content, true, true, new Date());
+            public void send(String content, String type) {
+                JSONObject object = new JSONObject();
+                try {
+                    object.put("to_chat", chat_id);
+                    object.put("type", "text");
+                    object.put("payload", content);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(object);
+                mSocket.emit("send message", object);
+                message = new Message(Message.MSG_TYPE_TEXT, Message.MSG_STATE_SUCCESS,
+                                      chat_id, content, true, true, new Date());
                 messages.add(message);
                 adapter.refresh(messages);
-                createReplyMsg(message);
             }
 
             @Override
             public void sendVoiceM(String fileName, final int length) {
-                final File audio = new File("fileName");
-
-                new AsyncTask<Void, Void, SpeechResults>(){
-                    @Override
-                    protected SpeechResults doInBackground(Void... none) {
-                        SpeechResults transcript = service.recognize(audio, options).execute();
-                        return transcript;
+                if(STT_flag) {
+                    final File audio = new File("fileName");
+                    SpeechResults transcript = service.recognize(audio, options).execute();
+                    String content = transcript.toString();
+                    JSONObject object = new JSONObject();
+                    try {
+                        object.put("to_chat", chat_id);
+                        object.put("type", "voice");
+                        object.put("payload", content);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-
-                    @Override
-                    protected void onPostExecute(SpeechResults result) {
-                        String content = result.toString();
-                        Message message = new Message(Message.MSG_TYPE_VOICE, Message.MSG_STATE_SUCCESS,
-                                user1, "avatar", user2, "avatar", content, true, true, new Date());
+                    System.out.println(object);
+                    mSocket.emit("send message", object);
+                    message = new Message(Message.MSG_TYPE_TEXT, Message.MSG_STATE_SUCCESS,
+                            chat_id, content, true, true, new Date());
+                    messages.add(message);
+                    message.setLength(length);
+                }
+                else{
+                    try {
+                        FileInputStream fileInputStream = new FileInputStream(fileName);
+                        JSONObject object = new JSONObject();
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream);
+                        byte[] data = new byte[4096];
+                        int count = fileInputStream.read(data);
+                        while (count != -1) {
+                            dataOutputStream.write(data, 0, count);
+                            count = fileInputStream.read(data);
+                        }
+                        byte[] ret = byteArrayOutputStream.toByteArray();
+                        object.put("to_chat", chat_id);
+                        object.put("type", "voice");
+                        object.put("payload", ret);
+                        System.out.println(object);
+                        mSocket.emit("send message", object);
+                        message = new Message(Message.MSG_TYPE_VOICE, Message.MSG_STATE_SUCCESS,
+                                chat_id, fileName, true, true, new Date());
                         message.setLength(length);
                         messages.add(message);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                }.execute();
-
-                adapter.refresh(messages);
+                }
             }
 
             @Override
@@ -184,6 +229,15 @@ public class ChatActivity extends KJActivity {
                     case 1:
                         ViewInject.toast("Camera");
                         break;
+                    case 2:
+                        STT_flag = !STT_flag;
+                        if(STT_flag) {
+                            ViewInject.toast("Turn on Speech to Text service");
+                        }
+                        else{
+                            ViewInject.toast("Turn off Speech to Text service");
+                        }
+                        break;
                 }
             }
         });
@@ -208,55 +262,8 @@ public class ChatActivity extends KJActivity {
 //        byte[] emoji = new byte[]{
 //                (byte) 0xF0, (byte) 0x9F, (byte) 0x98, (byte) 0x81
 //        };
-//        Message message = new Message(Message.MSG_TYPE_TEXT,
-//                Message.MSG_STATE_SUCCESS, user1, "avatar", user2, "avatar",
-//                new String(emoji), false, true, new Date(System.currentTimeMillis()
-//                - (1000 * 60 * 60 * 24) * 8));
-//
-//        Message message1 = new Message(Message.MSG_TYPE_TEXT,
-//                Message.MSG_STATE_SUCCESS, user2, "avatar", user1, "avatar",
-//                "以后的版本支持链接高亮喔:http://www.kymjs.com支持http、https、svn、ftp开头的链接",
-//                true, true, new Date());
-//
-//        Message message6 = new Message(Message.MSG_TYPE_TEXT,
-//                Message.MSG_STATE_FAIL, user1, "avatar", user2, "avatar",
-//                "test send fail", true, false, new Date(
-//                System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 2));
-//        Message message7 = new Message(Message.MSG_TYPE_TEXT,
-//                Message.MSG_STATE_SENDING, user1, "avatar", user2, "avatar",
-//                "<a href=\"http://kymjs.com\">自定义链接</a>也是支持的", true, true, new Date(System.currentTimeMillis()));
-//
-//        messages.add(message);
-//        messages.add(message1);
-//        messages.add(message6);
-//        messages.add(message7);
-
         adapter = new MessageAdapter(this, messages, getOnChatItemClickListener());
         mRealListView.setAdapter(adapter);
-    }
-
-    private void createReplyMsg(Message message) {
-        final Message reMessage = new Message(message.getType(), Message.MSG_STATE_SUCCESS, user2,
-                "avatar", user1, "avatar", message.getType() == Message.MSG_TYPE_TEXT ? "Reply:"
-                + message.getContent() : message.getContent(), false,
-                true, new Date());
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(1000 * (new Random().nextInt(3) + 1));
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            messages.add(reMessage);
-                            adapter.refresh(messages);
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
     }
 
     @Override
@@ -300,9 +307,9 @@ public class ChatActivity extends KJActivity {
             Uri dataUri = data.getData();
             if (dataUri != null) {
                 File file = FileUtils.uri2File(aty, dataUri);
-                Message message = new Message(Message.MSG_TYPE_PHOTO, Message.MSG_STATE_SUCCESS,
-                        user1, "avatar", user2,
-                        "avatar", file.getAbsolutePath(), true, true, new Date());
+//                Message message = new Message(Message.MSG_TYPE_PHOTO, Message.MSG_STATE_SUCCESS,
+//                        user1, "avatar", user2,
+//                        "avatar", file.getAbsolutePath(), true, true, new Date());
                 messages.add(message);
                 adapter.refresh(messages);
             }
@@ -384,27 +391,17 @@ public class ChatActivity extends KJActivity {
         }
     };
 
-    //display clickable a list of all Mymessages
+    //display clickable a list of all MyMessages
     private void setMessagesList(JSONArray MyMessages) {
         // looping through all messages
         for (int i = 0; i < MyMessages.length(); i++) {
             try {
                 JSONObject msg = MyMessages.getJSONObject(i);
-                int type = Message.MSG_TYPE_TEXT;
-                if(msg.getString("type") == "voice"){
-                    type = Message.MSG_TYPE_VOICE;
-                }
-                else if(msg.getString("type") == "image"){
-                    type = Message.MSG_TYPE_PHOTO;
-                }
-
                 Date date = new Date(Long.parseLong(msg.getString("timestamp")));
-
-                Message m = new Message(type, Message.MSG_STATE_SUCCESS,
-                                        msg.getString("from_id"), "avatar",
-                                        msg.getString("to_chat"), "avatar",
+                Message m = new Message(msg.getString("type"), Message.MSG_STATE_SUCCESS,
+                                        msg.getString("to_chat"),
                                         msg.getString("payload"), true, true, date);
-                messages.add(m);
+                messages.add(0, m);
             } catch (JSONException e) {
                 System.out.println("Get message error");
             }

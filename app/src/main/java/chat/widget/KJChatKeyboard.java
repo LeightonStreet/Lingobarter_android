@@ -142,7 +142,7 @@ public class KJChatKeyboard extends RelativeLayout implements
             public void onClick(View v) {
                 if (listener != null) {
                     String content = mEtMsg.getText().toString();
-                    listener.send(content);
+                    listener.send(content, "text");
                     mEtMsg.setText(null);
                 }
             }

@@ -3,8 +3,10 @@ package chat.bean;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class User {
-	private String birthday;
+import java.security.Timestamp;
+
+public class Contact {
+	private Double birthday;
 	private String userName;
 	private String name;
 	private String avatar_url;
@@ -16,10 +18,10 @@ public class User {
 	private JSONArray learn_langs;
 	private JSONArray teach_langs;
 
-	public User(String birthday, String userName, String name,
-				String avatar_url, String tagline, String gender,
-				String bio, JSONObject location, String nationality,
-				JSONArray learn_langs, JSONArray teach_langs){
+	public Contact(Double birthday, String userName, String name,
+				   String avatar_url, String tagline, String gender,
+				   String bio, JSONObject location, String nationality,
+				   JSONArray learn_langs, JSONArray teach_langs){
 		this.birthday = birthday;
 		this.userName = userName;
 		this.name = name;
@@ -33,7 +35,7 @@ public class User {
 		this.teach_langs = teach_langs;
 	}
 
-	public String getBirthday() {
+	public Double getBirthday() {
 		return birthday;
 	}
 

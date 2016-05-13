@@ -16,6 +16,7 @@
 package chat.adapter;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -23,12 +24,16 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.io.File;
 import java.lang.Object;
 
 import com.st.leighton.lingobarterclient.ChatActivity.OnChatItemClickListener;
 import com.st.leighton.lingobarterclient.R;
 import chat.UrlUtils;
 import chat.bean.Message;
+import chat.common.ViewHolder;
+
 import org.kymjs.kjframe.KJBitmap;
 
 import java.util.ArrayList;
@@ -129,7 +134,12 @@ public class MessageAdapter extends BaseAdapter {
             }
         } else if (data.getType() == Message.MSG_TYPE_VOICE) {
             String length = Integer.toString(data.getLength());
-            holder.tv_chatcontent.setText(data.getContent() + length);
+            holder.tv_chatcontent.setText("voice message: " + length + 's');
+            holder.tv_chatcontent.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    audioPlayer(data.getContent());
+                }
+            });
         }
         else{
             holder.tv_chatcontent.setVisibility(View.GONE);
@@ -155,12 +165,12 @@ public class MessageAdapter extends BaseAdapter {
             }
         }
 
-        //显示头像
-        if (data.getIsSend()) {
-            kjb.display(holder.img_avatar, data.getFromUserAvatar());
-        } else {
-            kjb.display(holder.img_avatar, data.getToUserAvatar());
-        }
+//        //显示头像
+//        if (data.getIsSend()) {
+//            kjb.display(holder.img_avatar, data.getFromUserAvatar());
+//        } else {
+//            kjb.display(holder.img_avatar, data.getToUserAvatar());
+//        }
 
         if (listener != null) {
             holder.tv_chatcontent.setOnClickListener(new View.OnClickListener() {
@@ -200,6 +210,19 @@ public class MessageAdapter extends BaseAdapter {
                 break;
         }
         return v;
+    }
+
+    public void audioPlayer(String fileName){
+        //set up MediaPlayer
+        MediaPlayer mp = new MediaPlayer();
+
+        try {
+            mp.setDataSource(fileName);
+            mp.prepare();
+            mp.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     static class ViewHolder {

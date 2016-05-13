@@ -1,18 +1,18 @@
 package com.st.leighton.lingobarterclient;
 
-import com.github.nkzawa.socketio.client.Socket;
+import com.lingobarter.socketclient.WebsocketClient;
 
 /**
  * Created by vicky on 5/10/16.
  */
 public class SocketHandler {
-    private static Socket socket;
+    private static WebsocketClient socket;
 
-    public static synchronized Socket getSocket(){
+    public static synchronized WebsocketClient getSocket(){
         return socket;
     }
 
-    public static synchronized void setSocket(Socket socket){
+    public static synchronized void setSocket(WebsocketClient socket){
         SocketHandler.socket = socket;
     }
 }

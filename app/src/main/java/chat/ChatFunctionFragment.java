@@ -34,6 +34,7 @@ public class ChatFunctionFragment extends SupportFragment {
 
     private LinearLayout layout1;
     private LinearLayout layout2;
+    private LinearLayout layout3;
 
     private OnOperationListener listener;
 
@@ -48,9 +49,11 @@ public class ChatFunctionFragment extends SupportFragment {
         super.initWidget(parentView);
         layout1 = (LinearLayout) parentView.findViewById(R.id.chat_menu_images);
         layout2 = (LinearLayout) parentView.findViewById(R.id.chat_menu_photo);
+        layout3 = (LinearLayout) parentView.findViewById(R.id.chat_menu_STT);
 
         layout1.setOnClickListener(this);
         layout2.setOnClickListener(this);
+        layout3.setOnClickListener(this);
     }
 
     public void setOnOperationListener(OnOperationListener onOperationListener) {
@@ -64,6 +67,9 @@ public class ChatFunctionFragment extends SupportFragment {
             clickMenu(0);
         } else if (v == layout2) {
             clickMenu(1);
+        }
+        else{
+            clickMenu(2);
         }
     }
 

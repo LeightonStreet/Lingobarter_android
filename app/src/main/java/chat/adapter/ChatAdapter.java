@@ -1,13 +1,9 @@
 package chat.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -15,12 +11,10 @@ import android.widget.TextView;
 
 import com.st.leighton.lingobarterclient.ChatActivity;
 import com.st.leighton.lingobarterclient.R;
-import com.st.leighton.lingobarterclient.Search;
 import com.st.leighton.lingobarterclient.UserProfile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +27,6 @@ import chat.bean.Chat;
 public class ChatAdapter extends BaseAdapter{
     private final Context context;
     private List<Chat> chats = null;
-    private AdapterView.OnItemClickListener listener;
 
     public ChatAdapter(Context context, List<Chat> chats) {
         this.context = context;
@@ -44,9 +37,6 @@ public class ChatAdapter extends BaseAdapter{
     }
 
     public void refresh(List<Chat> chats) {
-        if (chats == null) {
-            chats = new ArrayList<>(0);
-        }
         this.chats = chats;
         notifyDataSetChanged();
     }
@@ -66,26 +56,26 @@ public class ChatAdapter extends BaseAdapter{
     public View getView(final int position, View v, ViewGroup parent) {
         final ViewHolder holder;
         final Chat chat = chats.get(position);
-        if (v == null) {
-            holder = new ViewHolder();
-            v = View.inflate(context, R.layout.chats_list_contact, null);
-            holder.tv_name = (TextView) v.findViewById(R.id.txt_name);
-            holder.tv_unread_msg_num = (TextView) v.findViewById(R.id.unread_msg_number);
-            holder.img_avatar = (ImageView) v.findViewById(R.id.contact_item_avatar_iv);
-            holder.layout_content = (RelativeLayout) v.findViewById(R.id.contact_item_layout);
-            holder.tv_chat_content = (TextView) v.findViewById(R.id.txt_content);
-            holder.tv_time = (TextView) v.findViewById(R.id.txt_time);
-            v.setTag(holder);
-        } else {
-            holder = (ViewHolder) v.getTag();
-        }
+        holder = new ViewHolder();
+        v = View.inflate(context, R.layout.chats_list_contact, null);
+        holder.tv_name = (TextView) v.findViewById(R.id.txt_name);
+        holder.tv_unread_msg_num = (TextView) v.findViewById(R.id.unread_msg_number);
+        holder.img_avatar = (ImageView) v.findViewById(R.id.contact_item_avatar_iv);
+        holder.layout_content = (RelativeLayout) v.findViewById(R.id.contact_item_layout);
+        holder.tv_chat_content = (TextView) v.findViewById(R.id.txt_content);
+        holder.tv_time = (TextView) v.findViewById(R.id.txt_time);
 
-        holder.tv_chat_content.setOnClickListener(new View.OnClickListener() {
+        holder.tv_time.setText(chat.getTime());
+        holder.tv_name.setText(chat.getName());
+        holder.img_avatar.setImageResource(R.drawable.default_head);
+        v.setTag(holder);
+
+        holder.layout_content.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ChatActivity.class);
                 String id = chat.getId();
-                intent.putExtra("id", id);
+                intent.putExtra("CHAT_ID", id);
                 context.startActivity(intent);
             }
         });

@@ -22,6 +22,10 @@ public class Chat{
         return id;
     }
 
+    public String getName() {return name;}
+
+    public String getTime() {return last_updated;}
+
     public JSONArray getMembers(){
         return members;
     }
