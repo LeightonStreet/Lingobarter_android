@@ -51,6 +51,10 @@ public class Contact {
 		return avatar_url;
 	}
 
+	public void setAvatarUrl(String url){
+		this.avatar_url = url;
+	}
+
 	public String getTagline() {
 		return tagline;
 	}

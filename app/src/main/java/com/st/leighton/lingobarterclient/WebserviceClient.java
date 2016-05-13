@@ -1,11 +1,14 @@
 package com.st.leighton.lingobarterclient;
 
+import android.util.Log;
+
 import com.st.leighton.util.MyProperty;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -14,6 +17,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
@@ -132,6 +136,31 @@ public class WebserviceClient {
         Vector<String> result = new Vector<>();
         for (int i = 0; i < headers.length; ++i) result.addElement(headers[i].toString());
         return result;
+    }
+
+    public static String getResponse(String in) {
+        HttpClient httpClient = new DefaultHttpClient();
+        String send = "";
+        try {
+            send = URLEncoder.encode(in, "utf-8");
+        } catch (Exception e) { e.printStackTrace(); }
+        String send_url = "http://api.program-o.com/v2/chatbot/?bot_id=6&say=" + send + "&convo_id=exampleusage_1231232&format=json";
+        HttpGet httpGet = new HttpGet(send_url);
+        HttpResponse httpResponse;
+
+        try {
+            httpResponse = httpClient.execute(httpGet);
+            Log.i("Pa", httpResponse.getStatusLine().toString());
+            HttpEntity response = httpResponse.getEntity();
+            if (response != null) {
+                String raw_result = EntityUtils.toString(response);
+                Log.d("Reply", raw_result);
+                JSONObject result = new JSONObject(raw_result);
+                return result.getString("botsay");
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+
+        return "";
     }
 
     public void Execute() {

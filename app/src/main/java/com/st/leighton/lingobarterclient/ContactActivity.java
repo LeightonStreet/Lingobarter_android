@@ -40,7 +40,6 @@ public class ContactActivity extends Activity {
     private TextView mDialogText;
     private WindowManager mWindowManager;
 
-    private ArrayList<Contact> contacts = new ArrayList<>();
     private ContactAdapter adapter;
 
     private Button BtnAddPartner;
@@ -67,9 +66,9 @@ public class ContactActivity extends Activity {
                                 user.getString("gender"), user.getString("bio"),
                                 user.getJSONObject("location"), user.getString("nationality"),
                                 user.getJSONArray("learn_langs"), user.getJSONArray("teach_langs"));
-                        contacts.add(new_partner);
+                        partners.add(new_partner);
                         System.out.println("add partner successfully");
-                        adapter.refresh(contacts);
+                        adapter.refresh(partners);
                     }
                 }catch (JSONException e) {
                     e.printStackTrace();
@@ -85,12 +84,12 @@ public class ContactActivity extends Activity {
     private void initViews() {
         setContentView(R.layout.activity_main);
 //        lvContact = (ListView) findViewById(R.id.lvContact);
-        adapter = new ContactAdapter(this, contacts);
+        adapter = new ContactAdapter(this, partners);
         lvContact.setAdapter(adapter);
         lvContact.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int i, long l) {
-                Contact friend = contacts.get(i);
+                Contact friend = partners.get(i);
                 Intent intent = new Intent(getApplicationContext(), UserProfile.class);
                 intent.putExtra("USER_NAME", friend.getUserName());
                 startActivity(intent);

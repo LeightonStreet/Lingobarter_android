@@ -35,22 +35,23 @@ public class Message {
     private String chat_id;
     private String type;
     private int state; // 1-success | 2-fail | 3-sending
-//    private String fromUserName;
+    private String fromUserName;
 //    private String fromUserAvatar;
-//    private String toUserName;
+    private String toUserName;
 //    private String toUserAvatar;
     private String content;
 
-    private Boolean isSend;
+    private int isSend;
     private Boolean sendSuccess;
     private Date time;
     private int length; // audio message >= 0
 
     public Message(String type, int state, String chat_id,
-                   String content, Boolean isSend, Boolean sendSuccess, Date time) {
+                   String content, int isSend, Boolean sendSuccess, Date time) {
         super();
         this.type = type;
         this.state = state;
+        this.chat_id = chat_id;
 //        this.fromUserName = fromUserName;
 //        this.fromUserAvatar = fromUserAvatar;
 //        this.toUserName = toUserName;
@@ -86,14 +87,14 @@ public class Message {
         this.state = state;
     }
 
-//    public String getFromUserName() {
-//        return fromUserName;
-//    }
-//
-//    public void setFromUserName(String fromUserName) {
-//        this.fromUserName = fromUserName;
-//    }
-//
+    public String getFromUserName() {
+        return fromUserName;
+    }
+
+    public void setFromUserName(String fromUserName) {
+        this.fromUserName = fromUserName;
+    }
+
 //    public String getFromUserAvatar() {
 //        return fromUserAvatar;
 //    }
@@ -126,11 +127,11 @@ public class Message {
         this.content = content;
     }
 
-    public Boolean getIsSend() {
+    public int getIsSend() {
         return isSend;
     }
 
-    public void setIsSend(Boolean isSend) {
+    public void setIsSend(int isSend) {
         this.isSend = isSend;
     }
 

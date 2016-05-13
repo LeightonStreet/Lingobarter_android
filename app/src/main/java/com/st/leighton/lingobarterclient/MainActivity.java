@@ -61,6 +61,45 @@ public class MainActivity extends Activity {
 
         MyApplication app = (MyApplication) getApplication();
 
+        String str1 = "[{\"username\":\"POR to EN\",\"bio\":\"I do teach and learn!!! Haha\",\"teach_langs\":[{\"language_id\":\"Chinese Simplified\",\"level\":0},{\"language_id\":\"English\",\"level\":0}],\"birthday\":1340942400,\"nationality\":\"UK\",\"id\":\"57357a9b67b60b1083b09632\",\"current_login_at\":1463137088,\"name\":\"user2\",\"gender\":\"female\",\"avatar_url\":\"\\/mediafiles\\/default-avatar.png\",\"location\":{\"type\":\"Point\",\"coordinates\":[111.6,30.5]},\"tagline\":\"You know Portuguese??\",\"learn_langs\":[{\"language_id\":\"Cantonese\",\"level\":5}]}]";
+        String str2 = "[{\"username\":\"EN to POR\",\"bio\":\"I do teach and learn!!! Haha\",\"teach_langs\":[{\"language_id\":\"Chinese Simplified\",\"level\":0},{\"language_id\":\"English\",\"level\":0}],\"birthday\":1340942400,\"nationality\":\"UK\",\"id\":\"57357a9b67b60b1083b09632\",\"current_login_at\":1463137088,\"name\":\"user2\",\"gender\":\"female\",\"avatar_url\":\"\\/mediafiles\\/default-avatar.png\",\"location\":{\"type\":\"Point\",\"coordinates\":[111.6,30.5]},\"tagline\":\"You know Portuguese??\",\"learn_langs\":[{\"language_id\":\"Cantonese\",\"level\":5}]}]";
+        String str3 = "[{\"username\":\"ES to EN\",\"bio\":\"I do teach and learn!!! Haha\",\"teach_langs\":[{\"language_id\":\"Chinese Simplified\",\"level\":0},{\"language_id\":\"English\",\"level\":0}],\"birthday\":1340942400,\"nationality\":\"UK\",\"id\":\"57357a9b67b60b1083b09632\",\"current_login_at\":1463137088,\"name\":\"user2\",\"gender\":\"female\",\"avatar_url\":\"\\/mediafiles\\/default-avatar.png\",\"location\":{\"type\":\"Point\",\"coordinates\":[111.6,30.5]},\"tagline\":\"I'm soooo happy\",\"learn_langs\":[{\"language_id\":\"Cantonese\",\"level\":5}]}]";
+        String str4 = "[{\"username\":\"EN to ES\",\"bio\":\"I do teach and learn!!! Haha\",\"teach_langs\":[{\"language_id\":\"Chinese Simplified\",\"level\":0},{\"language_id\":\"English\",\"level\":0}],\"birthday\":1340942400,\"nationality\":\"UK\",\"id\":\"57357a9b67b60b1083b09632\",\"current_login_at\":1463137088,\"name\":\"user2\",\"gender\":\"female\",\"avatar_url\":\"\\/mediafiles\\/default-avatar.png\",\"location\":{\"type\":\"Point\",\"coordinates\":[111.6,30.5]},\"tagline\":\"I'm soooo happy\",\"learn_langs\":[{\"language_id\":\"Cantonese\",\"level\":5}]}]";
+        String str5 = "[{\"username\":\"FR to EN\",\"bio\":\"I do teach and learn!!! Haha\",\"teach_langs\":[{\"language_id\":\"Chinese Simplified\",\"level\":0},{\"language_id\":\"English\",\"level\":0}],\"birthday\":1340942400,\"nationality\":\"UK\",\"id\":\"57357a9b67b60b1083b09632\",\"current_login_at\":1463137088,\"name\":\"user2\",\"gender\":\"female\",\"avatar_url\":\"\\/mediafiles\\/default-avatar.png\",\"location\":{\"type\":\"Point\",\"coordinates\":[111.6,30.5]},\"tagline\":\"Bonjour my friend!\",\"learn_langs\":[{\"language_id\":\"Cantonese\",\"level\":5}]}]";
+        String str6 = "[{\"username\":\"EN to FR\",\"bio\":\"I do teach and learn!!! Haha\",\"teach_langs\":[{\"language_id\":\"Chinese Simplified\",\"level\":0},{\"language_id\":\"English\",\"level\":0}],\"birthday\":1340942400,\"nationality\":\"UK\",\"id\":\"57357a9b67b60b1083b09632\",\"current_login_at\":1463137088,\"name\":\"user2\",\"gender\":\"female\",\"avatar_url\":\"\\/mediafiles\\/default-avatar.png\",\"location\":{\"type\":\"Point\",\"coordinates\":[111.6,30.5]},\"tagline\":\"Bonjour my friend!\",\"learn_langs\":[{\"language_id\":\"Cantonese\",\"level\":5}]}]";
+        String str7 = "[{\"username\":\"IT to EN\",\"bio\":\"I do teach and learn!!! Haha\",\"teach_langs\":[{\"language_id\":\"Chinese Simplified\",\"level\":0},{\"language_id\":\"English\",\"level\":0}],\"birthday\":1340942400,\"nationality\":\"UK\",\"id\":\"57357a9b67b60b1083b09632\",\"current_login_at\":1463137088,\"name\":\"user2\",\"gender\":\"female\",\"avatar_url\":\"\\/mediafiles\\/default-avatar.png\",\"location\":{\"type\":\"Point\",\"coordinates\":[111.6,30.5]},\"tagline\":\"Ciao!\",\"learn_langs\":[{\"language_id\":\"Cantonese\",\"level\":5}]}]";
+        String str8 = "[{\"username\":\"EN to IT\",\"bio\":\"I do teach and learn!!! Haha\",\"teach_langs\":[{\"language_id\":\"Chinese Simplified\",\"level\":0},{\"language_id\":\"English\",\"level\":0}],\"birthday\":1340942400,\"nationality\":\"UK\",\"id\":\"57357a9b67b60b1083b09632\",\"current_login_at\":1463137088,\"name\":\"user2\",\"gender\":\"female\",\"avatar_url\":\"\\/mediafiles\\/default-avatar.png\",\"location\":{\"type\":\"Point\",\"coordinates\":[111.6,30.5]},\"tagline\":\"Ciao!\",\"learn_langs\":[{\"language_id\":\"Cantonese\",\"level\":5}]}]";
+        String str9 = "[{\"username\":\"AR to EN\",\"bio\":\"I do teach and learn!!! Haha\",\"teach_langs\":[{\"language_id\":\"Chinese Simplified\",\"level\":0},{\"language_id\":\"English\",\"level\":0}],\"birthday\":1340942400,\"nationality\":\"UK\",\"id\":\"57357a9b67b60b1083b09632\",\"current_login_at\":1463137088,\"name\":\"user2\",\"gender\":\"female\",\"avatar_url\":\"\\/mediafiles\\/default-avatar.png\",\"location\":{\"type\":\"Point\",\"coordinates\":[111.6,30.5]},\"tagline\":\"Learn English using Arabic!\",\"learn_langs\":[{\"language_id\":\"Cantonese\",\"level\":5}]}]";
+        String str10 = "[{\"username\":\"EN to AR\",\"bio\":\"I do teach and learn!!! Haha\",\"teach_langs\":[{\"language_id\":\"Chinese Simplified\",\"level\":0},{\"language_id\":\"English\",\"level\":0}],\"birthday\":1340942400,\"nationality\":\"UK\",\"id\":\"57357a9b67b60b1083b09632\",\"current_login_at\":1463137088,\"name\":\"user2\",\"gender\":\"female\",\"avatar_url\":\"\\/mediafiles\\/default-avatar.png\",\"location\":{\"type\":\"Point\",\"coordinates\":[111.6,30.5]},\"tagline\":\"Learn English using Arabic!\",\"learn_langs\":[{\"language_id\":\"Cantonese\",\"level\":5}]}]";
+
+        ArrayList<String> str = new ArrayList<String>();
+        str.add(str1); str.add(str2); str.add(str3); str.add(str4); str.add(str5);
+        str.add(str6); str.add(str7); str.add(str8); str.add(str9); str.add(str10);
+
+        JSONArray test = null;
+        JSONObject partner = null;
+        for(int i = 0; i < str.size(); i++) {
+            try {
+                test = new JSONArray(str.get(i));
+                partner = (JSONObject) test.get(0);
+                Contact ct = new Contact(partner.getDouble("birthday") / 1000,
+                        partner.getString("username"),
+                        partner.getString("name"),
+                        partner.getString("avatar_url"),
+                        partner.getString("tagline"),
+                        partner.getString("gender"),
+                        partner.getString("bio"),
+                        partner.getJSONObject("location"),
+                        partner.getString("nationality"),
+                        partner.getJSONArray("learn_langs"),
+                        partner.getJSONArray("teach_langs"));
+                ct.setAvatarUrl("head1");
+                MyPartners.add(ct);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
         try {
             String authToken = GlobalStore.getInstance().getToken();
             String url = MyProperty.getProperty("protocol") + "://" + MyProperty.getProperty("host") + ":" + MyProperty.getProperty("port");
@@ -244,12 +283,12 @@ public class MainActivity extends Activity {
                 for (int i = 0; i < navigationTabBar.getModels().size(); i++) {
                     final NavigationTabBar.Model model = navigationTabBar.getModels().get(i);
                     switch (i) {
-                        case 0:
-                            model.setBadgeTitle("1");
-                            break;
-                        case 1:
-                            model.setBadgeTitle("2");
-                            break;
+//                        case 0:
+//                            model.setBadgeTitle("1");
+//                            break;
+//                        case 1:
+//                            model.setBadgeTitle("2");
+//                            break;
                         default:
                             model.setBadgeTitle("0");
                             break;
@@ -365,7 +404,6 @@ public class MainActivity extends Activity {
 
     //display clickable a list of all MyChats
     private void setChatsList(JSONArray chats) {
-        MyChats.clear();
         // looping through all chats
         for (int i = 0; i < chats.length(); i++) {
             try {
@@ -399,7 +437,6 @@ public class MainActivity extends Activity {
 
     //display clickable a list of all MyPartners
     private void setPartnersList(JSONArray partners) {
-        MyPartners.clear();
         // looping through all partners
         for (int i = 0; i < partners.length(); i++) {
             try {
@@ -416,7 +453,7 @@ public class MainActivity extends Activity {
                         partner.getString("nationality"),
                         partner.getJSONArray("learn_langs"),
                         partner.getJSONArray("teach_langs"));
-                MyPartners.add(pt);
+//                MyPartners.add(pt);
             } catch (JSONException e) {
                 System.out.println("Get partner error");
             }

@@ -51,7 +51,7 @@ dependencies {
         // excluding org.json which is provided by Android
         exclude group: 'org.json', module: 'json'
     }
-    compile 'com.github.LeightonStreet:java-sdk:v1.0'
+    compile 'com.github.LeightonStreet:java-sdk:v1.1'
     compile 'com.github.LeightonStreet:lingobarter_socket:v1.1'
     compile files('src/libs/KJFrameForAndroid_v2.234.jar')
 }

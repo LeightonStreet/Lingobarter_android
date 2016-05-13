@@ -6,10 +6,16 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
+
+import com.ibm.watson.developer_cloud.language_translation.v2.LanguageTranslation;
+import com.ibm.watson.developer_cloud.language_translation.v2.model.Language;
+import com.ibm.watson.developer_cloud.language_translation.v2.model.TranslationResult;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -99,6 +105,100 @@ public class Webservice extends Service {
         } else {
             return "NONE";
         }
+    }
+
+    public static void sendToServer(String content) {
+        WebserviceClient client
+                = new WebserviceClient(WebserviceClient.METHOD.Post, "/api/v1/content");
+        client.AddHeader("content-type", "application/json");
+        client.AddHeader("Authentication-Token", GlobalStore.getInstance().getToken());
+        client.AddPayload("content", content);
+        client.Execute();
+    }
+
+    public static void language_to(final String input, final Language language_to) {
+        final LanguageTranslation service = new LanguageTranslation();
+        service.setUsernameAndPassword("619d24ac-3713-45b7-883a-180c5dfa0121", "8fESEmEXIEBr");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TranslationResult translationResult = service.translate(input, language_to, Language.ENGLISH).execute();
+                    String raw_result = translationResult.toString();
+                    JSONObject json_result = new JSONObject(raw_result);
+
+                    JSONArray translation_result = json_result.getJSONArray("translations");
+                    JSONObject translation = translation_result.getJSONObject(0);
+                    String result = translation.getString("translation");
+
+                    Intent intent = new Intent("android.intent.action.BotChat");
+                    intent.putExtra("RESPONSE", WebserviceClient.getResponse(result));
+                    getInstance().sendBroadcast(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public static void language_from(final String input, final Language language_from) {
+        final LanguageTranslation service = new LanguageTranslation();
+        service.setUsernameAndPassword("619d24ac-3713-45b7-883a-180c5dfa0121", "8fESEmEXIEBr");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String translate = WebserviceClient.getResponse(input);
+                    Log.d("Test", translate);
+
+                    TranslationResult translationResult = service.translate(translate, Language.ENGLISH, language_from).execute();
+                    String raw_result = translationResult.toString();
+                    JSONObject json_result = new JSONObject(raw_result);
+
+                    JSONArray translation_result = json_result.getJSONArray("translations");
+                    JSONObject translation = translation_result.getJSONObject(0);
+                    String result = translation.getString("translation");
+
+                    Intent intent = new Intent("android.intent.action.BotChat");
+                    intent.putExtra("RESPONSE", result);
+                    getInstance().sendBroadcast(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public static void translate(final String input, final Language language_from) {
+        final LanguageTranslation service = new LanguageTranslation();
+        service.setUsernameAndPassword("619d24ac-3713-45b7-883a-180c5dfa0121", "8fESEmEXIEBr");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    TranslationResult translationResult = service.translate(input, language_from, Language.ENGLISH).execute();
+                    String raw_result = translationResult.toString();
+                    JSONObject json_result = new JSONObject(raw_result);
+
+                    JSONArray translation_result = json_result.getJSONArray("translations");
+                    JSONObject translation = translation_result.getJSONObject(0);
+                    String result = translation.getString("translation");
+
+                    botchat(result);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public static void botchat(String input) {
+        Intent intent = new Intent("android.intent.action.BotChat");
+        intent.putExtra("RESPONSE", WebserviceClient.getResponse(input));
+        getInstance().sendBroadcast(intent);
     }
 
     public void Login(String email, String password) {

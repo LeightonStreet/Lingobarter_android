@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="5dp"
-    android:layout_marginTop="5dp">
+    android:layout_marginTop="5dp"
+    android:weightSum="1">
 
     <RelativeLayout
         android:id="@+id/contact_item_layout"
         android:layout_height="65.0dip"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:background="@color/primaryColorLight"
         android:paddingLeft="12dip">
 
@@ -24,49 +25,45 @@
                 android:layout_width="50.0dip"
                 android:layout_height="50.0dip"
                 android:src="@drawable/default_head" />
-            <TextView
-                android:id="@+id/unread_msg_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/aii"
-                android:gravity="center"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
         </RelativeLayout>
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1.0"
-        android:orientation="vertical"
-        android:paddingLeft="5dip">
+    <LinearLayout
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:background="@color/primaryColorLight"
+        android:paddingLeft="5dip"
+        android:weightSum="1">
         <TextView
             android:id="@+id/txt_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/primaryColorLight"
-            android:singleLine="true" />
+            android:layout_width="150sp"
+            android:layout_height="43sp"
+            android:textColor="@color/White"
+            android:textSize="17dp"
+            android:textStyle="bold"
+            android:layout_gravity="center|top"
+            android:gravity="center_horizontal" />
         <TextView
             android:id="@+id/txt_content"
             android:layout_below="@+id/txt_name"
             android:layout_toRightOf="@+id/txt_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
             android:layout_marginTop="5dp"
             android:textSize="14sp"
-            android:textColor="@color/DarkGray"
-            android:singleLine="true" />
+            android:textColor="@color/White"
+            android:layout_weight="0.54" />
         <TextView
             android:id="@+id/txt_time"
+            android:textColor="@color/primaryColor"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
-            android:gravity="top"
-            android:textSize="12sp"
-            android:singleLine="true" />
-    </RelativeLayout>
+            android:gravity="right"
+            android:textSize="12sp" />
+    </LinearLayout>
 
 </LinearLayout>

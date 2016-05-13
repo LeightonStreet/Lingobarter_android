@@ -16,9 +16,11 @@
 package com.st.leighton.lingobarterclient;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -29,6 +31,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.ibm.watson.developer_cloud.http.HttpMediaType;
+import com.ibm.watson.developer_cloud.language_translation.v2.model.Language;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.RecognizeOptions;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
 import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
@@ -59,7 +62,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -67,6 +72,7 @@ import java.util.List;
  */
 public class ChatActivity extends KJActivity {
     private String chat_id;
+    private HashMap<Integer, Language> langs;
 
     public static final int REQUEST_CODE_GETIMAGE_BYSDCARD = 0x1;
 
@@ -80,17 +86,28 @@ public class ChatActivity extends KJActivity {
     ArrayList<Message> messages = new ArrayList<>();
     private MessageAdapter adapter;
 
-    private
+    private int ind;
 
     SpeechToText service = new SpeechToText();
 
     RecognizeOptions options = new RecognizeOptions.Builder().contentType(
-            HttpMediaType.AUDIO_RAW + "; rate=44000").build();
+            HttpMediaType.AUDIO_WAV).build();
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        chat_id = getIntent().getExtras().getString("CHAT_ID");
+        ind = getIntent().getExtras().getInt("IND");
+        langs = new HashMap<>();
+        langs.put(0, Language.PORTUGUESE);
+        langs.put(1, Language.PORTUGUESE);
+        langs.put(2, Language.SPANISH);
+        langs.put(3, Language.SPANISH);
+        langs.put(4, Language.FRENCH);
+        langs.put(5, Language.FRENCH);
+        langs.put(6, Language.ITALIAN);
+        langs.put(7, Language.ITALIAN);
+        langs.put(8, Language.ARABIC);
+        langs.put(9, Language.ARABIC);
 
         MyApplication app = (MyApplication) getApplication();
         mSocket = app.getSocket();
@@ -114,6 +131,18 @@ public class ChatActivity extends KJActivity {
                 }
             }
         });
+
+        IntentFilter responseFilter = new IntentFilter("android.intent.action.BotChat");
+        BroadcastReceiver responseReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String response = intent.getStringExtra("RESPONSE");
+                Message m = new Message(Message.MSG_TYPE_TEXT, Message.MSG_STATE_SUCCESS,
+                        chat_id, response, 0, true, new Date());
+                createReplyMsg(m);
+            }
+        };
+        this.registerReceiver(responseReceiver, responseFilter);
     }
 
     @Override
@@ -135,7 +164,7 @@ public class ChatActivity extends KJActivity {
     private void initMessageInputToolBox() {
         box.setOnOperationListener(new OnOperationListener() {
             @Override
-            public void send(String content, String type) {
+            public void send(final String content, String type) {
                 JSONObject object = new JSONObject();
                 try {
                     object.put("to_chat", chat_id);
@@ -147,31 +176,57 @@ public class ChatActivity extends KJActivity {
                 System.out.println(object);
                 mSocket.emit("send message", object);
                 message = new Message(Message.MSG_TYPE_TEXT, Message.MSG_STATE_SUCCESS,
-                                      chat_id, content, true, true, new Date());
+                                      chat_id, content, 1, true, new Date());
                 messages.add(message);
                 adapter.refresh(messages);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (ind % 2 == 1) {
+                            Webservice.language_from(content, langs.get(ind));
+                        } else {
+                            Webservice.language_to(content, langs.get(ind));
+                        }
+                    }
+                }).start();
             }
 
             @Override
             public void sendVoiceM(String fileName, final int length) {
                 if(STT_flag) {
-                    final File audio = new File("fileName");
-                    SpeechResults transcript = service.recognize(audio, options).execute();
-                    String content = transcript.toString();
-                    JSONObject object = new JSONObject();
-                    try {
-                        object.put("to_chat", chat_id);
-                        object.put("type", "voice");
-                        object.put("payload", content);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    System.out.println(object);
-                    mSocket.emit("send message", object);
-                    message = new Message(Message.MSG_TYPE_TEXT, Message.MSG_STATE_SUCCESS,
-                            chat_id, content, true, true, new Date());
-                    messages.add(message);
-                    message.setLength(length);
+                    final File audio = new File(fileName);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                final SpeechResults transcript = service.recognize(audio, options).execute();
+                                Thread.sleep(1000 * (new Random().nextInt(3) + 1));
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        String content = transcript.toString();
+                                        JSONObject object = new JSONObject();
+                                        try {
+                                            object.put("to_chat", chat_id);
+                                            object.put("type", "voice");
+                                            object.put("payload", content);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                        System.out.println(object);
+                                        mSocket.emit("send message", object);
+                                        message = new Message(Message.MSG_TYPE_TEXT, Message.MSG_STATE_SUCCESS,
+                                                chat_id, content, 1, true, new Date());
+                                        messages.add(message);
+                                        message.setLength(length);
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
                 }
                 else{
                     try {
@@ -192,7 +247,7 @@ public class ChatActivity extends KJActivity {
                         System.out.println(object);
                         mSocket.emit("send message", object);
                         message = new Message(Message.MSG_TYPE_VOICE, Message.MSG_STATE_SUCCESS,
-                                chat_id, fileName, true, true, new Date());
+                                chat_id, fileName, 1, true, new Date());
                         message.setLength(length);
                         messages.add(message);
                     } catch (JSONException e) {
@@ -398,13 +453,34 @@ public class ChatActivity extends KJActivity {
             try {
                 JSONObject msg = MyMessages.getJSONObject(i);
                 Date date = new Date(Long.parseLong(msg.getString("timestamp")));
+                int flag = i % 2 + 1;
                 Message m = new Message(msg.getString("type"), Message.MSG_STATE_SUCCESS,
                                         msg.getString("to_chat"),
-                                        msg.getString("payload"), true, true, date);
+                                        msg.getString("payload"), flag, true, date);
                 messages.add(0, m);
             } catch (JSONException e) {
                 System.out.println("Get message error");
             }
         }
+    }
+
+    private void createReplyMsg(final Message message) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000 * (new Random().nextInt(3) + 1));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            messages.add(message);
+                            adapter.refresh(messages);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }

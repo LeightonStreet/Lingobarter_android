@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.st.leighton.lingobarterclient.ChatActivity;
@@ -15,8 +15,12 @@ import com.st.leighton.lingobarterclient.UserProfile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import chat.bean.Chat;
@@ -59,23 +63,39 @@ public class ChatAdapter extends BaseAdapter{
         holder = new ViewHolder();
         v = View.inflate(context, R.layout.chats_list_contact, null);
         holder.tv_name = (TextView) v.findViewById(R.id.txt_name);
-        holder.tv_unread_msg_num = (TextView) v.findViewById(R.id.unread_msg_number);
         holder.img_avatar = (ImageView) v.findViewById(R.id.contact_item_avatar_iv);
-        holder.layout_content = (RelativeLayout) v.findViewById(R.id.contact_item_layout);
+        holder.content_holder = (LinearLayout) v.findViewById(R.id.content_container);
         holder.tv_chat_content = (TextView) v.findViewById(R.id.txt_content);
         holder.tv_time = (TextView) v.findViewById(R.id.txt_time);
 
-        holder.tv_time.setText(chat.getTime());
-        holder.tv_name.setText(chat.getName());
-        holder.img_avatar.setImageResource(R.drawable.default_head);
+        Date date = new Date();
+        holder.tv_time.setText(date.toString());
+        holder.tv_name.setText("Chat with ADÈLE from French");
+
+        URL url = null;
+        try {
+            JSONArray members = chat.getMembers();
+            JSONObject friend = members.getJSONObject(0);
+            String str = friend.getString("avatar_url");
+            url = new URL("http://192.168.0.4/8080" + str);
+            System.out.print(url);
+//            Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+//            holder.img_avatar.setImageBitmap(bmp);
+            holder.img_avatar.setImageResource(R.drawable.default_head);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (java.io.IOException e){
+            e.printStackTrace();
+        } catch (org.json.JSONException e){
+            e.printStackTrace();
+        }
         v.setTag(holder);
 
-        holder.layout_content.setOnClickListener(new View.OnClickListener() {
+        holder.content_holder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ChatActivity.class);
-                String id = chat.getId();
-                intent.putExtra("CHAT_ID", id);
+                intent.putExtra("IND", 5);
                 context.startActivity(intent);
             }
         });
@@ -100,9 +120,8 @@ public class ChatAdapter extends BaseAdapter{
     static class ViewHolder {
         TextView tv_time;
         TextView tv_name;
-        TextView tv_unread_msg_num;
         ImageView img_avatar;
         TextView tv_chat_content;
-        RelativeLayout layout_content;
+        LinearLayout content_holder;
     }
 }

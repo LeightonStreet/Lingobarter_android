@@ -85,7 +85,7 @@ public class MessageAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        return datas.get(position).getIsSend() ? 1 : 0;
+        return (datas.get(position).getIsSend() == 1) ? 1 : 0;
     }
 
     @Override
@@ -99,7 +99,7 @@ public class MessageAdapter extends BaseAdapter {
         final Message data = datas.get(position);
         if (v == null) {
             holder = new ViewHolder();
-            if (data.getIsSend()) {
+            if (data.getIsSend() == 1) {
                 v = View.inflate(cxt, R.layout.chat_item_list_right, null);
             } else {
                 v = View.inflate(cxt, R.layout.chat_item_list_left, null);
@@ -158,7 +158,7 @@ public class MessageAdapter extends BaseAdapter {
         if (data.getType() == Message.MSG_TYPE_FACE || data.getType() == Message.MSG_TYPE_PHOTO) {
             holder.layout_content.setBackgroundResource(android.R.color.transparent);
         } else {
-            if (data.getIsSend()) {
+            if (data.getIsSend() == 1) {
                 holder.layout_content.setBackgroundResource(R.drawable.chat_to_bg_selector);
             } else {
                 holder.layout_content.setBackgroundResource(R.drawable.chat_from_bg_selector);
