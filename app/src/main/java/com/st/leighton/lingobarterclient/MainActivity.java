@@ -101,6 +101,7 @@ public class MainActivity extends Activity {
 
         myProfile.add("8)");
         initUI();
+        Toast.makeText(baseContext,GlobalStore.getInstance().getToken(), Toast.LENGTH_LONG).show();
     }
 
     @Override

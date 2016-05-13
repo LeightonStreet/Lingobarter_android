@@ -1,5 +1,6 @@
 package com.st.leighton.lingobarterclient;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -8,10 +9,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -32,7 +38,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,12 +49,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class BasicProfile extends AppCompatActivity {
+public class BasicProfile extends AppCompatActivity implements LocationListener{
     final Integer baseLevel = 0;
     final Integer highestLevel = 5;
     private static final int SELECT_PICTURE = 1;
 
+    BasicProfile self;
     Context baseContext;
+    LocationManager locationManager;
 
     EditText fullnameET;
     EditText locationET;
@@ -162,6 +169,7 @@ public class BasicProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_basic_profile);
 
+        self = this;
         baseContext = this;
 
         socketService = Webservice.getInstance();
@@ -197,13 +205,6 @@ public class BasicProfile extends AppCompatActivity {
         learnLanguages.clear();
 
         fullnameET.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                resetBackgroundColors();
-            }
-        });
-
-        locationET.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 resetBackgroundColors();
@@ -360,6 +361,24 @@ public class BasicProfile extends AppCompatActivity {
             }
         });
 
+        locationET.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetBackgroundColors();
+
+                waitIndicator.setMessage("Updating your location...");
+                waitIndicator.setCancelable(false);
+                waitIndicator.show();
+
+                if(ContextCompat.checkSelfPermission(baseContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(self, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  }, 11 );
+                } else {
+                    locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1000, self);
+                }
+            }
+        });
+
         uploadAvatarB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -375,84 +394,70 @@ public class BasicProfile extends AppCompatActivity {
             public void onClick(View v) {
                 resetBackgroundColors();
 
-                waitIndicator.setMessage("Please wait...");
-                waitIndicator.setCancelable(false);
-                waitIndicator.show();
+                fullname = fullnameET.getText().toString();
+                if(fullname.equals("")) {
+                    Toast.makeText(baseContext,"Please specify your name.", Toast.LENGTH_LONG).show();
+                    fullnameET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                    return ;
+                }
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        fullname = fullnameET.getText().toString();
-                        if(fullname.equals("")) {
-                            Toast.makeText(baseContext,"Please specify your name.", Toast.LENGTH_LONG).show();
-                            fullnameET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                            return ;
-                        }
+                if(!maleRB.isChecked()) {
+                    gender = false;
+                }
 
-                        if(!maleRB.isChecked()) {
-                            gender = false;
-                        }
+                if(birthday.equals("")) {
+                    Toast.makeText(baseContext,"Please select your birthday.", Toast.LENGTH_LONG).show();
+                    birthdayET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                    return ;
+                }
 
-                        if(birthday.equals("")) {
-                            Toast.makeText(baseContext,"Please select your birthday.", Toast.LENGTH_LONG).show();
-                            birthdayET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                            return ;
-                        }
+                if(nation.equals("")) {
+                    Toast.makeText(baseContext,"Please select your nationality.", Toast.LENGTH_LONG).show();
+                    nationalityS.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                    return ;
+                }
 
-                        if(nation.equals("")) {
-                            Toast.makeText(baseContext,"Please select your nationality.", Toast.LENGTH_LONG).show();
-                            nationalityS.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                            return ;
-                        }
+                if(locationET.getText().toString().equals("")) {
+                    Toast.makeText(baseContext,"Please set your location.", Toast.LENGTH_LONG).show();
+                    locationET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                    return ;
+                }
 
-                        String location = locationET.getText().toString();
-                        if(location.equals("")) {
-                            Toast.makeText(baseContext,"Please specify your location.", Toast.LENGTH_LONG).show();
-                            locationET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                            return ;
-                        } else {
-                            try {
-                                List<Address> addresses = geocoder.getFromLocationName(location, 1);
-                                if (addresses.isEmpty()) {
-                                    Toast.makeText(baseContext,"City name is not valid.", Toast.LENGTH_LONG).show();
-                                    locationET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                                    return ;
-                                }
-                                Address address = addresses.get(0);
-                                latitude = address.getLatitude();
-                                longitude = address.getLongitude();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                if(nativeLanguages.isEmpty()) {
+                    Toast.makeText(baseContext,"Please specify your native languages.", Toast.LENGTH_LONG).show();
+                    nativeLanguageET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                    return ;
+                }
 
-                        if(nativeLanguages.isEmpty()) {
-                            Toast.makeText(baseContext,"Please specify your native languages.", Toast.LENGTH_LONG).show();
-                            nativeLanguageET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                            return ;
-                        }
+                if(learnLanguages.isEmpty()) {
+                    Toast.makeText(baseContext,"Please specify languages you want to learn.", Toast.LENGTH_LONG).show();
+                    learnLanguageET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                    return ;
+                }
 
-                        if(learnLanguages.isEmpty()) {
-                            Toast.makeText(baseContext,"Please specify languages you want to learn.", Toast.LENGTH_LONG).show();
-                            learnLanguageET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                            return ;
-                        }
+                if(selectedImageUri == null) {
+                    Toast.makeText(baseContext,"Please upload an avatar.", Toast.LENGTH_LONG).show();
+                    uploadAvatarB.setTextColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
+                    return ;
+                }
 
-                        if(selectedImageUri == null) {
-                            Toast.makeText(baseContext,"Please upload an avatar.", Toast.LENGTH_LONG).show();
-                            uploadAvatarB.setTextColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
-                            return ;
-                        }
+                if (noOverlapLanguages(nativeLanguages, learnLanguages)) {
+                    waitIndicator.setMessage("Please wait...");
+                    waitIndicator.setCancelable(false);
+                    waitIndicator.show();
 
-                        if (noOverlapLanguages(nativeLanguages, learnLanguages)) {
-                                socketService.BasicSetBasicProfile(fullname, gender, nation,
-                                        latitude, longitude, birthday_timestamp,
-                                        nativeLanguages, learnLanguages);
-                        } else {
-                            Toast.makeText(baseContext,"Overlapped language choices", Toast.LENGTH_LONG).show();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            socketService.BasicSetBasicProfile(fullname, gender, nation,
+                                    latitude, longitude, birthday_timestamp,
+                                    nativeLanguages, learnLanguages);
                         }
-                    }
-                }).start();
+                    }).start();
+
+                } else {
+                    Toast.makeText(baseContext,"Overlapped language choices", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
@@ -532,6 +537,20 @@ public class BasicProfile extends AppCompatActivity {
         return rtn;
     }
 
+    String getCityByGeo(double latitude, double longtitude) {
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
+            if (addresses.isEmpty()) {
+                return "";
+            } else {
+                return addresses.get(0).getLocality();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     Boolean noOverlapLanguages(HashSet<String> nativeLanguages, HashMap<String, Integer> learnLanguages) {
         for(String item : nativeLanguages) {
             if(learnLanguages.containsKey(item)) {
@@ -539,5 +558,44 @@ public class BasicProfile extends AppCompatActivity {
             }
         }
         return true;
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+
+        if(ContextCompat.checkSelfPermission(baseContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  }, 11 );
+        } else {
+            locationManager.removeUpdates(self);
+            locationManager = null;
+        }
+
+        String addr = getCityByGeo(latitude, longitude);
+        if (addr.equals("")) {
+            if (waitIndicator.isShowing()) {
+                waitIndicator.cancel();
+            }
+            Toast.makeText(baseContext,"Your city cannot be located, please try again.", Toast.LENGTH_LONG).show();
+        } else {
+            if (waitIndicator.isShowing()) {
+                waitIndicator.cancel();
+            }
+            Toast.makeText(baseContext,"Your city has been updated.", Toast.LENGTH_LONG).show();
+            locationET.setText(addr);
+        }
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
     }
 }

@@ -180,6 +180,7 @@
 
     <EditText
         android:id="@+id/hx_profile_settings_edit_location"
+        android:focusable="false"
         android:textSize="15sp"
         android:hint="@string/hx_basic_profile_get_location"
 

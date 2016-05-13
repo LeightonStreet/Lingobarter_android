@@ -1,5 +1,6 @@
 package com.st.leighton.lingobarterclient;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -8,12 +9,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Paint;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -32,7 +38,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,12 +49,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ProfileSettings extends AppCompatActivity {
+public class ProfileSettings extends AppCompatActivity implements LocationListener{
     final Integer baseLevel = 0;
     final Integer highestLevel = 5;
     private static final int SELECT_PICTURE = 1;
 
+    ProfileSettings self;
     Context baseContext;
+    LocationManager locationManager;
 
     EditText fullnameET;
     EditText locationET;
@@ -161,6 +168,7 @@ public class ProfileSettings extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_settings);
 
+        self = this;
         baseContext = this;
 
         socketService = Webservice.getInstance();
@@ -200,13 +208,6 @@ public class ProfileSettings extends AppCompatActivity {
         changePasswordB.setPaintFlags(changePasswordB.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         fullnameET.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                resetBackgroundColors();
-            }
-        });
-
-        locationET.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 resetBackgroundColors();
@@ -372,6 +373,24 @@ public class ProfileSettings extends AppCompatActivity {
             }
         });
 
+        locationET.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetBackgroundColors();
+
+                waitIndicator.setMessage("Updating your location...");
+                waitIndicator.setCancelable(false);
+                waitIndicator.show();
+
+                if(ContextCompat.checkSelfPermission(baseContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(self, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  }, 11 );
+                } else {
+                    locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1000, self);
+                }
+            }
+        });
+
         submitB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -400,20 +419,10 @@ public class ProfileSettings extends AppCompatActivity {
                     return ;
                 }
 
-                String location = locationET.getText().toString();
-                if(location.equals("")) {
-                    Toast.makeText(baseContext,"Please specify your location.", Toast.LENGTH_LONG).show();
+                if(locationET.getText().toString().equals("")) {
+                    Toast.makeText(baseContext,"Please set your location.", Toast.LENGTH_LONG).show();
                     locationET.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorAccent));
                     return ;
-                } else {
-                    try {
-                        List<Address> addresses = geocoder.getFromLocationName(location, 1);
-                        Address address = addresses.get(0);
-                        latitude = address.getLatitude();
-                        longitude = address.getLongitude();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
 
                 if(nativeLanguages.isEmpty()) {
@@ -544,6 +553,20 @@ public class ProfileSettings extends AppCompatActivity {
         return rtn;
     }
 
+    String getCityByGeo(double latitude, double longitude) {
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            if (addresses.isEmpty()) {
+                return "";
+            } else {
+                return addresses.get(0).getLocality();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     Boolean noOverlapLanguages(HashSet<String> nativeLanguages, HashMap<String, Integer> learnLanguages) {
         for(String item : nativeLanguages) {
             if(learnLanguages.containsKey(item)) {
@@ -551,6 +574,46 @@ public class ProfileSettings extends AppCompatActivity {
             }
         }
         return true;
+    }
+
+
+    @Override
+    public void onLocationChanged(Location location) {
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+
+        if(ContextCompat.checkSelfPermission(baseContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  }, 11 );
+        } else {
+            locationManager.removeUpdates(self);
+            locationManager = null;
+        }
+
+        String addr = getCityByGeo(latitude, longitude);
+        if (addr.equals("")) {
+            if (waitIndicator.isShowing()) {
+                waitIndicator.cancel();
+            }
+            Toast.makeText(baseContext,"Your city cannot be located, please try again.", Toast.LENGTH_LONG).show();
+        } else {
+            if (waitIndicator.isShowing()) {
+                waitIndicator.cancel();
+            }
+            Toast.makeText(baseContext,"Your city has been updated.", Toast.LENGTH_LONG).show();
+            locationET.setText(addr);
+        }
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
     }
 }
 

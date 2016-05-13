@@ -2,7 +2,6 @@ package com.st.leighton.lingobarterclient;
 
 import android.app.Service;
 import android.content.Intent;
-import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -20,7 +19,6 @@ import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -76,18 +74,10 @@ class GlobalStore {
 }
 
 public class Webservice extends Service{
-    private String token;
-    private String name;
-    private String userid;
-    private String username;
-
-    private Geocoder geocoder;
     private static Webservice instance = null;
 
     @Override
     public void onCreate() {
-        geocoder = new Geocoder(this, Locale.getDefault());
-
         instance = this;
         super.onCreate();
     }
@@ -96,15 +86,6 @@ public class Webservice extends Service{
     {
         if (instance == null) instance = new Webservice();
         return instance;
-    }
-
-    public String getToken()
-    {
-        if (token != null) {
-            return token;
-        } else {
-            return "NONE";
-        }
     }
 
     public void Login(String email, String password) {
@@ -125,14 +106,10 @@ public class Webservice extends Service{
                 switch (status) {
                     case 200:
                         boolean completeFlag = jsonResult.getJSONObject("response").getBoolean("complete");
-                        token = jsonResult.getJSONObject("response").getString("auth_token");
-                        name = jsonResult.getJSONObject("response").getString("name");
-                        username = jsonResult.getJSONObject("response").getString("username");
-                        userid = jsonResult.getJSONObject("response").getString("user_id");
-                        GlobalStore.getInstance().setToken(token);
-                        GlobalStore.getInstance().setName(name);
-                        GlobalStore.getInstance().setUsername(username);
-                        GlobalStore.getInstance().setUserid(userid);
+                        GlobalStore.getInstance().setToken(jsonResult.getJSONObject("response").getString("auth_token"));
+                        GlobalStore.getInstance().setName(jsonResult.getJSONObject("response").getString("name"));
+                        GlobalStore.getInstance().setUsername(jsonResult.getJSONObject("response").getString("username"));
+                        GlobalStore.getInstance().setUserid(jsonResult.getJSONObject("response").getString("user_id"));
                         if (completeFlag) {
                             feedback = "Succeed";
                         } else {
@@ -307,14 +284,10 @@ public class Webservice extends Service{
                 int status = jsonResult.getInt("status");
                 switch (status) {
                     case 200:
-                        token = jsonResult.getJSONObject("response").getString("auth_token");
-                        name = jsonResult.getJSONObject("response").getString("name");
-                        username = jsonResult.getJSONObject("response").getString("username");
-                        userid = jsonResult.getJSONObject("response").getString("user_id");
-                        GlobalStore.getInstance().setToken(token);
-                        GlobalStore.getInstance().setName(name);
-                        GlobalStore.getInstance().setUsername(username);
-                        GlobalStore.getInstance().setUserid(userid);
+                        GlobalStore.getInstance().setToken(jsonResult.getJSONObject("response").getString("auth_token"));
+                        GlobalStore.getInstance().setName(jsonResult.getJSONObject("response").getString("name"));
+                        GlobalStore.getInstance().setUsername(jsonResult.getJSONObject("response").getString("username"));
+                        GlobalStore.getInstance().setUserid(jsonResult.getJSONObject("response").getString("user_id"));
                         feedback = "Succeed";
                         break;
 
@@ -840,15 +813,5 @@ public class Webservice extends Service{
     @Override
     public void onDestroy() {
         super.onDestroy();
-    }
-
-    public String getCityByGeo(double latitude, double longtitude) {
-        try {
-            List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
-            return addresses.get(0).getLocality();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
     }
 }
